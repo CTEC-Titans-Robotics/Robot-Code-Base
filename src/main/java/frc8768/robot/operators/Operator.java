@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj.GenericHID;
 import frc8768.robot.Robot;
 
 /*
-   Abstract class designed for Operators
-   Anything universal to operators goes in here
+   Abstract class designed for Operators.
+   Anything universal to operators goes in here.
 
-   OPERATORS ARE THREADED! For every operator a thread is made
-   It will process one operator without stalling other operators
+   OPERATORS ARE THREADED! For every operator a thread is made.
+   It will process one operator without stalling other operators.
  */
 public abstract class Operator {
     // The thread the operator runs on

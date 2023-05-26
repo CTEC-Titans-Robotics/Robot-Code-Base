@@ -7,7 +7,5 @@ public class Constants {
 
     public static class SwerveConfig {
         public static final SwerveType currentType = SwerveType.NEOS;
-        // Radians
-        public static final double maxRotationSpeed = 3.14159; // 180 degrees
     }
 }

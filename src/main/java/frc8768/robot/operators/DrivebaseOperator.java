@@ -16,7 +16,6 @@ public class DrivebaseOperator extends Operator {
         super("Drivebase", new XboxController(Constants.driverControllerId));
 
         swerve = Robot.getInstance().getSwerve();
-
         init();
     }
 
@@ -31,6 +30,7 @@ public class DrivebaseOperator extends Operator {
                 continue;
             }
             XboxController controller = this.getHid();
+            // Apply controller deadband
             Translation2d translation2d = new Translation2d(
                     MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband),
                     MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband));

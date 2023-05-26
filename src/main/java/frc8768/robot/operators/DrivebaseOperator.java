@@ -3,6 +3,7 @@ package frc8768.robot.operators;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
+import frc8768.robot.Robot;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 
@@ -14,11 +15,7 @@ public class DrivebaseOperator extends Operator {
     public DrivebaseOperator() {
         super("Drivebase", new XboxController(Constants.driverControllerId));
 
-        try {
-            swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
-        } catch (IOException io) {
-            throw new RuntimeException("Swerve failed to create!", io);
-        }
+        swerve = Robot.getInstance().getSwerve();
 
         init();
     }

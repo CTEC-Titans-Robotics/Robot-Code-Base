@@ -3,6 +3,7 @@ package frc8768.robot.subsystems;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc8768.robot.util.SwerveType;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
@@ -13,7 +14,7 @@ import java.io.IOException;
 /*
     Subsystems are NOT threaded to avoid a race condition with their operators.
  */
-public class SwerveSubsystem {
+public class SwerveSubsystem implements Subsystem {
     private SwerveDrive swerveDrive;
 
     public SwerveSubsystem(SwerveType type) throws IOException {

@@ -7,8 +7,6 @@ import frc8768.robot.Robot;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 
-import java.io.IOException;
-
 public class DrivebaseOperator extends Operator {
     private final SwerveSubsystem swerve;
 

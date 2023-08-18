@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc8768.robot.util.SwerveType;
+import frc8768.robot.util.MotorType;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 
@@ -17,7 +17,7 @@ import java.io.IOException;
 public class SwerveSubsystem implements Subsystem {
     private SwerveDrive swerveDrive;
 
-    public SwerveSubsystem(SwerveType type) throws IOException {
+    public SwerveSubsystem(MotorType type) throws IOException {
         switch(type) {
             case NEOS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive();
             case FALCONS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive();

@@ -6,6 +6,6 @@ public class Constants {
     public static double controllerDeadband = 0.1;
 
     public static class SwerveConfig {
-        public static final SwerveType currentType = SwerveType.NEOS;
+        public static final MotorType currentType = MotorType.NEOS;
     }
 }

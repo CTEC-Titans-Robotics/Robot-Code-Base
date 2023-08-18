@@ -1,6 +1,6 @@
 package frc8768.robot.util;
 
-public enum SwerveType {
+public enum MotorType {
     NEOS,
     FALCONS
 }

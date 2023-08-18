@@ -16,6 +16,7 @@ import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
 
 import java.io.IOException;
+import java.util.Set;
 
 
 /**
@@ -52,18 +53,20 @@ public class Robot extends TimedRobot
             throw new RuntimeException("Swerve failed to create!", io);
         }
          */
+        falcon = new TankSubsystemFalcon(Set.of(), Set.of(), new boolean[]{false, true}, new boolean[]{false, true}, 0);
 
-        this.auto = new Auto(swerve);
+        // TODO: Do Auto for Tank
+        // this.auto = new Auto(swerve);
         drivebase.init();
     }
 
-    public SwerveSubsystem getSwerve() {
-        return this.swerve;
-    }
-    /* For tank
+    // public SwerveSubsystem getSwerve() {
+    //     return this.swerve;
+    // }
     public TankSubsystemFalcon getFalcon() {
         return this.falcon;
     }
+    /* For tank
     public TankSubsystemSpark getSpark() {
         return this.spark;
     }

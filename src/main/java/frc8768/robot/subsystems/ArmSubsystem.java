@@ -16,7 +16,7 @@ public class ArmSubsystem implements Subsystem {
     private TalonSRX intake;
     private boolean isEmergencyStopped;
 
-    public ArmSubsystem(int leftExtend, int rightExtend, int intake, XboxController controller) {
+    public ArmSubsystem(int leftExtend, int rightExtend, int intake, boolean[] invertArray, XboxController controller) {
         this.armThread = new Thread(this::armLoop, "Arm Peripheral Thread");
         this.controller = controller;
         this.leftExtend = new TalonFX(leftExtend);
@@ -26,6 +26,9 @@ public class ArmSubsystem implements Subsystem {
         // Conf
         this.leftExtend.setNeutralMode(NeutralMode.Brake);
         this.rightExtend.setNeutralMode(NeutralMode.Brake);
+        this.leftExtend.setInverted(invertArray[0]);
+        this.rightExtend.setInverted(invertArray[1]);
+        this.intake.setInverted(invertArray[2]);
 
         this.armThread.start();
     }
@@ -50,7 +53,7 @@ public class ArmSubsystem implements Subsystem {
     private void armLoop() {
         while (true) {
             if(controller.getXButton() && controller.getYButton() && controller.getBButton() && controller.getAButton()) {
-                isEmergencyStopped = true;
+                emergencyStop();
                 this.leftExtend.set(TalonFXControlMode.PercentOutput, 0);
                 this.rightExtend.set(TalonFXControlMode.PercentOutput, 0);
             }

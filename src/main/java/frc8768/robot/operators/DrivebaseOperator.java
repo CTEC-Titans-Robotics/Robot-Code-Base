@@ -38,7 +38,7 @@ public class DrivebaseOperator extends Operator {
             // Apply controller deadband
             Translation2d translation2d = new Translation2d(
                     MathUtil.applyDeadband(controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
-                    MathUtil.applyDeadband(controller.getRightY(), Constants.controllerDeadband));
+                    MathUtil.applyDeadband(controller.getRightY() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
             // Swerve Example
             // swerve.drive(translation2d, -controller.getRightX(), true, false, true);

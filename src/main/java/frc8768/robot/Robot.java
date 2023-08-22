@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
+import frc8768.robot.operators.PeripheralOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.subsystems.TankSubsystemFalcon;
 import frc8768.robot.subsystems.TankSubsystemSpark;
@@ -29,6 +30,7 @@ public class Robot extends TimedRobot
 {
     public static Robot instance;
     private final DrivebaseOperator drivebase = new DrivebaseOperator();
+    private final PeripheralOperator peripheralOperator = new PeripheralOperator();
     private SwerveSubsystem swerve;
     private TankSubsystemFalcon falcon;
     private TankSubsystemSpark spark;
@@ -53,11 +55,13 @@ public class Robot extends TimedRobot
             throw new RuntimeException("Swerve failed to create!", io);
         }
          */
-        falcon = new TankSubsystemFalcon(Set.of(), Set.of(), new boolean[]{false, true}, new boolean[]{false, true}, 0);
+        falcon = new TankSubsystemFalcon(Set.of(2, 0), Set.of(4, 15), new boolean[]{false, false}, new boolean[]{true, true}, 0);
 
         // TODO: Do Auto for Tank
         // this.auto = new Auto(swerve);
         drivebase.init();
+
+        peripheralOperator.init();
     }
 
     // public SwerveSubsystem getSwerve() {

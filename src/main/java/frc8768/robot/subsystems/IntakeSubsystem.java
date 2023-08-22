@@ -1,6 +1,7 @@
 package frc8768.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -16,6 +17,14 @@ public class IntakeSubsystem implements Subsystem {
     public IntakeSubsystem(Set<Integer> mainIds, Set<Integer> tipIds, boolean[] invertedMain, boolean[] invertedTip) {
         main = (TalonSRX[]) createFalcons(mainIds, 1, invertedMain);
         tip = (TalonFX[]) createFalcons(tipIds, 0, invertedTip);
+
+        // Conf
+        for(TalonSRX srx : main) {
+            srx.setNeutralMode(NeutralMode.Coast);
+        }
+        for(TalonFX fx : tip) {
+            fx.setNeutralMode(NeutralMode.Coast);
+        }
     }
 
     private BaseTalon[] createFalcons(Set<Integer> ids, int type, boolean[] inverted) {
@@ -42,5 +51,10 @@ public class IntakeSubsystem implements Subsystem {
     public void spinTip(double front, double back) {
         tip[0].set(ControlMode.PercentOutput, front);
         tip[1].set(TalonFXControlMode.PercentOutput, back);
+    }
+
+    public void stopTip() {
+        tip[0].set(ControlMode.PercentOutput, 0);
+        tip[1].set(TalonFXControlMode.PercentOutput, 0);
     }
 }

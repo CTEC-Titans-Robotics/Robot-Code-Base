@@ -21,7 +21,7 @@ public abstract class Operator {
         Controller: The controller object
      */
     public Operator(String name, GenericHID controller) {
-        opThread = new Thread(this::run);
+        opThread = new Thread(this::runLoop);
         opThread.setName(String.format("%s Thread", name));
 
         hid = controller;
@@ -36,6 +36,12 @@ public abstract class Operator {
      */
     public void init() {
         opThread.start();
+    }
+
+    public void runLoop() {
+        while(true) {
+            run();
+        }
     }
 
     public abstract void run();

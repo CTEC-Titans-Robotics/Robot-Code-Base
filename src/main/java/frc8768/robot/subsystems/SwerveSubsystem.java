@@ -16,20 +16,49 @@ import java.io.IOException;
  */
 public class SwerveSubsystem implements Subsystem {
     private SwerveDrive swerveDrive;
+    private boolean isTortoise;
+
+    private double tortoiseSpeed = 0.75;
+    private double tortoiseAngularVelocity = 1;
+
+    private double hareSpeed;
+    private double hareAngularVelocity;
 
     public SwerveSubsystem(MotorType type) throws IOException {
         switch(type) {
             case NEOS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive();
             case FALCONS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive();
         }
+
+        hareSpeed = swerveDrive.swerveDriveConfiguration.maxSpeed;
+        hareAngularVelocity = swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond;
     }
 
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
-        swerveDrive.drive(translation2d, rotation, fieldRelative, isOpenLoop, headingCorrection);
+        swerveDrive.drive(translation2d.times(
+                swerveDrive.swerveDriveConfiguration.maxSpeed),
+                rotation * swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond,
+                fieldRelative, isOpenLoop, headingCorrection);
     }
 
     public Rotation3d getGyroRot() {
         return swerveDrive.getGyroRotation3d();
+    }
+
+    public void tortoiseMode() {
+        isTortoise = true;
+        swerveDrive.swerveDriveConfiguration.maxSpeed = tortoiseSpeed;
+        swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond = tortoiseAngularVelocity;
+    }
+
+    public void hareMode() {
+        isTortoise = false;
+        swerveDrive.swerveDriveConfiguration.maxSpeed = hareSpeed;
+        swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond = hareAngularVelocity;
+    }
+
+    public boolean isTortoise() {
+        return isTortoise;
     }
 
     public SwerveDrive getSwerveDrive() {

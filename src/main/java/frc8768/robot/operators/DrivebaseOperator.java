@@ -10,12 +10,13 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 
 public class DrivebaseOperator extends Operator {
+    private static final XboxController controller = new XboxController(Constants.driverControllerId);
     private final SwerveSubsystem swerve;
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
 
     public DrivebaseOperator() {
-        super("Drivebase", new XboxController(Constants.driverControllerId));
+        super("Drivebase", controller);
 
         swerve = Robot.getInstance().getSwerve();
         // sparkTank = Robot.getInstance().getSpark();
@@ -29,10 +30,17 @@ public class DrivebaseOperator extends Operator {
 
     @Override
     public void run() {
-        if (!isRobotTeleop()) {
-            return;
+        swerve.getSwerveDrive().updateOdometry();
+
+        if(controller.getBButton()) {
+            swerve.getSwerveDrive().zeroGyro();
         }
-        XboxController controller = this.getHid();
+
+        if(controller.getLeftTriggerAxis() > 0.1 && swerve.isTortoise()) {
+            swerve.hareMode();
+        } else if(controller.getLeftTriggerAxis() > 0.1 && !swerve.isTortoise()) {
+            swerve.tortoiseMode();
+        }
 
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
@@ -40,7 +48,7 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(controller.getLeftY() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
         // Swerve Example
-        // swerve.drive(translation2d, -controller.getRightX(), true, false, true);
+        swerve.drive(translation2d, -controller.getRightX(), true, false, true);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

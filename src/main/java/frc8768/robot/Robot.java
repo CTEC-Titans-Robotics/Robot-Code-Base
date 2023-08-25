@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
+import frc8768.robot.operators.PeripheralOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.subsystems.TankSubsystemFalcon;
 import frc8768.robot.subsystems.TankSubsystemSpark;
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot
 {
     public static Robot instance;
     private final DrivebaseOperator drivebase = new DrivebaseOperator();
+    private final PeripheralOperator peripheral = new PeripheralOperator();
     private SwerveSubsystem swerve;
     private TankSubsystemFalcon falcon;
     private TankSubsystemSpark spark;
@@ -45,16 +47,15 @@ public class Robot extends TimedRobot
     public void robotInit() {
         instance = this;
 
-        /* Swerve Example
         try {
             swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
         } catch (IOException io) {
             throw new RuntimeException("Swerve failed to create!", io);
         }
-         */
 
         this.auto = new Auto(swerve);
         drivebase.init();
+        peripheral.init();
     }
 
     public SwerveSubsystem getSwerve() {

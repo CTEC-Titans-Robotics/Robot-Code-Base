@@ -29,11 +29,11 @@ import java.util.Set;
 public class Robot extends TimedRobot
 {
     public static Robot instance;
-    private final DrivebaseOperator drivebase = new DrivebaseOperator();
-    private final PeripheralOperator peripheralOperator = new PeripheralOperator();
-    private SwerveSubsystem swerve;
+    private DrivebaseOperator drivebase;
+    private PeripheralOperator peripheralOperator;
+    // private SwerveSubsystem swerve;
     private TankSubsystemFalcon falcon;
-    private TankSubsystemSpark spark;
+    // private TankSubsystemSpark spark;
     private Auto auto;
 
     public static Robot getInstance() {
@@ -48,6 +48,9 @@ public class Robot extends TimedRobot
     public void robotInit() {
         instance = this;
 
+        drivebase = new DrivebaseOperator();
+        peripheralOperator = new PeripheralOperator();
+
         /* Swerve Example
         try {
             swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
@@ -55,12 +58,11 @@ public class Robot extends TimedRobot
             throw new RuntimeException("Swerve failed to create!", io);
         }
          */
-        falcon = new TankSubsystemFalcon(Set.of(2, 0), Set.of(4, 15), new boolean[]{false, false}, new boolean[]{true, true}, 0);
+        falcon = new TankSubsystemFalcon(Set.of(4, 2), Set.of(15, 16), new boolean[]{true, true}, new boolean[]{false, false});
 
         // TODO: Do Auto for Tank
         // this.auto = new Auto(swerve);
         drivebase.init();
-
         peripheralOperator.init();
     }
 
@@ -78,7 +80,10 @@ public class Robot extends TimedRobot
     
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
+    }
+
+    public static boolean isRobotTeleop() {
+        return getInstance().isTeleop();
     }
     
     

@@ -18,23 +18,23 @@ public class PeripheralOperator extends Operator{
     private final Timer shootTimer = new Timer();
     private final boolean isLimelightEnabled = false;
 
-    private ShotMode currMode;
+    private ShotMode currMode = ShotMode.LR_TOP;
     private static final XboxController controller = new XboxController(Constants.coDriverControllerId);
 
     public PeripheralOperator() {
-        super("Peripheral", controller);
+        super("Peripheral");
 
         if(isLimelightEnabled) {
             limelight = new Limelight();
             limelight.init();
         }
         arm = new ArmSubsystem(13, 3 ,8, new boolean[] { false, false, false }, controller);
-        intake = new IntakeSubsystem(Set.of(7, 6), Set.of(10, 9), new boolean[] { false, false }, new boolean[] { false, false });
+        intake = new IntakeSubsystem(Set.of(7, 6), Set.of(9, 10), new boolean[] { false, false }, new boolean[] { false, true });
     }
 
     @Override
     public void run() {
-        if(!Robot.getInstance().isTeleop()) {
+        if(!Robot.isRobotTeleop()) {
             arm.emergencyReset();
             return;
         }
@@ -43,47 +43,41 @@ public class PeripheralOperator extends Operator{
             limelight.tick();
         }
 
-        if (controller.getRightTriggerAxis() > 0.1) {
-            intake.spinTip(-0.50, 0.10);
-        } else {
-            intake.spinTip(0, 0);
-        }
-
         if(controller.getRightBumper()) {
-            intake.spinMain(0.5);
+            intake.spinMain(0.5, -0.5);
+        } else if(controller.getLeftBumper()) {
+            intake.spinMain(0.5, -0.5);
+            intake.spinTip(0.2, -0.2);
             arm.spinIntake(0.35);
         } else if(controller.getAButton()) {
-            intake.spinMain(-0.5);
+            intake.spinMain(-0.5, 0.5);
             arm.spinIntake(-0.35);
         } else {
-            intake.spinMain(0);
+            intake.spinMain(0, 0);
+            if(controller.getRightTriggerAxis() <= 0.5) {
+                intake.stopTip();
+            }
             arm.spinIntake(0);
         }
 
-        if (controller.getPOV() == 0) { // Upper hoop close range
+        if (controller.getPOV() >= 0 && controller.getPOV() < 90) { // Upper hoop close range
             currMode = ShotMode.CR_TOP;
         }
-        if (controller.getPOV() == 90) { // upper hoop mid range
+        if (controller.getPOV() >= 90 && controller.getPOV() < 180) { // upper hoop mid range
             currMode = ShotMode.MR_TOP;
         }
-        if (controller.getPOV() == 270) { // upper hoop long range
+        if (controller.getPOV() >= 270 && controller.getPOV() < 360 ) { // upper hoop long range
             currMode = ShotMode.LR_TOP;
         }
-        if (controller.getPOV() == 18 && !isLimelightEnabled) { // lower hoop close range
+        if (controller.getPOV() >= 180 && controller.getPOV() < 270 && !isLimelightEnabled) { // lower hoop close range
             currMode = ShotMode.LIMELIGHT;
         }
 
-        if (controller.getRightTriggerAxis() > 0.1) {
+        if (controller.getRightTriggerAxis() > 0.5) {
             switch (currMode) {
-                case LR_TOP -> {
-                    intake.spinTip(-0.56, 0.08);
-                }
-                case MR_TOP -> {
-                    intake.spinTip(-0.50, 0.08);
-                }
-                case CR_TOP -> {
-                    intake.spinTip(-0.50, 0.10);
-                }
+                case LR_TOP -> intake.spinTip(-0.56, 0.08);
+                case MR_TOP -> intake.spinTip(-0.50, 0.08);
+                case CR_TOP -> intake.spinTip(-0.50, 0.10);
                 case LIMELIGHT -> {
                     double distance = limelight.getDistance();
                     if (distance > 300D/12D){
@@ -95,7 +89,9 @@ public class PeripheralOperator extends Operator{
                 }
             }
         } else {
-            intake.stopTip();
+            if(!controller.getLeftBumper()) {
+                intake.stopTip();
+            }
             shootTimer.reset();
             controller.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
             controller.setRumble(GenericHID.RumbleType.kRightRumble, 0);

@@ -15,37 +15,39 @@ public class IntakeSubsystem implements Subsystem {
     private final TalonFX[] tip;
 
     public IntakeSubsystem(Set<Integer> mainIds, Set<Integer> tipIds, boolean[] invertedMain, boolean[] invertedTip) {
-        main = (TalonSRX[]) createFalcons(mainIds, 1, invertedMain);
-        tip = (TalonFX[]) createFalcons(tipIds, 0, invertedTip);
-
-        // Conf
-        for(TalonSRX srx : main) {
-            srx.setNeutralMode(NeutralMode.Coast);
-        }
-        for(TalonFX fx : tip) {
-            fx.setNeutralMode(NeutralMode.Coast);
-        }
+        main = createTalonSRX(mainIds, invertedMain);
+        tip = createTalonFX(tipIds, invertedTip);
     }
 
-    private BaseTalon[] createFalcons(Set<Integer> ids, int type, boolean[] inverted) {
-        BaseTalon[] motors = new BaseTalon[ids.size()];
+    private TalonFX[] createTalonFX(Set<Integer> ids, boolean[] inverted) {
+        TalonFX[] motors = new TalonFX[ids.size()];
         int i = 0;
         for(int id : ids) {
-            if(type == 0) {
-                motors[id] = new TalonFX(id);
-            } else {
-                motors[id] = new TalonSRX(id);
-            }
-            motors[id].setInverted(inverted[i]);
+            motors[i] = new TalonFX(id);
+            motors[i].configFactoryDefault();
+            motors[i].setNeutralMode(NeutralMode.Coast);
+            motors[i].setInverted(inverted[i]);
             i++;
         }
         return motors;
     }
 
-    public void spinMain(double value) {
-        for(TalonSRX motor : main) {
-            motor.set(ControlMode.PercentOutput, value);
+    private TalonSRX[] createTalonSRX(Set<Integer> ids, boolean[] inverted) {
+        TalonSRX[] motors = new TalonSRX[ids.size()];
+        int i = 0;
+        for(int id : ids) {
+            motors[i] = new TalonSRX(id);
+            motors[i].configFactoryDefault();
+            motors[i].setNeutralMode(NeutralMode.Coast);
+            motors[i].setInverted(inverted[i]);
+            i++;
         }
+        return motors;
+    }
+
+    public void spinMain(double front, double back) {
+        main[0].set(ControlMode.PercentOutput, front);
+        main[1].set(ControlMode.PercentOutput, back);
     }
 
     public void spinTip(double front, double back) {

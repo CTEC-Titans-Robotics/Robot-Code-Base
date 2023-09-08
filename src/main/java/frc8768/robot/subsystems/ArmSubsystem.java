@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 public class ArmSubsystem implements Subsystem {
     private Thread armThread;
     private XboxController controller;
-    private TalonFX leftExtend;
-    private TalonFX rightExtend;
-    private TalonSRX intake;
+    private final TalonFX leftExtend;
+    private final TalonFX rightExtend;
+    private final TalonSRX intake;
     private boolean isEmergencyStopped;
 
     public ArmSubsystem(int leftExtend, int rightExtend, int intake, boolean[] invertArray, XboxController controller) {

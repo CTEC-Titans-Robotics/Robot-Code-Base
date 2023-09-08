@@ -28,8 +28,8 @@ public class PeripheralOperator extends Operator{
             limelight = new Limelight();
             limelight.init();
         }
-        arm = new ArmSubsystem(13, 3 ,8, new boolean[] { false, false, false }, controller);
-        intake = new IntakeSubsystem(Set.of(7, 6), Set.of(9, 10), new boolean[] { false, false }, new boolean[] { false, true });
+        arm = new ArmSubsystem(13, 3, 8, new boolean[] { false, false, false }, controller);
+        intake = new IntakeSubsystem(Set.of(7, 6), Set.of(10, 9), new boolean[] { false, false }, new boolean[] { false, false });
     }
 
     @Override

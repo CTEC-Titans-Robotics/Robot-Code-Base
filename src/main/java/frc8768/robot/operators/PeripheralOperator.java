@@ -16,7 +16,7 @@ public class PeripheralOperator extends Operator {
     private boolean hasZeroed = false;
 
     public PeripheralOperator() {
-        super("Peripheral", controller);
+        super("Peripheral");
 
         armSubsystem = new ArmSubsystem(16, 15, 19, 1);
         extensionSubsystem = new ArmExtensionSubsystem(17, 9);

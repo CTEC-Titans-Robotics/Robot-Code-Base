@@ -49,7 +49,6 @@ public class Robot extends TimedRobot
 
         drivebase = new DrivebaseOperator();
         peripheral = new PeripheralOperator();
-        /* Swerve Example
         try {
             swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
         } catch (IOException io) {

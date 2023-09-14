@@ -18,11 +18,8 @@ public class SwerveSubsystem implements Subsystem {
     private SwerveDrive swerveDrive;
     private boolean isTortoise;
 
-    private double tortoiseSpeed = 0.75;
-    private double tortoiseAngularVelocity = 1;
-
-    private double hareSpeed;
-    private double hareAngularVelocity;
+    private final double hareSpeed;
+    private final double hareAngularVelocity;
 
     public SwerveSubsystem(MotorType type) throws IOException {
         switch(type) {
@@ -47,8 +44,8 @@ public class SwerveSubsystem implements Subsystem {
 
     public void tortoiseMode() {
         isTortoise = true;
-        swerveDrive.swerveDriveConfiguration.maxSpeed = tortoiseSpeed;
-        swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond = tortoiseAngularVelocity;
+        swerveDrive.swerveDriveConfiguration.maxSpeed = 0.75;
+        swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond = 1;
     }
 
     public void hareMode() {

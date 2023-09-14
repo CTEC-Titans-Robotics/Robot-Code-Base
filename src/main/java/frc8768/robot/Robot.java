@@ -27,7 +27,7 @@ import java.io.IOException;
 public class Robot extends TimedRobot
 {
     public static Robot instance;
-    private final DrivebaseOperator drivebase = new DrivebaseOperator();
+    private DrivebaseOperator drivebase;
     private SwerveSubsystem swerve;
     private TankSubsystemFalcon falcon;
     private TankSubsystemSpark spark;
@@ -45,6 +45,7 @@ public class Robot extends TimedRobot
     public void robotInit() {
         instance = this;
 
+        drivebase = new DrivebaseOperator();
         /* Swerve Example
         try {
             swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);

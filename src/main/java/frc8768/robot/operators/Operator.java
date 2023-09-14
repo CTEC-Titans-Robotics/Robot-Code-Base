@@ -13,18 +13,14 @@ import frc8768.robot.Robot;
 public abstract class Operator {
     // The thread the operator runs on
     private final Thread opThread;
-    // A controller, can be a XboxController or anything deriving from GenericHID
-    protected final GenericHID hid;
 
     /*
         Name: name of the operator
         Controller: The controller object
      */
-    public Operator(String name, GenericHID controller) {
+    public Operator(String name) {
         opThread = new Thread(this::runLoop);
         opThread.setName(String.format("%s Thread", name));
-
-        hid = controller;
     }
 
     public boolean isRobotTeleop() {
@@ -48,8 +44,4 @@ public abstract class Operator {
     }
 
     public abstract void run();
-
-    public GenericHID getHid() {
-        return hid;
-    }
 }

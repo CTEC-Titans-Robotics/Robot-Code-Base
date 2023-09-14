@@ -28,8 +28,8 @@ import java.io.IOException;
 public class Robot extends TimedRobot
 {
     public static Robot instance;
-    private final DrivebaseOperator drivebase = new DrivebaseOperator();
-    private final PeripheralOperator peripheral = new PeripheralOperator();
+    private DrivebaseOperator drivebase;
+    private PeripheralOperator peripheral;
     private SwerveSubsystem swerve;
     private TankSubsystemFalcon falcon;
     private TankSubsystemSpark spark;
@@ -47,6 +47,9 @@ public class Robot extends TimedRobot
     public void robotInit() {
         instance = this;
 
+        drivebase = new DrivebaseOperator();
+        peripheral = new PeripheralOperator();
+        /* Swerve Example
         try {
             swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
         } catch (IOException io) {

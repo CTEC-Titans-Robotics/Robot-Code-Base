@@ -14,18 +14,15 @@ public class DrivebaseOperator extends Operator {
     private final SwerveSubsystem swerve;
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
+    private static final XboxController controller = new XboxController(Constants.driverControllerId);
 
     public DrivebaseOperator() {
-        super("Drivebase", controller);
+        super("Drivebase");
 
         swerve = Robot.getInstance().getSwerve();
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
         init();
-    }
-
-    public XboxController getHid() {
-        return (XboxController) hid;
     }
 
     @Override

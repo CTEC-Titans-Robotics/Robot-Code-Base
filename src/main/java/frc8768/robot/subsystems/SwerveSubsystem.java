@@ -1,11 +1,13 @@
 package frc8768.robot.subsystems;
 
+import com.ctre.phoenix.sensors.Pigeon2;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc8768.robot.util.MotorType;
 import swervelib.SwerveDrive;
+import swervelib.imu.Pigeon2Swerve;
 import swervelib.parser.SwerveParser;
 
 import java.io.File;
@@ -28,13 +30,13 @@ public class SwerveSubsystem implements Subsystem {
         }
 
         hareSpeed = swerveDrive.swerveDriveConfiguration.maxSpeed;
-        hareAngularVelocity = swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond;
+        hareAngularVelocity = swerveDrive.swerveDriveConfiguration.attainableMaxTranslationalSpeedMetersPerSecond;
     }
 
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
         swerveDrive.drive(translation2d.times(
                 swerveDrive.swerveDriveConfiguration.maxSpeed),
-                rotation * swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond,
+                rotation * (((360*5) * Math.PI)/180),
                 fieldRelative, isOpenLoop, headingCorrection);
     }
 
@@ -45,13 +47,13 @@ public class SwerveSubsystem implements Subsystem {
     public void tortoiseMode() {
         isTortoise = true;
         swerveDrive.swerveDriveConfiguration.maxSpeed = 0.75;
-        swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond = 1;
+        swerveDrive.swerveDriveConfiguration.attainableMaxTranslationalSpeedMetersPerSecond = 1;
     }
 
     public void hareMode() {
         isTortoise = false;
         swerveDrive.swerveDriveConfiguration.maxSpeed = hareSpeed;
-        swerveDrive.swerveDriveConfiguration.attainableMaxRotationalVelocityRadiansPerSecond = hareAngularVelocity;
+        swerveDrive.swerveDriveConfiguration.attainableMaxTranslationalSpeedMetersPerSecond = hareAngularVelocity;
     }
 
     public boolean isTortoise() {

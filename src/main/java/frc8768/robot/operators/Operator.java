@@ -36,9 +36,6 @@ public abstract class Operator {
 
     public void runLoop() {
         while(true) {
-            if (!isRobotTeleop()) {
-                continue;
-            }
             run();
         }
     }

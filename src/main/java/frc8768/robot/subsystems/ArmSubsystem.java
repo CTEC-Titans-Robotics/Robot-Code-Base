@@ -112,15 +112,13 @@ public class ArmSubsystem implements Subsystem {
     public void zeroArm() {
         gearboxEncoder.setZeroOffset(gearboxEncoder.getPosition());
         leaderMotor.set(0.1);
-        Timer.delay(.5);
         leaderMotor.set(0);
         mainPIDMotor.setReference(10, CANSparkMax.ControlType.kPosition);
     }
 
     public void moveArm(double speed) {
-        if(speed > 0 && armState == ArmStates.MAXIMUM_REACHED) {
-            return;
-        } else if(speed < 0 && armState == ArmStates.MINIMUM_REACHED) {
+        if((armState == ArmStates.MAXIMUM_REACHED && speed < 0) || ((armState == ArmStates.MINIMUM_REACHED || !limitSwitch.get()) && speed > 0)) {
+            leaderMotor.set(0);
             return;
         }
         leaderMotor.set(speed);

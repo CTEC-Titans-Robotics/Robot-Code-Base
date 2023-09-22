@@ -5,6 +5,10 @@
 
 package frc8768.robot;
 
+import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
@@ -14,7 +18,10 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.subsystems.TankSubsystemFalcon;
 import frc8768.robot.subsystems.TankSubsystemSpark;
 import frc8768.robot.util.Constants;
+import frc8768.robot.util.MathUtil;
 import swervelib.SwerveDrive;
+import swervelib.SwerveModule;
+import swervelib.imu.Pigeon2Swerve;
 
 import java.io.IOException;
 
@@ -47,13 +54,14 @@ public class Robot extends TimedRobot
     public void robotInit() {
         instance = this;
 
-        drivebase = new DrivebaseOperator();
-        peripheral = new PeripheralOperator();
         try {
             swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
         } catch (IOException io) {
             throw new RuntimeException("Swerve failed to create!", io);
         }
+
+        drivebase = new DrivebaseOperator();
+        peripheral = new PeripheralOperator();
 
         this.auto = new Auto(swerve);
         drivebase.init();
@@ -74,10 +82,8 @@ public class Robot extends TimedRobot
     
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
     }
-    
-    
+
     @Override
     public void autonomousInit() {
         if (auto != null) {
@@ -111,7 +117,11 @@ public class Robot extends TimedRobot
     
     
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+        for(SwerveModule module : swerve.getSwerveDrive().swerveDriveConfiguration.modules) {
+            System.out.printf("Module %d has pos: %s\n", module.moduleNumber, module.getAbsolutePosition());
+        }
+    }
     
     
     @Override

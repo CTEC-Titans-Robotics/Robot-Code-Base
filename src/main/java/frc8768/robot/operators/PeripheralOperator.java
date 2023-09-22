@@ -31,7 +31,8 @@ public class PeripheralOperator extends Operator {
 
         if(!hasZeroed) {
             hasZeroed = true;
-            armSubsystem.zeroArm();
+            //armSubsystem.zeroArm();
+            extensionSubsystem.zeroExtension();
         }
 
         if(controller.getPOV() == 180) {
@@ -49,10 +50,10 @@ public class PeripheralOperator extends Operator {
             extensionSubsystem.zeroExtension();
         }
 
-        if(controller.getRightY()  > 0.1) {
-            armSubsystem.moveArm(-0.325);
+        if(controller.getRightY() > 0.1) {
+            armSubsystem.moveArm(0.325);
         } else if(controller.getRightY() < -0.1) {
-            armSubsystem.moveArm(0.25);
+            armSubsystem.moveArm(-0.25);
         } else {
             armSubsystem.stopGearbox();
         }

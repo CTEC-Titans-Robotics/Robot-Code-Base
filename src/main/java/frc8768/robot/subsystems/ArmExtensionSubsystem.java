@@ -27,7 +27,8 @@ public class ArmExtensionSubsystem implements Subsystem {
     }
 
     public void zeroExtension() {
-        for(int i = 0; i <= 10000; i++) {
+        while(true) {
+            extensionMotor.set(-0.05);
             if(extensionMotor.getOutputCurrent() > 25) {
                 extensionMotor.stopMotor();
                 encoder.reset();

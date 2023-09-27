@@ -8,6 +8,7 @@ package frc8768.robot;
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -53,6 +54,7 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit() {
         instance = this;
+        CameraServer.startAutomaticCapture();
 
         try {
             swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);

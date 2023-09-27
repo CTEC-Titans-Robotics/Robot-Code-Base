@@ -43,7 +43,7 @@ public class PeripheralOperator extends Operator {
             armSubsystem.magicButton(-19);
         }
 
-        if(controller.getRightTriggerAxis() > 0.1) {
+        if(controller.getRightBumperPressed()) {
             intakeSubsystem.spin();
         }
         if(controller.getYButton()) {

@@ -18,36 +18,52 @@ public class IntakeSubsystem implements Subsystem {
         timer = new Timer();
     }
 
+    private void stopAndReset() {
+        intakeMotor.set(0);
+        timer.stop();
+        timer.reset();
+    }
+
     public void tick() {
-        if (Objects.requireNonNull(intakeState) == IntakeStates.INTAKE) {
-            if (timer.hasElapsed(0.25) && intakeMotor.getOutputCurrent() >= 80) {
-                intakeState = IntakeStates.HELD;
-                intakeMotor.set(-0.15);
-                timer.stop();
-                timer.reset();
+        switch (intakeState) {
+            case INTAKE -> {
+                if(timer.hasElapsed(6.5)) {
+                    intakeState = IntakeStates.IDLE;
+                    stopAndReset();
+                }
+                if(intakeMotor.getOutputCurrent() > 40) {
+                    intakeState = IntakeStates.HELD;
+                    intakeMotor.set(-0.1);
+                    timer.reset();
+                }
             }
-            if (timer.hasElapsed(7.5)) {
-                intakeState = IntakeStates.EXPEL;
-                intakeMotor.set(0);
-                timer.stop();
-                timer.reset();
+
+            case EXPEL -> {
+                if(timer.hasElapsed(2)) {
+                    intakeState = IntakeStates.IDLE;
+                    stopAndReset();
+                }
             }
         }
     }
 
     public void spin() {
         switch (intakeState) {
-            case EXPEL -> {
-                intakeMotor.set(-0.75);
-                timer.reset();
-                timer.start();
+            case IDLE -> {
                 intakeState = IntakeStates.INTAKE;
+                intakeMotor.set(-0.5);
+                timer.start();
             }
+
             case HELD -> {
+                intakeState = IntakeStates.EXPEL;
                 intakeMotor.set(0.5);
                 timer.reset();
-                timer.start();
-                intakeState = IntakeStates.EXPEL;
+            }
+
+            case EXPEL -> {
+                intakeState = IntakeStates.IDLE;
+                stopAndReset();
             }
         }
     }
@@ -55,6 +71,7 @@ public class IntakeSubsystem implements Subsystem {
     enum IntakeStates {
         HELD,
         INTAKE,
-        EXPEL
+        EXPEL,
+        IDLE
     }
 }

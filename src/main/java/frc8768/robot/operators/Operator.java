@@ -23,10 +23,6 @@ public abstract class Operator {
         opThread.setName(String.format("%s Thread", name));
     }
 
-    public boolean isRobotTeleop() {
-        return Robot.getInstance().isTeleop();
-    }
-
     /*
         Starts the thread
      */

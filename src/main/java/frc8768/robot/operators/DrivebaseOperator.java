@@ -21,22 +21,17 @@ public class DrivebaseOperator extends Operator {
         swerve = Robot.getInstance().getSwerve();
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
-        init();
     }
 
     @Override
     public void run() {
-        if (!isRobotTeleop()) {
-            return;
-        }
-
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
-                MathUtil.applyDeadband(controller.getLeftX() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
-                MathUtil.applyDeadband(controller.getLeftY() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
+                MathUtil.applyDeadband(controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
+                MathUtil.applyDeadband(controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
         // Swerve Example
-        // swerve.drive(translation2d, -controller.getRightX(), true, false, true);
+        // swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, true);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

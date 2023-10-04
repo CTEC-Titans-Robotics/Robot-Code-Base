@@ -20,23 +20,17 @@ public class SwerveSubsystem implements Subsystem {
     private SwerveDrive swerveDrive;
     private boolean isTortoise;
 
-    private final double hareSpeed;
-    private final double hareAngularVelocity;
-
     public SwerveSubsystem(MotorType type) throws IOException {
         switch(type) {
             case NEOS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive();
             case FALCONS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive();
         }
-
-        hareSpeed = swerveDrive.swerveDriveConfiguration.maxSpeed;
-        hareAngularVelocity = swerveDrive.swerveDriveConfiguration.attainableMaxTranslationalSpeedMetersPerSecond;
     }
 
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
         swerveDrive.drive(translation2d.times(
-                swerveDrive.swerveDriveConfiguration.maxSpeed),
-                rotation * (((360*5) * Math.PI)/180),
+                isTortoise ? 1.0625 : swerveDrive.swerveDriveConfiguration.maxSpeed),
+                isTortoise ? (rotation * (((90*5) * Math.PI)/180)) : (rotation * (((360*5) * Math.PI)/180)) ,
                 fieldRelative, isOpenLoop, headingCorrection);
     }
 
@@ -46,14 +40,10 @@ public class SwerveSubsystem implements Subsystem {
 
     public void tortoiseMode() {
         isTortoise = true;
-        swerveDrive.swerveDriveConfiguration.maxSpeed = 0.75;
-        swerveDrive.swerveDriveConfiguration.attainableMaxTranslationalSpeedMetersPerSecond = 1;
     }
 
     public void hareMode() {
         isTortoise = false;
-        swerveDrive.swerveDriveConfiguration.maxSpeed = hareSpeed;
-        swerveDrive.swerveDriveConfiguration.attainableMaxTranslationalSpeedMetersPerSecond = hareAngularVelocity;
     }
 
     public boolean isTortoise() {

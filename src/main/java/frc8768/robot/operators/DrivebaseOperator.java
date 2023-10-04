@@ -31,10 +31,10 @@ public class DrivebaseOperator extends Operator {
             swerve.getSwerveDrive().zeroGyro();
         }
 
-        if(controller.getLeftBumperPressed() && swerve.isTortoise()) {
-            swerve.hareMode();
-        } else if(controller.getLeftBumperPressed() && !swerve.isTortoise()) {
+        if(controller.getLeftTriggerAxis() > 0.1) {
             swerve.tortoiseMode();
+        } else {
+            swerve.hareMode();
         }
 
         // Apply controller deadband
@@ -43,7 +43,7 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
         // Swerve Example
-        swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, true);
+        swerve.drive(translation2d, MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband), true, false, false);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

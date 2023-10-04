@@ -39,7 +39,7 @@ public class ArmExtensionSubsystem implements Subsystem {
     }
 
     public void stopExtension() {
-        extensionMotor.set(0);
+        extensionMotor.set(-0.03);
     }
 
     public void moveArmExtension(double speed) {

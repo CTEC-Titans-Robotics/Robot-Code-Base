@@ -22,7 +22,7 @@ public class Auto {
     /**
      * Auto constructor, builds everything.
      *
-     * @param swerve
+     * @param swerve The Robots swerve subsystem
      */
     public Auto(SwerveSubsystem swerve) {
         this.swerve = swerve;

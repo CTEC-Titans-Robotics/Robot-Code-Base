@@ -23,14 +23,38 @@ import frc8768.visionlib.Vision;
  */
 public class Robot extends TimedRobot
 {
+    /**
+     * Robot instance, can't be seen across threads
+     */
     public static Robot instance;
+
+    /**
+     * Drivebase Operator
+     */
     private DrivebaseOperator drivebase;
+
+    /**
+     * The swerve subsystem, held in here for Auton.
+     */
     private SwerveSubsystem swerve;
-    private TankSubsystemFalcon falcon;
-    private TankSubsystemSpark spark;
+    // private TankSubsystemFalcon falcon;
+    // private TankSubsystemSpark spark;
+
+    /**
+     * Vision API instance
+     */
     public Vision vision;
+
+    /**
+     * Auton Instance
+     */
     private Auto auto;
 
+    /**
+     * Certain properties cannot be seen across Threads.
+     *
+     * @return The Robot instance;
+     */
     public static Robot getInstance() {
         return instance;
     }
@@ -60,6 +84,11 @@ public class Robot extends TimedRobot
         drivebase.init();
     }
 
+    /**
+     * Get the swerve subsystem, often for auton mechanics.
+     *
+     * @return The swerve subsystem
+     */
     public SwerveSubsystem getSwerve() {
         return this.swerve;
     }
@@ -71,53 +100,52 @@ public class Robot extends TimedRobot
         return this.spark;
     }
      */
-    
+
+    /**
+     * Runs even if the Robot is disabled.
+     */
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
     }
 
-
+    /**
+     * Runs when first entering Autonomous mode
+     */
     @Override
     public void autonomousInit() {
         if (auto != null) {
             auto.getSelected().schedule();
         }
     }
-    
-    
+
+    /**
+     * Runs every "tick" of Autonomous time
+     */
     @Override
     public void autonomousPeriodic() {}
-    
-    
+
+    /**
+     * Runs at the start of Teleop state
+     */
     @Override
     public void teleopInit() {}
-    
-    
+
+    /**
+     * Runs every "tick" of Teleop time
+     */
     @Override
     public void teleopPeriodic() {}
-    
-    
-    @Override
-    public void disabledInit() {}
-    
-    
-    @Override
-    public void disabledPeriodic() {}
-    
-    
+
+    /**
+     * Runs at the start of Test state
+     */
     @Override
     public void testInit() {}
-    
-    
+
+    /**
+     * Runs every "tick" of Test time
+     */
     @Override
     public void testPeriodic() {}
-    
-    
-    @Override
-    public void simulationInit() {}
-    
-    
-    @Override
-    public void simulationPeriodic() {}
 }

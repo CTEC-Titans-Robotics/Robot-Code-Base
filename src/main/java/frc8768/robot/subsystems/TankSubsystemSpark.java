@@ -1,7 +1,5 @@
 package frc8768.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -9,16 +7,40 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import java.util.Set;
 
-// Big ol' fuck you from Falcons, they don't implement IMotorController
+/**
+ * Subsystem for all things Tank related (Spark Max)
+ */
 public class TankSubsystemSpark implements Subsystem {
+    /**
+     * Left motors
+     */
     private final CANSparkMax[] motorsLeft;
+
+    /**
+     * Right motors
+     */
     private final CANSparkMax[] motorsRight;
 
+    /**
+     * Tank subsystem constructor.
+     *
+     * @param motorIdsLeft CAN IDs for left side motors.
+     * @param motorIdsRight CAN IDs for right side motors.
+     * @param motorsLeftInverted Left IDs -> inverted.
+     * @param motorsRightInverted Right IDs -> inverted.
+     * @param type Brushless or Brushed, see {@link com.revrobotics.CANSparkMaxLowLevel.MotorType}
+     */
     public TankSubsystemSpark(Set<Integer> motorIdsLeft, Set<Integer> motorIdsRight, boolean[] motorsLeftInverted, boolean[] motorsRightInverted, CANSparkMaxLowLevel.MotorType type) {
         motorsLeft = createSparkMax(motorIdsLeft, motorsLeftInverted, type);
         motorsRight = createSparkMax(motorIdsRight, motorsRightInverted, type);
     }
 
+    /**
+     * @param ids A list of CAN-IDs
+     * @param inverted A list of inverted motors, index 0 of {@param ids} corresponds to index 0 of {@param inverted}
+     * @param type Brushless or Brushed, see {@link com.revrobotics.CANSparkMaxLowLevel.MotorType}
+     * @return An array of Neo Motors.
+     */
     private CANSparkMax[] createSparkMax(Set<Integer> ids, boolean[] inverted, CANSparkMaxLowLevel.MotorType type) {
         CANSparkMax[] motors = new CANSparkMax[ids.size()];
         int i = 0;
@@ -30,6 +52,11 @@ public class TankSubsystemSpark implements Subsystem {
         return motors;
     }
 
+    /**
+     * Drive the subsystem.
+     *
+     * @param translation2d X = Left, Y = Right.
+     */
     public void drive(Translation2d translation2d) {
         for(CANSparkMax motor : motorsLeft) {
             motor.set(translation2d.getX());

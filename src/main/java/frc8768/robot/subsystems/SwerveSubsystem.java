@@ -11,12 +11,19 @@ import swervelib.parser.SwerveParser;
 import java.io.File;
 import java.io.IOException;
 
-/*
-    Subsystems are NOT threaded to avoid a race condition with their operators.
+/**
+ * Container class for everything Swerve
  */
 public class SwerveSubsystem implements Subsystem {
+    /**
+     * The underlying YAGSL implementation
+     */
     private SwerveDrive swerveDrive;
 
+    /**
+     * @param type Neos or Falcons, see {@link MotorType}
+     * @throws IOException if it can't find the resources.
+     */
     public SwerveSubsystem(MotorType type) throws IOException {
         switch(type) {
             case NEOS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive();
@@ -24,14 +31,33 @@ public class SwerveSubsystem implements Subsystem {
         }
     }
 
+    /**
+     * Drive the motors
+     *
+     * @param translation2d X = Forward and back, Y = left and right.
+     * @param rotation Rotation in Radians/Seconds
+     * @param fieldRelative Use the Gyro as the permanent "front" of the Robot
+     * @param isOpenLoop Don't use PID
+     * @param headingCorrection Use heading correction.
+     */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
         swerveDrive.drive(translation2d, rotation, fieldRelative, isOpenLoop, headingCorrection);
     }
 
+    /**
+     * Get the Gyro rotation in degrees.
+     *
+     * @return 3d rotation.
+     */
     public Rotation3d getGyroRot() {
         return swerveDrive.getGyroRotation3d();
     }
 
+    /**
+     * Get the underlying instance.
+     *
+     * @return Underlying instance
+     */
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
     }

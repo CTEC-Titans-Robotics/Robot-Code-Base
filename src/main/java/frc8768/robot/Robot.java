@@ -13,6 +13,7 @@ import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.subsystems.TankSubsystemFalcon;
 import frc8768.robot.subsystems.TankSubsystemSpark;
+import frc8768.visionlib.Vision;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -27,6 +28,7 @@ public class Robot extends TimedRobot
     private SwerveSubsystem swerve;
     private TankSubsystemFalcon falcon;
     private TankSubsystemSpark spark;
+    public Vision vision;
     private Auto auto;
 
     public static Robot getInstance() {
@@ -43,15 +45,18 @@ public class Robot extends TimedRobot
         CameraServer.startAutomaticCapture();
 
         drivebase = new DrivebaseOperator();
-        /* Swerve Example
-        try {
-            swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
-        } catch (IOException io) {
-            throw new RuntimeException("Swerve failed to create!", io);
-        }
-         */
+        /*
+        * Swerve Example
+        * try {
+        *   swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
+        * } catch (IOException io) {
+        *   throw new RuntimeException("Swerve failed to create!", io);
+        * }
+        */
 
         this.auto = new Auto(swerve);
+        this.vision = new Vision(Vision.Type.PI);
+
         drivebase.init();
     }
 

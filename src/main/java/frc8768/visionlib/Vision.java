@@ -13,11 +13,11 @@ public class Vision {
     private final PhotonCamera camera;
 
     /**
-     * @param name pi, limelight, or glowworm.
-     *             NOTE: Limelight 3 is pi for now.
+     * @param type One of {@link Type}
+     *             <p>NOTE: Limelight 3 is pi for now.</>
      */
-    public Vision(String name) {
-        camera = new PhotonCamera(name);
+    public Vision(Type type) {
+        camera = new PhotonCamera(type.name);
     }
 
     /**
@@ -96,5 +96,16 @@ public class Vision {
             }
         }
         return -1;
+    }
+
+    public enum Type {
+        PI("pi"),
+        LIMELIGHT("limelight"),
+        GLOWWORM("glowworm");
+
+        private String name;
+        Type(String name) {
+            this.name = name;
+        }
     }
 }

@@ -1,44 +1,46 @@
 package frc8768.robot.operators;
 
-import edu.wpi.first.wpilibj.GenericHID;
-import frc8768.robot.Robot;
-
-/*
-   Abstract class designed for Operators.
-   Anything universal to operators goes in here.
-
-   OPERATORS ARE THREADED! For every operator a thread is made.
-   It will process one operator without stalling other operators.
+/**
+ * Abstract class designed for Operators.
+ * Anything universal to operators goes in here.
+ * <p>
+ * IMPORTANT: OPERATORS ARE THREADED! For every operator a thread is made.
+ * It will process one operator without stalling other operators.
  */
 public abstract class Operator {
-    // The thread the operator runs on
+    /**
+     * The thread the operator runs on
+     */
     private final Thread opThread;
 
-    /*
-        Name: name of the operator
-        Controller: The controller object
+    /**
+     * Operator constructor.
+     *
+     * @param name The name of the operator.
      */
     public Operator(String name) {
         opThread = new Thread(this::runLoop);
         opThread.setName(String.format("%s Thread", name));
     }
 
-    public boolean isRobotTeleop() {
-        return Robot.getInstance().isTeleop();
-    }
-
-    /*
-        Starts the thread
+    /**
+     * Start the thread, do not call this method more than once per-operator.
      */
     public void init() {
         opThread.start();
     }
 
+    /**
+     * While loop wrapper
+     */
     public void runLoop() {
         while(true) {
             run();
         }
     }
 
+    /**
+     * The operator-specific code
+     */
     public abstract void run();
 }

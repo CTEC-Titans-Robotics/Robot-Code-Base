@@ -10,6 +10,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
@@ -26,6 +27,7 @@ import swervelib.imu.Pigeon2Swerve;
 
 import java.io.IOException;
 
+import frc8768.visionlib.Vision;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -35,14 +37,40 @@ import java.io.IOException;
  */
 public class Robot extends TimedRobot
 {
+    /**
+     * Robot instance, can't be seen across threads
+     */
     public static Robot instance;
+
+    /**
+     * Drivebase Operator
+     */
     private DrivebaseOperator drivebase;
+
     private PeripheralOperator peripheral;
+
+    /**
+     * The swerve subsystem, held in here for Auton.
+     */
     private SwerveSubsystem swerve;
-    private TankSubsystemFalcon falcon;
-    private TankSubsystemSpark spark;
+    // private TankSubsystemFalcon falcon;
+    // private TankSubsystemSpark spark;
+
+    /**
+     * Vision API instance
+     */
+    public Vision vision;
+
+    /**
+     * Auton Instance
+     */
     private Auto auto;
 
+    /**
+     * Certain properties cannot be seen across Threads.
+     *
+     * @return The Robot instance;
+     */
     public static Robot getInstance() {
         return instance;
     }
@@ -66,10 +94,17 @@ public class Robot extends TimedRobot
         peripheral = new PeripheralOperator();
 
         this.auto = new Auto(swerve);
+        this.vision = new Vision(Vision.Type.PI);
+
         drivebase.init();
         peripheral.init();
     }
 
+    /**
+     * Get the swerve subsystem, often for auton mechanics.
+     *
+     * @return The swerve subsystem
+     */
     public SwerveSubsystem getSwerve() {
         return this.swerve;
     }
@@ -81,43 +116,51 @@ public class Robot extends TimedRobot
         return this.spark;
     }
      */
-    
+
+    /**
+     * Runs even if the Robot is disabled.
+     */
     @Override
     public void robotPeriodic() {
     }
 
+    /**
+     * Runs when first entering Autonomous mode
+     */
     @Override
     public void autonomousInit() {
         if (auto != null) {
             auto.getSelected().schedule();
         }
     }
-    
-    
+
+    /**
+     * Runs every "tick" of Autonomous time
+     */
     @Override
     public void autonomousPeriodic() {}
-    
-    
+
+    /**
+     * Runs at the start of Teleop state
+     */
     @Override
     public void teleopInit() {}
-    
-    
+
+    /**
+     * Runs every "tick" of Teleop time
+     */
     @Override
     public void teleopPeriodic() {}
-    
-    
-    @Override
-    public void disabledInit() {}
-    
-    
-    @Override
-    public void disabledPeriodic() {}
-    
-    
+
+    /**
+     * Runs at the start of Test state
+     */
     @Override
     public void testInit() {}
-    
-    
+
+    /**
+     * Runs every "tick" of Test time
+     */
     @Override
     public void testPeriodic() {
         for(SwerveModule module : swerve.getSwerveDrive().swerveDriveConfiguration.modules) {

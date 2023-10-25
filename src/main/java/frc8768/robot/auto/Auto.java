@@ -13,6 +13,9 @@ import swervelib.SwerveDrive;
 
 import java.util.HashMap;
 
+/**
+ * Auton example for swerve using PathPlanner
+ */
 public class Auto {
     public static final PathConstraints CONSTRAINTS = new PathConstraints(2, 1);
 
@@ -21,6 +24,11 @@ public class Auto {
     private final SendableChooser<Command> autonChooser;
     private final HashMap<String, Command> eventMap;
 
+    /**
+     * Auto constructor, builds everything.
+     *
+     * @param swerve The Robots swerve subsystem
+     */
     public Auto(SwerveSubsystem swerve) {
         this.swerve = swerve;
         this.eventMap = new HashMap<>();
@@ -67,6 +75,11 @@ public class Auto {
                 PathPlanner.loadPath("Community", CONSTRAINTS));
       }
 
+    /**
+     * Get the current Auton mode
+     *
+     * @return Current Auton Mode
+     */
     public Command getSelected() {
         return autonChooser.getSelected();
     }

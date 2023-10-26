@@ -14,7 +14,7 @@ public class IntakeSubsystem implements Subsystem {
 
     public IntakeSubsystem(int intakeMotorId) {
         intakeMotor = new CANSparkMax(intakeMotorId, CANSparkMaxLowLevel.MotorType.kBrushless);
-        intakeState = IntakeStates.EXPEL;
+        intakeState = IntakeStates.IDLE;
         timer = new Timer();
     }
 
@@ -31,7 +31,7 @@ public class IntakeSubsystem implements Subsystem {
                     intakeState = IntakeStates.IDLE;
                     stopAndReset();
                 }
-                if(intakeMotor.getOutputCurrent() > 45) {
+                if(intakeMotor.getOutputCurrent() > 60) {
                     intakeState = IntakeStates.HELD;
                     intakeMotor.set(-0.1);
                     timer.reset();
@@ -59,11 +59,6 @@ public class IntakeSubsystem implements Subsystem {
                 intakeState = IntakeStates.EXPEL;
                 intakeMotor.set(0.5);
                 timer.reset();
-            }
-
-            case EXPEL -> {
-                intakeState = IntakeStates.IDLE;
-                stopAndReset();
             }
         }
     }

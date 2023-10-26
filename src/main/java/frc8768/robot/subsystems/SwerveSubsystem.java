@@ -46,7 +46,7 @@ public class SwerveSubsystem implements Subsystem {
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
         swerveDrive.drive(translation2d.times(
                 isTortoise ? 1.0625 : swerveDrive.swerveDriveConfiguration.maxSpeed),
-                isTortoise ? (rotation * (((90*5) * Math.PI)/180)) : (rotation * (((360*5) * Math.PI)/180)) ,
+                isTortoise ? (rotation * (((45*5) * Math.PI)/180)) : (rotation * (((90*5) * Math.PI)/180)),
                 fieldRelative, isOpenLoop, headingCorrection);
     }
 

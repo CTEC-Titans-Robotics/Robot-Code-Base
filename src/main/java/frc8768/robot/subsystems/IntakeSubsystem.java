@@ -31,7 +31,7 @@ public class IntakeSubsystem implements Subsystem {
                     intakeState = IntakeStates.IDLE;
                     stopAndReset();
                 }
-                if(intakeMotor.getOutputCurrent() > 60) {
+                if(intakeMotor.getOutputCurrent() > 70) {
                     intakeState = IntakeStates.HELD;
                     intakeMotor.set(-0.2);
                     timer.reset();

@@ -9,7 +9,12 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ArmSubsystem implements Subsystem {
+    private static double angleCANOffset = 27.58;
+
     private CANSparkMax followerMotor;
     private CANSparkMax leaderMotor;
     public SparkMaxPIDController mainPIDMotor;
@@ -19,12 +24,16 @@ public class ArmSubsystem implements Subsystem {
 
     private double armAngle;
     private Thread magicButtonThread;
-    private static double angleCANOffset = 27.58;
-    private double minPos = -79;
+    private double minPos = -80;
     private double maxPos = 20;
+    private boolean isExtendedPastThreshold = false;
+    private boolean isExtendedPastThreshold2 = false;
     private ArmStates armState = ArmStates.NOT_LIMITED;
+    private ArmExtensionSubsystem armExtension;
 
-    public ArmSubsystem(int followerMotorId, int leaderMotorId, int topEncoderId, int limitSwitchId) {
+    public ArmSubsystem(int followerMotorId, int leaderMotorId, int topEncoderId, int limitSwitchId, ArmExtensionSubsystem armExtension) {
+        this.armExtension = armExtension;
+
         followerMotor = new CANSparkMax(followerMotorId, CANSparkMaxLowLevel.MotorType.kBrushless);
         leaderMotor = new CANSparkMax(leaderMotorId, CANSparkMaxLowLevel.MotorType.kBrushless);
         mainPIDMotor = leaderMotor.getPIDController();
@@ -106,7 +115,11 @@ public class ArmSubsystem implements Subsystem {
 
     public void tick() {
         armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
-        armState = armAngle >= maxPos ? ArmStates.MAXIMUM_REACHED : armAngle <= minPos ? ArmStates.MINIMUM_REACHED : ArmStates.NOT_LIMITED;
+        armState = armAngle >= maxPos ? ArmStates.MAXIMUM_REACHED :
+                (armAngle <= minPos || !limitSwitch.get()) ? ArmStates.MINIMUM_REACHED : ArmStates.NOT_LIMITED;
+        isExtendedPastThreshold = armAngle >= minPos/* Small Value */ && armAngle <= -61/*Large Value*/ && armExtension.getExtDistance() > 0.39;
+        isExtendedPastThreshold2 = armAngle >= -61/* Small Value */ && armAngle <= -47/*Large Value*/ && armExtension.getExtDistance() > 1.5;
+        armExtension.isExtendedPastThreshold = armAngle >= -84 && armAngle <= -61 && armExtension.getExtDistance() > 0.7;
     }
 
     public void zeroArm() {
@@ -117,10 +130,17 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public void moveArm(double speed) {
-        if((armState == ArmStates.MAXIMUM_REACHED && speed < 0) || ((armState == ArmStates.MINIMUM_REACHED || !limitSwitch.get()) && speed > 0)) {
+        if((armState == ArmStates.MAXIMUM_REACHED && speed < 0) || ((armState == ArmStates.MINIMUM_REACHED || (isExtendedPastThreshold || isExtendedPastThreshold2)) && speed > 0)) {
             leaderMotor.set(0);
             return;
         }
         leaderMotor.set(speed);
+    }
+
+    public Map<String, String> getDebugInfo() {
+        HashMap<String, String> debugInfo = new HashMap<>();
+        debugInfo.put("Arm Angle", String.valueOf(armAngle));
+        debugInfo.put("Extension Distance", String.valueOf(armExtension.getExtDistance()));
+        return debugInfo;
     }
 }

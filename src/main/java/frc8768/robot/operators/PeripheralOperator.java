@@ -2,10 +2,13 @@ package frc8768.robot.operators;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc8768.robot.subsystems.ArmExtensionSubsystem;
 import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.util.Constants;
+
+import java.util.Map;
 
 public class PeripheralOperator extends Operator {
     private static XboxController controller = new XboxController(Constants.coDriverControllerId);
@@ -13,13 +16,11 @@ public class PeripheralOperator extends Operator {
     private IntakeSubsystem intakeSubsystem;
     private ArmExtensionSubsystem extensionSubsystem;
 
-    private boolean hasZeroed = false;
-
     public PeripheralOperator() {
         super("Peripheral");
 
-        armSubsystem = new ArmSubsystem(16, 15, 19, 1);
         extensionSubsystem = new ArmExtensionSubsystem(17, 9);
+        armSubsystem = new ArmSubsystem(16, 15, 19, 1, extensionSubsystem);
         intakeSubsystem = new IntakeSubsystem(18);
     }
 
@@ -28,12 +29,6 @@ public class PeripheralOperator extends Operator {
         armSubsystem.tick();
         extensionSubsystem.tick();
         intakeSubsystem.tick();
-
-        if(!hasZeroed) {
-            hasZeroed = true;
-            //armSubsystem.zeroArm();
-            extensionSubsystem.zeroExtension();
-        }
 
         if(controller.getPOV() == 180) {
             armSubsystem.magicButton(-62);
@@ -64,6 +59,10 @@ public class PeripheralOperator extends Operator {
             extensionSubsystem.moveArmExtension(0.15);
         } else {
             extensionSubsystem.stopExtension();
+        }
+
+        for(Map.Entry<String, String> entry : armSubsystem.getDebugInfo().entrySet()) {
+            SmartDashboard.putString(entry.getKey(), entry.getValue());
         }
     }
 }

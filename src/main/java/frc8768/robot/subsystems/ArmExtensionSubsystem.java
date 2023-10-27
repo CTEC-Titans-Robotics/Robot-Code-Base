@@ -11,7 +11,9 @@ public class ArmExtensionSubsystem implements Subsystem {
 
     private double maxPos = 3.6; //4.8
     private double minPos = 0.1; // 0.1
-    private double extDistance;
+    private double extDistance; //.78
+    public boolean isExtendedPastThreshold = false;
+    private boolean hasZeroed = false;
     private ArmStates armExtensionState = ArmStates.NOT_LIMITED;
 
     public ArmExtensionSubsystem(int extensionMotorId, int encoderId) {
@@ -21,12 +23,18 @@ public class ArmExtensionSubsystem implements Subsystem {
         extensionMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
 
+    public double getExtDistance() {
+        return this.extDistance;
+    }
+
     public void tick() {
         extDistance = -1 * encoder.getDistance();
-        armExtensionState = extDistance >= maxPos ? ArmStates.MAXIMUM_REACHED : extDistance <= minPos ? ArmStates.MINIMUM_REACHED : ArmStates.NOT_LIMITED;
+        armExtensionState = extDistance >= maxPos ? ArmStates.MAXIMUM_REACHED :
+                extDistance <= minPos ? ArmStates.MINIMUM_REACHED : ArmStates.NOT_LIMITED;
     }
 
     public void zeroExtension() {
+        hasZeroed = true;
         for(int i = 0; i < 9999; i++) {
             extensionMotor.set(-0.1);
             if(extensionMotor.getOutputCurrent() > 30) {
@@ -43,7 +51,10 @@ public class ArmExtensionSubsystem implements Subsystem {
     }
 
     public void moveArmExtension(double speed) {
-        if((armExtensionState == ArmStates.MAXIMUM_REACHED && speed > 0) || (armExtensionState == ArmStates.MINIMUM_REACHED && speed < 0)) {
+        if(!hasZeroed) {
+            zeroExtension();
+        }
+        if(((armExtensionState == ArmStates.MAXIMUM_REACHED|| isExtendedPastThreshold) && speed > 0) || (armExtensionState == ArmStates.MINIMUM_REACHED && speed < 0)) {
             extensionMotor.set(0);
             return;
         }

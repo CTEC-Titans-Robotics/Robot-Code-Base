@@ -33,7 +33,7 @@ public class IntakeSubsystem implements Subsystem {
                 }
                 if(intakeMotor.getOutputCurrent() > 60) {
                     intakeState = IntakeStates.HELD;
-                    intakeMotor.set(-0.1);
+                    intakeMotor.set(-0.2);
                     timer.reset();
                 }
             }

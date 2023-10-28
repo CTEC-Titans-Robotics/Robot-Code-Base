@@ -66,6 +66,10 @@ public class Robot extends TimedRobot
      */
     private Auto auto;
 
+    public Robot() {
+        instance = this;
+    }
+
     /**
      * Certain properties cannot be seen across Threads.
      *
@@ -81,7 +85,6 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotInit() {
-        instance = this;
         CameraServer.startAutomaticCapture();
 
         try {
@@ -141,7 +144,7 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic() {
         if(auto != null) {
-            if(auto.getSelected().isFinished()) {
+            if(!auto.getSelected().isScheduled()) {
                 return;
             }
             auto.getSelected().execute();

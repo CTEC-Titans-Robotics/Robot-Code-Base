@@ -38,8 +38,8 @@ public class Auto {
         this.builder = new SwerveAutoBuilder(
                 swerveDrive::getPose,
                 swerveDrive::resetOdometry,
-                new PIDConstants(0.0020645, 0.0, 0.0),
-                new PIDConstants(0.01, 0.0, 0.0),
+                new PIDConstants(0.045849, 0.0, 0.0068069),
+                new PIDConstants(0.0091857, 0.0, 0.00052987),
                 swerveDrive::setChassisSpeeds,
                 eventMap,
                 true,

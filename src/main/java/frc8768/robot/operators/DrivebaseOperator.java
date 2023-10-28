@@ -3,11 +3,14 @@ package frc8768.robot.operators;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc8768.robot.Robot;
 import frc8768.robot.subsystems.SwerveSubsystem;
 // import frc8768.robot.subsystems.TankSubsystemFalcon;
 // import frc8768.robot.subsystems.TankSubsystemSpark;
 import frc8768.robot.util.Constants;
+
+import java.util.Map;
 
 public class DrivebaseOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
@@ -50,5 +53,8 @@ public class DrivebaseOperator extends Operator {
 
         // Tank Example (Spark)
         // sparkTank.drive(translation2d);
+        for(Map.Entry<String, String> entry : swerve.getDebugInfo().entrySet()) {
+            SmartDashboard.putString(entry.getKey(), entry.getValue());
+        }
     }
 }

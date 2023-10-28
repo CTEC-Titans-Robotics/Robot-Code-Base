@@ -13,6 +13,8 @@ import swervelib.parser.SwerveParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Container class for everything Swerve
@@ -79,5 +81,14 @@ public class SwerveSubsystem implements Subsystem {
      */
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
+    }
+
+    public Map<String, String> getDebugInfo() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("Module 0", String.valueOf(swerveDrive.getModules()[0].getPosition().angle.getDegrees()));
+        map.put("Module 1", String.valueOf(swerveDrive.getModules()[1].getPosition().angle.getDegrees()));
+        map.put("Module 2", String.valueOf(swerveDrive.getModules()[2].getPosition().angle.getDegrees()));
+        map.put("Module 3", String.valueOf(swerveDrive.getModules()[3].getPosition().angle.getDegrees()));
+        return map;
     }
 }

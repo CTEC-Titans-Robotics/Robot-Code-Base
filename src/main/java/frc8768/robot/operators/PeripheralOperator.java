@@ -46,17 +46,17 @@ public class PeripheralOperator extends Operator {
         }
 
         if(controller.getRightY() > 0.1) {
-            armSubsystem.moveArm(0.425);
+            armSubsystem.moveArm(0.6);
         } else if(controller.getRightY() < -0.1) {
-            armSubsystem.moveArm(-0.35);
+            armSubsystem.moveArm(-0.55);
         } else {
             armSubsystem.stopGearbox();
         }
 
         if(controller.getLeftY() > 0.1) {
-            extensionSubsystem.moveArmExtension(-0.15);
+            extensionSubsystem.moveArmExtension(-0.25);
         } else if(controller.getLeftY() < -0.1) {
-            extensionSubsystem.moveArmExtension(0.15);
+            extensionSubsystem.moveArmExtension(0.25);
         } else {
             extensionSubsystem.stopExtension();
         }

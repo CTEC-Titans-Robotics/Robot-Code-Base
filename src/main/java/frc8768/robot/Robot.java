@@ -139,7 +139,14 @@ public class Robot extends TimedRobot
      * Runs every "tick" of Autonomous time
      */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        if(auto != null) {
+            if(auto.getSelected().isFinished()) {
+                return;
+            }
+            auto.getSelected().execute();
+        }
+    }
 
     /**
      * Runs at the start of Teleop state

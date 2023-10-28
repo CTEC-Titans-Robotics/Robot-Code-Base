@@ -46,7 +46,7 @@ public class Auto {
                 swerve);
 
         autonChooser = new SendableChooser<>();
-        autonChooser.addOption("No-op", new InstantCommand());
+        autonChooser.setDefaultOption("No-op", new InstantCommand());
         autonChooser.addOption("Right Platform", rightPlatform());
         autonChooser.addOption("Left Platform", leftPlatform());
         autonChooser.addOption("Middle Platform", middlePlatform());

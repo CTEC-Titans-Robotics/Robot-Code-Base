@@ -56,7 +56,7 @@ public class ArmExtensionSubsystem implements Subsystem {
             zeroExtension();
         }
         if(((extState == ArmStates.MAXIMUM_REACHED || locked) && speed > 0) || (extState == ArmStates.MINIMUM_REACHED && speed < 0)) {
-            extensionMotor.set(0);
+            stopExtension();
             return;
         }
         extensionMotor.set(speed);

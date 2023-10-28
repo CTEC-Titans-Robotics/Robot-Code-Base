@@ -24,7 +24,7 @@ public class ArmSubsystem implements Subsystem {
 
     private double armAngle;
     private Thread magicButtonThread;
-    private double minPos = -80;
+    private double minPos = -78;
     private double maxPos = 20;
     private State currLockState = State.TUCKED_LOCK;
     private ArmStates armState = ArmStates.NOT_LIMITED;

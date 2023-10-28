@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.8713153215780125,
-        "y": 0.8739527253490615
+        "x": 2.8457948262050388,
+        "y": 0.4721112326840052
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8713153215780127,
-        "y": 0.8739527253490615
+        "x": 3.8457948262050388,
+        "y": 0.4721112326840052
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,19 +24,44 @@
     },
     {
       "anchorPoint": {
-        "x": 6.1305791784515895,
-        "y": 0.9040890262231663
+        "x": 2.0268263613450324,
+        "y": 0.4721112326840052
       },
       "prevControl": {
-        "x": 6.116372789979618,
-        "y": 0.9040890262231663
+        "x": 2.926675670659035,
+        "y": 0.4383890017780047
       },
       "nextControl": {
-        "x": 6.116372789979618,
-        "y": 0.9040890262231663
+        "x": 1.1269770520310294,
+        "y": 0.5058334635900057
       },
       "holonomicAngle": 0,
-      "isReversal": true,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.0714620660010565,
+        "y": 0.5299207713800053
+      },
+      "prevControl": {
+        "x": 4.792049295637054,
+        "y": 0.4335715402200043
+      },
+      "nextControl": {
+        "x": 5.625591197294645,
+        "y": 0.7209997821708978
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
@@ -53,8 +78,8 @@
         "y": 2.3606769018049327
       },
       "prevControl": {
-        "x": 6.2264786935588905,
-        "y": 2.2236254848449573
+        "x": 5.842255915281064,
+        "y": 2.27384185537602
       },
       "nextControl": null,
       "holonomicAngle": 180.0,

@@ -6,15 +6,12 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmExtensionSubsystem implements Subsystem {
+    public boolean locked = false;
     private CANSparkMax extensionMotor;
     private DutyCycleEncoder encoder;
-
-    private double maxPos = 3.6; //4.8
-    private double minPos = 0.1; // 0.1
-    private double extDistance; //.78
-    public boolean isExtendedPastThreshold = false;
     private boolean hasZeroed = false;
-    private ArmStates armExtensionState = ArmStates.NOT_LIMITED;
+    private ArmStates extState = ArmStates.NOT_LIMITED;
+    private double extDistance;
 
     public ArmExtensionSubsystem(int extensionMotorId, int encoderId) {
         extensionMotor = new CANSparkMax(extensionMotorId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -29,7 +26,11 @@ public class ArmExtensionSubsystem implements Subsystem {
 
     public void tick() {
         extDistance = -1 * encoder.getDistance();
-        armExtensionState = extDistance >= maxPos ? ArmStates.MAXIMUM_REACHED :
+        //4.8
+        double maxPos = 3.6;
+        // 0.1
+        double minPos = 0.1;
+        extState = extDistance >= maxPos ? ArmStates.MAXIMUM_REACHED :
                 extDistance <= minPos ? ArmStates.MINIMUM_REACHED : ArmStates.NOT_LIMITED;
     }
 
@@ -54,7 +55,7 @@ public class ArmExtensionSubsystem implements Subsystem {
         if(!hasZeroed) {
             zeroExtension();
         }
-        if(((armExtensionState == ArmStates.MAXIMUM_REACHED|| isExtendedPastThreshold) && speed > 0) || (armExtensionState == ArmStates.MINIMUM_REACHED && speed < 0)) {
+        if(((extState == ArmStates.MAXIMUM_REACHED || locked) && speed > 0) || (extState == ArmStates.MINIMUM_REACHED && speed < 0)) {
             extensionMotor.set(0);
             return;
         }

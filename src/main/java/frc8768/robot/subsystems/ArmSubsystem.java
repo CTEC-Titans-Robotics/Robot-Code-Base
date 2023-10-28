@@ -26,8 +26,7 @@ public class ArmSubsystem implements Subsystem {
     private Thread magicButtonThread;
     private double minPos = -80;
     private double maxPos = 20;
-    private boolean isExtendedPastThreshold = false;
-    private boolean isExtendedPastThreshold2 = false;
+    private State currLockState = State.TUCKED_LOCK;
     private ArmStates armState = ArmStates.NOT_LIMITED;
     private ArmExtensionSubsystem armExtension;
 
@@ -117,9 +116,11 @@ public class ArmSubsystem implements Subsystem {
         armAngle = topEncoder.getAbsolutePosition() - angleCANOffset;
         armState = armAngle >= maxPos ? ArmStates.MAXIMUM_REACHED :
                 (armAngle <= minPos || !limitSwitch.get()) ? ArmStates.MINIMUM_REACHED : ArmStates.NOT_LIMITED;
-        isExtendedPastThreshold = armAngle >= minPos/* Small Value */ && armAngle <= -61/*Large Value*/ && armExtension.getExtDistance() > 0.39;
-        isExtendedPastThreshold2 = armAngle >= -61/* Small Value */ && armAngle <= -47/*Large Value*/ && armExtension.getExtDistance() > 1.5;
-        armExtension.isExtendedPastThreshold = armAngle >= -84 && armAngle <= -61 && armExtension.getExtDistance() > 0.7;
+        currLockState = State.TUCKED_LOCK.isWithinThreshold(armAngle, armExtension.getExtDistance()) ?
+                State.TUCKED_LOCK : State.LOW_LOCK.isWithinThreshold(armAngle, armExtension.getExtDistance()) ?
+                State.LOW_LOCK : State.BUMPER_LOCK.isWithinThreshold(armAngle, armExtension.getExtDistance()) ?
+                State.BUMPER_LOCK : State.NO_LOCK;
+        armExtension.locked = currLockState == State.TUCKED_LOCK;
     }
 
     public void zeroArm() {
@@ -130,7 +131,9 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public void moveArm(double speed) {
-        if((armState == ArmStates.MAXIMUM_REACHED && speed < 0) || ((armState == ArmStates.MINIMUM_REACHED || (isExtendedPastThreshold || isExtendedPastThreshold2)) && speed > 0)) {
+        if((armState == ArmStates.MAXIMUM_REACHED && speed < 0) || ((armState == ArmStates.MINIMUM_REACHED ||
+                ((currLockState == State.LOW_LOCK || currLockState == State.BUMPER_LOCK) &&
+                        currLockState.isWithinThreshold(armAngle, armExtension.getExtDistance()))) && speed > 0)) {
             leaderMotor.set(0);
             return;
         }
@@ -142,5 +145,29 @@ public class ArmSubsystem implements Subsystem {
         debugInfo.put("Arm Angle", String.valueOf(armAngle));
         debugInfo.put("Extension Distance", String.valueOf(armExtension.getExtDistance()));
         return debugInfo;
+    }
+
+    enum State {
+        NO_LOCK(0, 0, 0),
+        BUMPER_LOCK(-80, -61, 0.39),
+        LOW_LOCK(-61, -47, 1.5),
+        TUCKED_LOCK(-84, -61,  0.6);
+
+        private final double minArmAngle;
+        private final double maxArmAngle;
+        private final double maxExtDist;
+
+        State(double minArmAngle, double maxArmAngle, double maxExtDistance) {
+            this.minArmAngle = minArmAngle;
+            this.maxArmAngle = maxArmAngle;
+            this.maxExtDist = maxExtDistance;
+        }
+
+        public boolean isWithinThreshold(double currAngle, double currDistance) {
+            if(this == State.NO_LOCK) {
+                return false;
+            }
+            return currAngle >= minArmAngle && currAngle <= maxArmAngle && currDistance > maxExtDist;
+        }
     }
 }

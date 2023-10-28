@@ -155,6 +155,7 @@ public class Robot extends TimedRobot
         if(levelOut != null && !auto.getSelected().isScheduled() && auto.getSelected().getName().contains("platform")) {
             if(levelOut.isFinished()) {
                 swerve.lock();
+                return;
             }
             levelOut.execute();
         }

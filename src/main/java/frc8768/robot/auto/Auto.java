@@ -4,6 +4,9 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,7 +20,7 @@ import java.util.HashMap;
  * Auton example for swerve using PathPlanner
  */
 public class Auto {
-    public static final PathConstraints CONSTRAINTS = new PathConstraints(2, 1);
+    public static final PathConstraints CONSTRAINTS = new PathConstraints(7.25, 5);
 
     private SwerveSubsystem swerve;
     private SwerveAutoBuilder builder;

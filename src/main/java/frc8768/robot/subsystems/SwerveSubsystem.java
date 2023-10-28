@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc8768.robot.util.MathUtil;
 import frc8768.robot.util.MotorType;
 import swervelib.SwerveDrive;
 import swervelib.imu.Pigeon2Swerve;
@@ -46,7 +47,7 @@ public class SwerveSubsystem implements Subsystem {
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
         swerveDrive.drive(translation2d.times(
                 isTortoise ? 1.0625 : swerveDrive.swerveDriveConfiguration.maxSpeed),
-                isTortoise ? (rotation * (((45*5) * Math.PI)/180)) : (rotation * (((90*5) * Math.PI)/180)),
+                isTortoise ? (rotation * MathUtil.getRadFromDeg(225)) : (rotation * MathUtil.getRadFromDeg(450)),
                 fieldRelative, isOpenLoop, headingCorrection);
     }
 

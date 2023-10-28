@@ -22,10 +22,10 @@ public class BalanceChassisCommand extends CommandBase {
 
 	@Override
 	public void execute() {
-		double vxMeters = MathUtil.clamp(this.pid.calculate(frc8768.robot.util.MathUtil.getRadFromDeg(this.swerve.getGyroRot().getAngle())),
+		double vxMeters = MathUtil.clamp(this.pid.calculate(-this.swerve.getSwerveDrive().getPitch().getDegrees()),
 				-BalanceChassisConstants.kDriveSpeedMPS, BalanceChassisConstants.kDriveSpeedMPS);
 
-		this.swerve.drive(new Translation2d(-vxMeters, 0), 0, false, false, false);
+		this.swerve.drive(new Translation2d(vxMeters, 0), 0, false, false, false);
 	}
 
 	@Override

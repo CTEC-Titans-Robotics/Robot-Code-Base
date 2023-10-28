@@ -57,22 +57,26 @@ public class Auto {
 
     public Command rightPlatform() {
         return builder.fullAuto(
-                PathPlanner.loadPath("Right Platform", CONSTRAINTS)).andThen(new BalanceChassisCommand(swerve));
+                PathPlanner.loadPath("Right Platform", CONSTRAINTS)).withName("platform");
       }
 
       public Command leftPlatform() {
         return builder.fullAuto(
-                PathPlanner.loadPath("Left Platform", CONSTRAINTS)).andThen(new BalanceChassisCommand(swerve));
+                PathPlanner.loadPath("Left Platform", CONSTRAINTS)).withName("platform");
       }
 
       public Command middlePlatform() {
         return builder.fullAuto(
-                PathPlanner.loadPath("Middle Platform", CONSTRAINTS)).andThen(new BalanceChassisCommand(swerve));
+                PathPlanner.loadPath("Middle Platform", CONSTRAINTS)).withName("platform");
       }
 
       public Command community() {
         return builder.fullAuto(
                 PathPlanner.loadPath("Community", CONSTRAINTS));
+      }
+
+      public Command levelOut() {
+        return new BalanceChassisCommand(swerve);
       }
 
     /**

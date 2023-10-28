@@ -11,7 +11,9 @@ import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
@@ -141,13 +143,20 @@ public class Robot extends TimedRobot
     /**
      * Runs every "tick" of Autonomous time
      */
+    Command levelOut;
     @Override
     public void autonomousPeriodic() {
-        if(auto != null) {
-            if(!auto.getSelected().isScheduled()) {
-                return;
+        if(auto.getSelected() == null) {
+            return;
+        }
+        if(levelOut == null) {
+            levelOut = auto.levelOut();
+        }
+        if(levelOut != null && !auto.getSelected().isScheduled() && auto.getSelected().getName().contains("platform")) {
+            if(levelOut.isFinished()) {
+                swerve.lock();
             }
-            auto.getSelected().execute();
+            levelOut.execute();
         }
     }
 

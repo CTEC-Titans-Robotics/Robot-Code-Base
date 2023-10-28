@@ -73,6 +73,9 @@ public class SwerveSubsystem implements Subsystem {
     public boolean isTortoise() {
         return isTortoise;
     }
+    public void lock() {
+        swerveDrive.lockPose();
+    }
 
     /**
      * Get the underlying instance.

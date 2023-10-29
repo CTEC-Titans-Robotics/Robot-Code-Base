@@ -41,7 +41,7 @@ public class Auto {
                 swerve);
 
         autonChooser = new SendableChooser<>();
-        autonChooser.addOption("No-op", new InstantCommand());
+        autonChooser.setDefaultOption("No-op", new InstantCommand());
     }
 
     /**

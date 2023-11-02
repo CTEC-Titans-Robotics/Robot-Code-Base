@@ -12,12 +12,15 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
+import frc8768.robot.operators.IntakeOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.LimelightVision;
+import frc8768.robot.util.Constants;
 import frc8768.visionlib.Vision;
 
+import java.io.IOException;
 import java.util.logging.Level;
 
 /**
@@ -37,6 +40,7 @@ public class Robot extends TimedRobot
      * Drivebase Operator
      */
     private DrivebaseOperator drivebase;
+    private IntakeOperator intake;
 
     /**
      * The swerve subsystem, held in here for Auton.
@@ -77,20 +81,19 @@ public class Robot extends TimedRobot
         CameraServer.startAutomaticCapture();
 
         // drivebase = new DrivebaseOperator();
-        /*
-        * Swerve Example
-        * try {
-        *   swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
-        * } catch (IOException io) {
-        *   throw new RuntimeException("Swerve failed to create!", io);
-        * }
-        */
+
+        try {
+          swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
+        } catch (IOException io) {
+          throw new RuntimeException("Swerve failed to create!", io);
+        }
 
         this.drivebase = new DrivebaseOperator(this.swerve);
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
         drivebase.init();
+        intake.init();
     }
 
     /* For tank

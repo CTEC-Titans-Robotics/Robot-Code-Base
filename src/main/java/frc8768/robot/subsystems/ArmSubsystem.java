@@ -27,7 +27,7 @@ public class ArmSubsystem implements Subsystem {
 
     public void up() {
         if(currAngle < 0) {
-            armMotor.set(0.3); // TODO
+            armMotor.set(0.6); // TODO
         } else {
             stop();
         }
@@ -39,7 +39,7 @@ public class ArmSubsystem implements Subsystem {
 
     public void down() {
         if(currAngle > -90) {
-            armMotor.set(-0.3); // TODO
+            armMotor.set(-0.6); // TODO
         } else {
             stop();
         }

@@ -21,12 +21,12 @@ public class IntakeSubsystem implements Subsystem {
 
     public void tick() {
         if(currState == IntakeState.INTAKE) {
-            if(intakeMotorLeader.getOutputCurrent() > 45) {
+            if(intakeMotorLeader.getOutputCurrent() > 15) {
                 currState = IntakeState.HOLD;
             }
         }
 
-        if(currState.dwellTime >= timer.get() && currState.dwellTime != -1) {
+        if(timer.get() >= currState.dwellTime && currState.dwellTime != -1) {
             currState = IntakeState.IDLE;
         }
 
@@ -36,7 +36,7 @@ public class IntakeSubsystem implements Subsystem {
     public void run() {
         timer.reset();
         currState = currState.next == null
-                ? IntakeState.IDLE : currState.next;
+                ? IntakeState.INTAKE : currState.next;
     }
 
     public void outtake() {
@@ -48,9 +48,9 @@ public class IntakeSubsystem implements Subsystem {
 
     public enum IntakeState {
         IDLE(-1, 0, null),
-        OUTTAKE(3, -0.4, IDLE),
+        OUTTAKE(3, -1, IDLE),
         HOLD(-1, 0.2, OUTTAKE),
-        INTAKE(5, 0.4, HOLD);
+        INTAKE(5, 1, HOLD);
 
         double dwellTime;
         double speed;

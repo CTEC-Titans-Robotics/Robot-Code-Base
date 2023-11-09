@@ -89,6 +89,14 @@ public class DrivebaseOperator extends Operator {
         // sparkTank.drive(translation2d);
     }
 
+    public ArmSubsystem getArmSubsystem() {
+        return armSubsystem;
+    }
+
+    public IntakeSubsystem getIntakeSubsystem() {
+        return intakeSubsystem;
+    }
+
     int failCount = 0;
 
     /**

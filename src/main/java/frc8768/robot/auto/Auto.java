@@ -1,5 +1,7 @@
 package frc8768.robot.auto;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -7,6 +9,8 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc8768.robot.subsystems.ArmSubsystem;
+import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
@@ -49,6 +53,10 @@ public class Auto {
 
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("No-op", new InstantCommand());
+        autonChooser.setDefaultOption("Left Platform", leftPlatform());
+        autonChooser.setDefaultOption("Middle Platform", midPlatform());
+        autonChooser.setDefaultOption("Right Platform", rightPlatform());
+        autonChooser.setDefaultOption("Community", community());
     }
 
     /**

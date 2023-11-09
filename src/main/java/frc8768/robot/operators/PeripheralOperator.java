@@ -14,6 +14,14 @@ public class PeripheralOperator extends Operator {
         super("Intake");
     }
 
+    public IntakeSubsystem getIntakeSubsystem() {
+        return intakeSubsystem;
+    }
+
+    public ArmSubsystem getArmSubsystem() {
+        return armSubsystem;
+    }
+
     @Override
     public void run() {
         armSubsystem.tick();

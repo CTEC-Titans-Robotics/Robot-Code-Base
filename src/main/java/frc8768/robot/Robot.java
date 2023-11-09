@@ -40,7 +40,7 @@ public class Robot extends TimedRobot
      * Drivebase Operator
      */
     private DrivebaseOperator drivebase;
-    private PeripheralOperator intake;
+    private PeripheralOperator peripheral;
 
     /**
      * The swerve subsystem, held in here for Auton.
@@ -89,11 +89,11 @@ public class Robot extends TimedRobot
         }
 
         this.drivebase = new DrivebaseOperator(this.swerve);
-        // this.auto = new Auto(swerve);
+        // this.auto = new Auto(swerve, peripheral.getArmSubsystem(), peripheral.getIntakeSubsystem());
         this.vision = new LimelightVision("limelight");
 
         drivebase.init();
-        intake.init();
+        peripheral.init();
     }
 
     /* For tank

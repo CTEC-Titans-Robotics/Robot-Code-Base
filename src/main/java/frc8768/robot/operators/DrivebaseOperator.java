@@ -61,4 +61,12 @@ public class DrivebaseOperator extends Operator {
         // Tank Example (Spark)
         // sparkTank.drive(translation2d);
     }
+
+    public ArmSubsystem getArmSubsystem() {
+        return armSubsystem;
+    }
+
+    public IntakeSubsystem getIntakeSubsystem() {
+        return intakeSubsystem;
+    }
 }

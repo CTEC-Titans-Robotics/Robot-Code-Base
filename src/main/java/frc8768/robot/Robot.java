@@ -33,7 +33,6 @@ public class Robot extends TimedRobot
      * Drivebase Operator
      */
     private DrivebaseOperator drivebase;
-    private PeripheralOperator peripheral;
 
     /**
      * The swerve subsystem, held in here for Auton.
@@ -73,20 +72,17 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
-        drivebase = new DrivebaseOperator();
-
         try {
-          swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
+          this.swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
         } catch (IOException io) {
           throw new RuntimeException("Swerve failed to create!", io);
         }
 
-
-        this.auto = new Auto(swerve, peripheral.getArmSubsystem(), peripheral.getIntakeSubsystem());
+        this.drivebase = new DrivebaseOperator();
+        this.auto = new Auto(swerve, drivebase.getArmSubsystem(), drivebase.getIntakeSubsystem());
         // this.vision = new Vision(Vision.Type.PI);
 
         drivebase.init();
-        peripheral.init();
     }
 
     /**

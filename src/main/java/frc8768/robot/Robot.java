@@ -84,7 +84,7 @@ public class Robot extends TimedRobot
 
 
         this.auto = new Auto(swerve);
-        this.vision = new Vision(Vision.Type.PI);
+        // this.vision = new Vision(Vision.Type.PI);
 
         drivebase.init();
         intake.init();

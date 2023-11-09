@@ -1,5 +1,7 @@
 package frc8768.robot.operators;
 
+import frc8768.robot.Robot;
+
 /**
  * Abstract class designed for Operators.
  * Anything universal to operators goes in here.
@@ -35,6 +37,9 @@ public abstract class Operator {
      */
     public void runLoop() {
         while(true) {
+            if(!Robot.getInstance().isTeleopEnabled()) {
+                continue;
+            }
             run();
         }
     }

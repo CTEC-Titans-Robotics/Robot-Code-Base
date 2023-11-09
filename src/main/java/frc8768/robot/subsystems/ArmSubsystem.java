@@ -13,7 +13,7 @@ public class ArmSubsystem implements Subsystem {
 
     public ArmSubsystem(int id) {
         armMotor = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
-        armMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        armMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         armEncoder = (SparkMaxRelativeEncoder) armMotor.getEncoder();
         armEncoder.setPosition(0);
@@ -26,28 +26,22 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public void up() {
-        if(armMovementThread.isAlive()) {
-            return;
+        if(currAngle < 0) {
+            armMotor.set(0.3); // TODO
+        } else {
+            stop();
         }
-        armMovementThread = new Thread(() -> {
-            while (currAngle < 100) {
-                armMotor.set(0.3); // TODO
-            }
-            armMotor.set(0);
-        });
-        armMovementThread.start();
+    }
+
+    public void stop() {
+        armMotor.set(0);
     }
 
     public void down() {
-        if(armMovementThread.isAlive()) {
-            return;
+        if(currAngle > -90) {
+            armMotor.set(-0.3); // TODO
+        } else {
+            stop();
         }
-        armMovementThread = new Thread(() -> {
-            while (currAngle > 0) {
-                armMotor.set(-0.3); // TODO
-            }
-            armMotor.set(0);
-        });
-        armMovementThread.start();
     }
 }

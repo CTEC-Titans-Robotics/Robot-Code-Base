@@ -5,6 +5,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import frc8768.robot.Robot;
+import frc8768.robot.subsystems.ArmSubsystem;
+import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 // import frc8768.robot.subsystems.TankSubsystemFalcon;
 // import frc8768.robot.subsystems.TankSubsystemSpark;
@@ -18,6 +20,8 @@ import java.util.logging.Level;
 public class DrivebaseOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
     private final SwerveSubsystem swerve;
+    private final ArmSubsystem armSubsystem = new ArmSubsystem(15);
+    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem(16, 17);
     private boolean isRelocating = false;
 
     // private final TankSubsystemSpark sparkTank;
@@ -41,6 +45,17 @@ public class DrivebaseOperator extends Operator {
     @Override
     public void run() {
         swerve.getSwerveDrive().updateOdometry();
+
+        if(controller.getLeftBumperPressed()) {
+            armSubsystem.up();
+        }
+        if(controller.getLeftTriggerAxis() > 0.1) {
+            armSubsystem.down();
+        }
+
+        if(controller.getRightBumperPressed()) {
+            intakeSubsystem.run();
+        }
 
         if(controller.getBButtonPressed()) {
             swerve.getSwerveDrive().zeroGyro();

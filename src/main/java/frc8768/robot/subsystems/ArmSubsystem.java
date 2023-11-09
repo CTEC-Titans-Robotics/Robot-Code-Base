@@ -9,6 +9,7 @@ public class ArmSubsystem implements Subsystem {
     private final CANSparkMax armMotor;
     private final SparkMaxRelativeEncoder armEncoder;
     private double currAngle;
+    private Thread armMovementThread = new Thread();
 
     public ArmSubsystem(int id) {
         armMotor = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -16,6 +17,8 @@ public class ArmSubsystem implements Subsystem {
 
         armEncoder = (SparkMaxRelativeEncoder) armMotor.getEncoder();
         armEncoder.setPosition(0);
+
+        armMovementThread.start();
     }
 
     public void tick() {
@@ -23,16 +26,28 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public void up() {
-        while(currAngle < 100) {
-            armMotor.set(0.3);// TODO
+        if(armMovementThread.isAlive()) {
+            return;
         }
-        armMotor.set(0);
+        armMovementThread = new Thread(() -> {
+            while (currAngle < 100) {
+                armMotor.set(0.3); // TODO
+            }
+            armMotor.set(0);
+        });
+        armMovementThread.start();
     }
 
     public void down() {
-        while(currAngle > 0) {
-            armMotor.set(-0.3);// TODO
+        if(armMovementThread.isAlive()) {
+            return;
         }
-        armMotor.set(0);
+        armMovementThread = new Thread(() -> {
+            while (currAngle > 0) {
+                armMotor.set(-0.3); // TODO
+            }
+            armMotor.set(0);
+        });
+        armMovementThread.start();
     }
 }

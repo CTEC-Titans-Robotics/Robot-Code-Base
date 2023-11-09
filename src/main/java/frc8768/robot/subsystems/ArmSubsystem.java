@@ -15,6 +15,7 @@ public class ArmSubsystem implements Subsystem {
         armMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         armEncoder = (SparkMaxRelativeEncoder) armMotor.getEncoder();
+        armEncoder.setPosition(0);
     }
 
     public void tick() {

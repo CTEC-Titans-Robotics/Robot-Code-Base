@@ -16,6 +16,7 @@ public class IntakeSubsystem implements Subsystem {
         intakeMotorFollower = new CANSparkMax(followerId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
         intakeMotorFollower.follow(intakeMotorLeader, true);
+        timer.start();
     }
 
     public void tick() {
@@ -36,6 +37,13 @@ public class IntakeSubsystem implements Subsystem {
         timer.reset();
         currState = currState.next == null
                 ? IntakeState.IDLE : currState.next;
+    }
+
+    public void outtake() {
+        intakeMotorLeader.set(-0.4);
+        timer.reset();
+        while(timer.get() < 2);
+        intakeMotorLeader.set(0);
     }
 
     public enum IntakeState {

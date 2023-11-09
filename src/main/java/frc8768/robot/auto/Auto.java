@@ -53,10 +53,10 @@ public class Auto {
 
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("No-op", new InstantCommand());
-        autonChooser.setDefaultOption("Left Platform", leftPlatform());
-        autonChooser.setDefaultOption("Middle Platform", midPlatform());
-        autonChooser.setDefaultOption("Right Platform", rightPlatform());
-        autonChooser.setDefaultOption("Community", community());
+        autonChooser.addOption("Left Platform", leftPlatform());
+        autonChooser.addOption("Middle Platform", midPlatform());
+        autonChooser.addOption("Right Platform", rightPlatform());
+        autonChooser.addOption("Community", community());
     }
 
     /**

@@ -90,7 +90,7 @@ public class Robot extends TimedRobot
 
         this.drivebase = new DrivebaseOperator(this.swerve);
         // this.auto = new Auto(swerve);
-        // this.vision = new LimelightVision("limelight");
+        this.vision = new LimelightVision("limelight");
 
         drivebase.init();
         intake.init();

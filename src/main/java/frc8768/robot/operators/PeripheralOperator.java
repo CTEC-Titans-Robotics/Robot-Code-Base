@@ -26,7 +26,7 @@ public class PeripheralOperator extends Operator {
             armSubsystem.down();
         }
 
-        if(controller.getRightBumper()) {
+        if(controller.getRightBumperPressed()) {
             intakeSubsystem.run();
         }
     }

@@ -44,13 +44,16 @@ public class DrivebaseOperator extends Operator {
 
     @Override
     public void run() {
+        intakeSubsystem.tick();
+        armSubsystem.tick();
         swerve.getSwerveDrive().updateOdometry();
 
-        if(controller.getLeftBumperPressed()) {
+        if(controller.getLeftBumper()) {
             armSubsystem.up();
-        }
-        if(controller.getLeftTriggerAxis() > 0.1) {
+        } else if(controller.getLeftTriggerAxis() > 0.1) {
             armSubsystem.down();
+        } else {
+            armSubsystem.stop();
         }
 
         if(controller.getRightBumperPressed()) {

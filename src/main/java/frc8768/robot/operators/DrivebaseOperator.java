@@ -50,17 +50,26 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
         // Swerve Example
-        swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, false);
 
         double speed = .2;
         if(controller.getPOV() == 90) {
-            swerve.drive(new Translation2d(0,speed), 0, false, false, false);
-        } else if (controller.getPOV() == 270) {
             swerve.drive(new Translation2d(0,-speed), 0, false, false, false);
+        } else if (controller.getPOV() == 270) {
+            swerve.drive(new Translation2d(0,speed), 0, false, false, false);
         } else if (controller.getPOV() == 0) {
             swerve.drive(new Translation2d(speed,0), 0, false, false, false);
         } else if (controller.getPOV() == 180) {
             swerve.drive(new Translation2d(-speed,0), 0, false, false, false);
+        } else if (controller.getPOV() == 45) {
+            swerve.drive(new Translation2d(speed,-speed), 0, false, false, false);
+        } else if (controller.getPOV() == 135) {
+            swerve.drive(new Translation2d(-speed,-speed), 0, false, false, false);
+        } else if (controller.getPOV() == 225) {
+            swerve.drive(new Translation2d(-speed,speed), 0, false, false, false);
+        } else if (controller.getPOV() == 315) {
+            swerve.drive(new Translation2d(speed,speed), 0, false, false, false);
+        } else {
+            swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, false);
         }
 
 

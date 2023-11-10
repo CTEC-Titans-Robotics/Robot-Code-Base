@@ -52,6 +52,18 @@ public class DrivebaseOperator extends Operator {
         // Swerve Example
         swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, false);
 
+        double speed = .2;
+        if(controller.getPOV() == 90) {
+            swerve.drive(new Translation2d(0,speed), 0, false, false, false);
+        } else if (controller.getPOV() == 270) {
+            swerve.drive(new Translation2d(0,-speed), 0, false, false, false);
+        } else if (controller.getPOV() == 0) {
+            swerve.drive(new Translation2d(speed,0), 0, false, false, false);
+        } else if (controller.getPOV() == 180) {
+            swerve.drive(new Translation2d(-speed,0), 0, false, false, false);
+        }
+
+
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);
 

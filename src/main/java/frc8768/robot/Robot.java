@@ -9,6 +9,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
@@ -165,5 +166,10 @@ public class Robot extends TimedRobot
      * Runs every "tick" of Test time
      */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+        SmartDashboard.putString("Encoder 0", String.valueOf(swerve.getSwerveDrive().getModules()[0].getPosition().angle.getDegrees()));
+        SmartDashboard.putString("Encoder 1", String.valueOf(swerve.getSwerveDrive().getModules()[1].getPosition().angle.getDegrees()));
+        SmartDashboard.putString("Encoder 2", String.valueOf(swerve.getSwerveDrive().getModules()[2].getPosition().angle.getDegrees()));
+        SmartDashboard.putString("Encoder 3", String.valueOf(swerve.getSwerveDrive().getModules()[3].getPosition().angle.getDegrees()));
+    }
 }

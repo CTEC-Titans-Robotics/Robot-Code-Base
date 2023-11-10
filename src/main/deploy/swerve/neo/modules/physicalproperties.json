@@ -2,7 +2,7 @@
   "wheelDiameter": 4,
   "gearRatio": {
     "drive": 6.75,
-    "angle": 21
+    "angle": 21.0
   },
   "currentLimit": {
     "drive": 40,

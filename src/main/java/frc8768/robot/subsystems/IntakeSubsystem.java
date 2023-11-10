@@ -15,13 +15,24 @@ public class IntakeSubsystem implements Subsystem {
         intakeMotorLeader = new CANSparkMax(leaderId, CANSparkMaxLowLevel.MotorType.kBrushless);
         intakeMotorFollower = new CANSparkMax(followerId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-        intakeMotorFollower.follow(intakeMotorLeader, true);
+        // Conf
+        intakeMotorLeader.restoreFactoryDefaults();
+        intakeMotorLeader.setSmartCurrentLimit(25);
+        intakeMotorLeader.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        intakeMotorLeader.burnFlash();
+
+        intakeMotorFollower.restoreFactoryDefaults();
+        intakeMotorFollower.setSmartCurrentLimit(25);
+        intakeMotorFollower.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        // intakeMotorFollower.setInverted(true);
+        intakeMotorFollower.burnFlash();
+
         timer.start();
     }
 
     public void tick() {
         if(currState == IntakeState.INTAKE) {
-            if(intakeMotorLeader.getOutputCurrent() > 15) {
+            if(intakeMotorLeader.getOutputCurrent() > 29) {
                 currState = IntakeState.HOLD;
             }
         }
@@ -31,6 +42,7 @@ public class IntakeSubsystem implements Subsystem {
         }
 
         intakeMotorLeader.set(currState.speed);
+        intakeMotorFollower.set(-currState.speed);
     }
 
     public void run() {
@@ -48,9 +60,9 @@ public class IntakeSubsystem implements Subsystem {
 
     public enum IntakeState {
         IDLE(-1, 0, null),
-        OUTTAKE(3, -1, IDLE),
-        HOLD(-1, 0.2, OUTTAKE),
-        INTAKE(5, 1, HOLD);
+        OUTTAKE(3, -0.4, IDLE),
+        HOLD(-1, 0.05, OUTTAKE),
+        INTAKE(5, 0.35, HOLD);
 
         double dwellTime;
         double speed;

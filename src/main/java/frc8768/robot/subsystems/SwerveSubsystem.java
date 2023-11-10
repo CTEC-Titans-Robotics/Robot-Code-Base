@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc8768.robot.util.MathUtil;
 import frc8768.robot.util.MotorType;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
@@ -41,7 +42,7 @@ public class SwerveSubsystem implements Subsystem {
      * @param headingCorrection Use heading correction.
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
-        swerveDrive.drive(translation2d, rotation, fieldRelative, isOpenLoop, headingCorrection);
+        swerveDrive.drive(translation2d, rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, headingCorrection);
     }
 
     /**

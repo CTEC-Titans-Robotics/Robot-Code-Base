@@ -149,9 +149,9 @@ public class ArmSubsystem implements Subsystem {
 
     enum State {
         NO_LOCK(0, 0, 0),
-        BUMPER_LOCK(-80, -61, 0.39),
-        LOW_LOCK(-61, -47, 1.5),
-        TUCKED_LOCK(-84, -61,  0.6);
+        BUMPER_LOCK(-80, -65, 0.39),
+        LOW_LOCK(-65, -47, 1.5),
+        TUCKED_LOCK(-84, -65,  0.6);
 
         private final double minArmAngle;
         private final double maxArmAngle;

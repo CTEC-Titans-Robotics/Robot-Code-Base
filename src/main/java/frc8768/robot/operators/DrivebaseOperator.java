@@ -63,6 +63,10 @@ public class DrivebaseOperator extends Operator {
             swerve.getSwerveDrive().zeroGyro();
         }
 
+        if(controller.getXButtonPressed()) {
+            swerve.getSwerveDrive().lockPose();
+        }
+
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
                 MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),

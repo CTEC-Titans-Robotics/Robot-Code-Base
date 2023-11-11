@@ -42,7 +42,7 @@ public class SwerveSubsystem implements Subsystem {
      * @param headingCorrection Use heading correction.
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
-        swerveDrive.drive(translation2d, rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, headingCorrection);
+        swerveDrive.drive(translation2d.times(this.swerveDrive.swerveDriveConfiguration.maxSpeed), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, headingCorrection);
     }
 
     /**

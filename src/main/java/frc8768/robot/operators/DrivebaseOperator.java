@@ -7,12 +7,11 @@ import frc8768.robot.Robot;
 import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
-// import frc8768.robot.subsystems.TankSubsystemFalcon;
-// import frc8768.robot.subsystems.TankSubsystemSpark;
 import frc8768.robot.util.Constants;
 
 public class DrivebaseOperator extends Operator {
     private final SwerveSubsystem swerve;
+
     private final ArmSubsystem armSubsystem = new ArmSubsystem(15);
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem(16, 17);
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
@@ -27,9 +26,9 @@ public class DrivebaseOperator extends Operator {
 
     @Override
     public void run() {
+        swerve.getSwerveDrive().updateOdometry();
         intakeSubsystem.tick();
         armSubsystem.tick();
-        swerve.getSwerveDrive().updateOdometry();
 
         if(controller.getLeftBumper()) {
             armSubsystem.up();

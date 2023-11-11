@@ -3,6 +3,7 @@ package frc8768.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxRelativeEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmSubsystem implements Subsystem {
@@ -26,10 +27,11 @@ public class ArmSubsystem implements Subsystem {
 
     public void tick() {
         currAngle = armEncoder.getPosition();
+        SmartDashboard.putNumber("currAngle", currAngle);
     }
 
     public void up() {
-        if(currAngle < 0) {
+        if(currAngle > -1) {
             armMotor.set(-0.2); // TODO
         } else {
             stop();
@@ -37,14 +39,32 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public void stop() {
-        armMotor.set(0);
+        if(currAngle > -1) {
+            armMotor.set(-0.05);
+        } else {
+            armMotor.stopMotor();
+        }
     }
 
     public void down() {
-        if(currAngle > -80) {
+        if(currAngle < 7.5) {
             armMotor.set(0.05); // TODO
         } else {
             stop();
         }
+    }
+
+    public void dropArm() {
+        while(currAngle < 7.5) {
+            armMotor.set(0.05);
+        }
+        stop();
+    }
+
+    public void raiseArm() {
+        while(currAngle > -1) {
+            armMotor.set(-0.2);
+        }
+        stop();
     }
 }

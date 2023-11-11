@@ -31,8 +31,8 @@ public class Auto {
     public Auto(SwerveSubsystem swerve, ArmSubsystem arm, IntakeSubsystem intake) {
         this.swerve = swerve;
         this.eventMap = new HashMap<>();
-        this.eventMap.put("droparm", new InstantCommand(arm::down));
-        this.eventMap.put("armup", new InstantCommand(arm::up));
+        this.eventMap.put("droparm", new InstantCommand(arm::dropArm));
+        this.eventMap.put("armup", new InstantCommand(arm::raiseArm));
         this.eventMap.put("dropcube", new InstantCommand(intake::outtake));
 
         SwerveDrive swerveDrive = swerve.getSwerveDrive();

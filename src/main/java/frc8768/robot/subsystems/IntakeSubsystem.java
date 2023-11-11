@@ -22,7 +22,7 @@ public class IntakeSubsystem implements Subsystem {
         intakeMotorLeader.burnFlash();
 
         intakeMotorFollower.restoreFactoryDefaults();
-        intakeMotorFollower.setSmartCurrentLimit(25);
+        intakeMotorFollower.setSmartCurrentLimit(30);
         intakeMotorFollower.setIdleMode(CANSparkMax.IdleMode.kCoast);
         // intakeMotorFollower.setInverted(true);
         intakeMotorFollower.burnFlash();
@@ -32,7 +32,7 @@ public class IntakeSubsystem implements Subsystem {
 
     public void tick() {
         if(currState == IntakeState.INTAKE) {
-            if(intakeMotorLeader.getOutputCurrent() > 29) {
+            if(intakeMotorLeader.getOutputCurrent() > 30) {
                 currState = IntakeState.HOLD;
             }
         }
@@ -60,7 +60,7 @@ public class IntakeSubsystem implements Subsystem {
 
     public enum IntakeState {
         IDLE(-1, 0, null),
-        OUTTAKE(3, -0.4, IDLE),
+        OUTTAKE(1.5, -0.4, IDLE),
         HOLD(-1, 0.05, OUTTAKE),
         INTAKE(5, 0.35, HOLD);
 

@@ -50,13 +50,6 @@ public class Auto {
                 swerveDrive::setChassisSpeeds,
                 config,
                 swerve);
-
-        autonChooser = new SendableChooser<>();
-        autonChooser.setDefaultOption("No-op", new InstantCommand());
-        autonChooser.addOption("Left Platform", leftPlatform());
-        autonChooser.addOption("Middle Platform", midPlatform());
-        autonChooser.addOption("Right Platform", rightPlatform());
-        autonChooser.addOption("Community", community());
     }
 
     /**

@@ -80,7 +80,7 @@ public class Robot extends TimedRobot
         }
 
         this.drivebase = new DrivebaseOperator();
-        this.auto = new Auto(swerve, drivebase.getArmSubsystem(), drivebase.getIntakeSubsystem());
+        this.auto = new Auto(swerve);
         // this.vision = new Vision(Vision.Type.PI);
 
         drivebase.init();

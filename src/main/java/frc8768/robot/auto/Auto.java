@@ -5,6 +5,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.subsystems.ArmSubsystem;
@@ -28,20 +29,16 @@ public class Auto {
      *
      * @param swerve The Robots swerve subsystem
      */
-    public Auto(SwerveSubsystem swerve, ArmSubsystem arm, IntakeSubsystem intake) {
+    public Auto(SwerveSubsystem swerve) {
         this.swerve = swerve;
         this.eventMap = new HashMap<>();
-        this.eventMap.put("droparm", new InstantCommand(arm::dropArm));
-        this.eventMap.put("armup", new InstantCommand(arm::raiseArm));
-        this.eventMap.put("dropcube", new InstantCommand(intake::outtake));
-
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
         this.builder = new SwerveAutoBuilder(
                 swerveDrive::getPose,
                 swerveDrive::resetOdometry,
-                new PIDConstants(0.01, 0.0, 0.0),
-                new PIDConstants(0.01, 0.0, 0.0),
+                new PIDConstants(0.045849, 0.0, 0.0068069),
+                new PIDConstants(0.0091857, 0.0, 0.00052987),
                 swerveDrive::setChassisSpeeds,
                 eventMap,
                 true,
@@ -53,6 +50,8 @@ public class Auto {
         autonChooser.addOption("Middle Platform", midPlatform());
         autonChooser.addOption("Right Platform", rightPlatform());
         autonChooser.addOption("Community", community());
+
+        SmartDashboard.putData("Auton Chooser", autonChooser);
     }
 
     /**
@@ -70,7 +69,7 @@ public class Auto {
     }
 
     public Command midPlatform() {
-        return builder.fullAuto(PathPlanner.loadPath("Mid Platform", new PathConstraints(7.25, 5)))
+        return builder.fullAuto(PathPlanner.loadPath("Middle Platform", new PathConstraints(7.25, 5)))
                 .andThen(new BalanceChassisCommand(swerve));
     }
 

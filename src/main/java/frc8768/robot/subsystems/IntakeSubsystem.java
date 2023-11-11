@@ -60,7 +60,7 @@ public class IntakeSubsystem implements Subsystem {
 
     public enum IntakeState {
         IDLE(-1, 0, null),
-        OUTTAKE(1.5, -0.4, IDLE),
+        OUTTAKE(1.5, -0.5, IDLE),
         HOLD(-1, 0.05, OUTTAKE),
         INTAKE(5, 0.35, HOLD);
 

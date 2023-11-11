@@ -30,7 +30,7 @@ public class DrivebaseOperator extends Operator {
     public void run() {
         swerve.getSwerveDrive().updateOdometry();
 
-        if(controller.getYButtonPressed()) {
+        if(controller.getXButtonPressed()) {
             swerve.lock();
         }
 

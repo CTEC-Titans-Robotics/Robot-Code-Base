@@ -51,7 +51,7 @@ public class LogUtil {
 
         for(Supplier<List<String>> supplier : LOGGERS) {
             for(String log : supplier.get()) {
-                LOGGER.log(Level.FINE, log);
+                LOGGER.log(Level.INFO, log);
             }
         }
     }

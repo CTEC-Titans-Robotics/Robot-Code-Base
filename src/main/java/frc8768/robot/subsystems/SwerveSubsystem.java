@@ -26,8 +26,8 @@ public class SwerveSubsystem implements Subsystem {
      */
     public SwerveSubsystem(MotorType type) throws IOException {
         switch(type) {
-            case NEOS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive();
-            case FALCONS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive();
+            case NEOS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive(14.5);
+            case FALCONS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(14.5);
         }
     }
 
@@ -38,10 +38,10 @@ public class SwerveSubsystem implements Subsystem {
      * @param rotation Rotation in Radians/Seconds
      * @param fieldRelative Use the Gyro as the permanent "front" of the Robot
      * @param isOpenLoop Don't use PID
-     * @param headingCorrection Use heading correction.
+     * @param pivotPoint 2d Pivot point for rotation
      */
-    public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
-        swerveDrive.drive(translation2d, rotation, fieldRelative, isOpenLoop, headingCorrection);
+    public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
+        swerveDrive.drive(translation2d, rotation, fieldRelative, isOpenLoop, pivotPoint);
     }
 
     /**

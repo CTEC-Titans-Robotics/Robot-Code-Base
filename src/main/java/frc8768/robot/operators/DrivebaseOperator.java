@@ -8,6 +8,7 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 // import frc8768.robot.subsystems.TankSubsystemFalcon;
 // import frc8768.robot.subsystems.TankSubsystemSpark;
 import frc8768.robot.util.Constants;
+import frc8768.robot.util.LogUtil;
 
 public class DrivebaseOperator extends Operator {
     private final SwerveSubsystem swerve;
@@ -21,6 +22,10 @@ public class DrivebaseOperator extends Operator {
         swerve = Robot.getInstance().getSwerve();
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
+
+        // Init logging
+        LogUtil.registerLogger(swerve::log);
+        LogUtil.registerDashLogger(swerve::dashboard);
     }
 
     @Override

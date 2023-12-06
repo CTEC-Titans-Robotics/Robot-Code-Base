@@ -13,6 +13,7 @@ import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.subsystems.TankSubsystemFalcon;
 import frc8768.robot.subsystems.TankSubsystemSpark;
+import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.Vision;
 
 /**
@@ -109,6 +110,8 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotPeriodic() {
+        LogUtil.run();
+
         CommandScheduler.getInstance().run();
     }
 

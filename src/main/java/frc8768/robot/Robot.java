@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
-import frc8768.robot.subsystems.TankSubsystemFalcon;
-import frc8768.robot.subsystems.TankSubsystemSpark;
 import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.Vision;
 

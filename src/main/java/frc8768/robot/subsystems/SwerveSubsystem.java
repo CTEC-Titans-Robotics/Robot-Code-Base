@@ -31,7 +31,7 @@ public class SwerveSubsystem implements Subsystem {
     public SwerveSubsystem(MotorType type) throws IOException {
         switch(type) {
             case NEOS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive(14.5);
-            case FALCONS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(14.5);
+            case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(14.5);
         }
     }
 

@@ -80,7 +80,7 @@ public class Vision {
      * Sometimes, you may want to find the maximum Y for corners for the
      * intake to suck in the top of a cone, or cube. This function is helpful for that.
      *
-     * @return The maximum Y point for all corners
+     * @return The maximum Y point for all corners, or -1 if none is found
      */
     public double getMaxPointY() {
         PhotonTrackedTarget target = getBestTarget();
@@ -90,9 +90,6 @@ public class Vision {
                 if(corner.y > maxY) {
                     maxY = corner.y;
                 }
-            }
-            if(maxY == 0) {
-                return -1;
             }
         }
         return -1;

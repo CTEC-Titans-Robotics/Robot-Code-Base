@@ -70,7 +70,7 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
-        drivebase = new DrivebaseOperator();
+        // drivebase = new DrivebaseOperator();
         /*
         * Swerve Example
         * try {
@@ -80,10 +80,10 @@ public class Robot extends TimedRobot
         * }
         */
 
-        this.auto = new Auto(swerve);
-        this.vision = new Vision(Vision.Type.PI);
+        // this.auto = new Auto(swerve);
+        // this.vision = new Vision(Vision.Type.PI);
 
-        drivebase.init();
+        // drivebase.init();
     }
 
     /**

@@ -3,9 +3,11 @@ package frc8768.robot.auto;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc8768.robot.subsystems.SwerveSubsystem;
-public class BalanceChassisCommand extends CommandBase {
+import frc8768.robot.util.Constants;
+
+public class BalanceChassisCommand extends Command {
 	private SwerveSubsystem swerve;
 	private PIDController pid;
 
@@ -23,7 +25,7 @@ public class BalanceChassisCommand extends CommandBase {
 		double vxMeters = MathUtil.clamp(this.pid.calculate(-this.swerve.getSwerveDrive().getPitch().getDegrees()),
 				-BalanceChassisConstants.kDriveSpeedMPS, BalanceChassisConstants.kDriveSpeedMPS);
 
-		this.swerve.drive(new Translation2d(vxMeters, 0), 0, false, false, false);
+		this.swerve.drive(new Translation2d(vxMeters, 0), 0, false, false, Constants.BOT_CENTER);
 	}
 
 	@Override

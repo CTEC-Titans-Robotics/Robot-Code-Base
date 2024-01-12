@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
+import frc8768.robot.util.LogUtil;
 import frc8768.robot.util.Constants;
 import frc8768.visionlib.Vision;
 
@@ -83,7 +84,7 @@ public class Robot extends TimedRobot
         this.auto = new Auto(swerve);
         // this.vision = new Vision(Vision.Type.PI);
 
-        drivebase.init();
+        // drivebase.init();
     }
 
     /**
@@ -108,6 +109,8 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotPeriodic() {
+        LogUtil.run();
+
         CommandScheduler.getInstance().run();
     }
 

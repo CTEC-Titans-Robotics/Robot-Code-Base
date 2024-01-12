@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="script-dir/jquery-ui.min.css" title="Style">
 <link rel="stylesheet" type="text/css" href="jquery-ui.overrides.css" title="Style">
 <script type="text/javascript" src="script.js"></script>
-<script type="text/javascript" src="script-dir/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="script-dir/jquery-3.6.1.min.js"></script>
 <script type="text/javascript" src="script-dir/jquery-ui.min.js"></script>
 </head>
 <body class="index-page">
@@ -98,6 +98,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
+<dt><a href="frc8768/robot/subsystems/SwerveSubsystem.html#dashboard()" class="member-name-link">dashboard()</a> - Method in class frc8768.robot.subsystems.<a href="frc8768/robot/subsystems/SwerveSubsystem.html" title="class in frc8768.robot.subsystems">SwerveSubsystem</a></dt>
+<dd>
+<div class="block">Dashboard logging</div>
+</dd>
 <dt><a href="frc8768/robot/subsystems/TankSubsystemFalcon.html#drive(edu.wpi.first.math.geometry.Translation2d)" class="member-name-link">drive(Translation2d)</a> - Method in class frc8768.robot.subsystems.<a href="frc8768/robot/subsystems/TankSubsystemFalcon.html" title="class in frc8768.robot.subsystems">TankSubsystemFalcon</a></dt>
 <dd>
 <div class="block">Drive the subsystem.</div>
@@ -106,7 +110,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Drive the subsystem.</div>
 </dd>
-<dt><a href="frc8768/robot/subsystems/SwerveSubsystem.html#drive(edu.wpi.first.math.geometry.Translation2d,double,boolean,boolean,boolean)" class="member-name-link">drive(Translation2d, double, boolean, boolean, boolean)</a> - Method in class frc8768.robot.subsystems.<a href="frc8768/robot/subsystems/SwerveSubsystem.html" title="class in frc8768.robot.subsystems">SwerveSubsystem</a></dt>
+<dt><a href="frc8768/robot/subsystems/SwerveSubsystem.html#drive(edu.wpi.first.math.geometry.Translation2d,double,boolean,boolean,edu.wpi.first.math.geometry.Translation2d)" class="member-name-link">drive(Translation2d, double, boolean, boolean, Translation2d)</a> - Method in class frc8768.robot.subsystems.<a href="frc8768/robot/subsystems/SwerveSubsystem.html" title="class in frc8768.robot.subsystems">SwerveSubsystem</a></dt>
 <dd>
 <div class="block">Drive the motors</div>
 </dd>
@@ -197,6 +201,20 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Limelight 1 and 2</div>
 </dd>
+<dt><a href="frc8768/robot/subsystems/SwerveSubsystem.html#log()" class="member-name-link">log()</a> - Method in class frc8768.robot.subsystems.<a href="frc8768/robot/subsystems/SwerveSubsystem.html" title="class in frc8768.robot.subsystems">SwerveSubsystem</a></dt>
+<dd>
+<div class="block">Log string, (Could use a buffer here to prevent data race)</div>
+</dd>
+<dt><a href="frc8768/robot/util/LogUtil.html#LOGGER" class="member-name-link">LOGGER</a> - Static variable in class frc8768.robot.util.<a href="frc8768/robot/util/LogUtil.html" title="class in frc8768.robot.util">LogUtil</a></dt>
+<dd>
+<div class="block">Logging instance, change the parameter to your robots name</div>
+</dd>
+<dt><a href="frc8768/robot/util/LogUtil.html" class="type-name-link" title="class in frc8768.robot.util">LogUtil</a> - Class in <a href="frc8768/robot/util/package-summary.html">frc8768.robot.util</a></dt>
+<dd>
+<div class="block">Center for all things logging.</div>
+</dd>
+<dt><a href="frc8768/robot/util/LogUtil.html#%3Cinit%3E()" class="member-name-link">LogUtil()</a> - Constructor for class frc8768.robot.util.<a href="frc8768/robot/util/LogUtil.html" title="class in frc8768.robot.util">LogUtil</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
 <dl class="index">
@@ -236,6 +254,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:R">R</h2>
 <dl class="index">
+<dt><a href="frc8768/robot/util/LogUtil.html#registerDashLogger(java.util.function.Supplier)" class="member-name-link">registerDashLogger(Supplier&lt;Map&lt;String, String&gt;&gt;)</a> - Static method in class frc8768.robot.util.<a href="frc8768/robot/util/LogUtil.html" title="class in frc8768.robot.util">LogUtil</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="frc8768/robot/util/LogUtil.html#registerLogger(java.util.function.Supplier)" class="member-name-link">registerLogger(Supplier&lt;List&lt;String&gt;&gt;)</a> - Static method in class frc8768.robot.util.<a href="frc8768/robot/util/LogUtil.html" title="class in frc8768.robot.util">LogUtil</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="frc8768/robot/Robot.html" class="type-name-link" title="class in frc8768.robot">Robot</a> - Class in <a href="frc8768/robot/package-summary.html">frc8768.robot</a></dt>
 <dd>
 <div class="block">The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -257,6 +279,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="frc8768/robot/operators/Operator.html#run()" class="member-name-link">run()</a> - Method in class frc8768.robot.operators.<a href="frc8768/robot/operators/Operator.html" title="class in frc8768.robot.operators">Operator</a></dt>
 <dd>
 <div class="block">The operator-specific code</div>
+</dd>
+<dt><a href="frc8768/robot/util/LogUtil.html#run()" class="member-name-link">run()</a> - Static method in class frc8768.robot.util.<a href="frc8768/robot/util/LogUtil.html" title="class in frc8768.robot.util">LogUtil</a></dt>
+<dd>
+<div class="block">Runs each log function to print the supplied state</div>
 </dd>
 <dt><a href="frc8768/robot/operators/Operator.html#runLoop()" class="member-name-link">runLoop()</a> - Method in class frc8768.robot.operators.<a href="frc8768/robot/operators/Operator.html" title="class in frc8768.robot.operators">Operator</a></dt>
 <dd>

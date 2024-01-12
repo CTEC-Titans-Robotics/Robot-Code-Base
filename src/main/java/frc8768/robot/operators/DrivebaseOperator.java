@@ -8,6 +8,7 @@ import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
+import frc8768.robot.util.LogUtil;
 
 public class DrivebaseOperator extends Operator {
     private final SwerveSubsystem swerve;
@@ -22,6 +23,10 @@ public class DrivebaseOperator extends Operator {
         swerve = Robot.getInstance().getSwerve();
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
+
+        // Init logging
+        LogUtil.registerLogger(swerve::log);
+        LogUtil.registerDashLogger(swerve::dashboard);
     }
 
     @Override
@@ -56,7 +61,7 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
         // Swerve Example
-        swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, false);
+        swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, new Translation2d(0, 0));
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

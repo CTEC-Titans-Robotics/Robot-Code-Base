@@ -2,8 +2,10 @@ package frc8768.robot.auto;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,16 +15,11 @@ import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveDrive;
 
-import java.util.HashMap;
-
 /**
  * Auton example for swerve using PathPlanner
  */
 public class Auto {
-    private SwerveSubsystem swerve;
-    private SwerveAutoBuilder builder;
     private final SendableChooser<Command> autonChooser;
-    private final HashMap<String, Command> eventMap;
 
     /**
      * Auto constructor, builds everything.
@@ -30,18 +27,28 @@ public class Auto {
      * @param swerve The Robots swerve subsystem
      */
     public Auto(SwerveSubsystem swerve) {
-        this.swerve = swerve;
-        this.eventMap = new HashMap<>();
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
-        this.builder = new SwerveAutoBuilder(
+        HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
+                new PIDConstants(0.00, 0.00, 0.01),
+                new PIDConstants(0.00, 0.00, 0.01),
+                // TODO: Put max module speed here
+                14.2,
+                // TODO: Put your robot chassis radius here
+                5,
+                new ReplanningConfig(
+                        false,
+                        true
+                )
+
+        );
+
+        AutoBuilder.configureHolonomic(
                 swerveDrive::getPose,
                 swerveDrive::resetOdometry,
-                new PIDConstants(0.045849, 0.0, 0.0068069),
-                new PIDConstants(0.0091857, 0.0, 0.00052987),
+                swerveDrive::getRobotVelocity,
                 swerveDrive::setChassisSpeeds,
-                eventMap,
-                true,
+                config,
                 swerve);
 
         autonChooser = new SendableChooser<>();

@@ -59,6 +59,7 @@ public class Vision {
      * @param mountAngle The amount of degrees back the limelight is.
      * @param mountHeight Height in inches from center of limelight lens to floor.
      * @param goalHeight Distance in inches from floor to center of target.
+     * @param topY Get the top most location from the camera. See {@link #getMaxPointY() this method.}
      * @return Distance to target, returns -1 on fail.
      */
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
@@ -80,7 +81,7 @@ public class Vision {
      * Sometimes, you may want to find the maximum Y for corners for the
      * intake to suck in the top of a cone, or cube. This function is helpful for that.
      *
-     * @return The maximum Y point for all corners
+     * @return The maximum Y point for all corners, or -1 if none is found
      */
     public double getMaxPointY() {
         PhotonTrackedTarget target = getBestTarget();
@@ -90,9 +91,6 @@ public class Vision {
                 if(corner.y > maxY) {
                     maxY = corner.y;
                 }
-            }
-            if(maxY == 0) {
-                return -1;
             }
         }
         return -1;

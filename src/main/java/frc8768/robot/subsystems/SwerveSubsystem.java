@@ -11,6 +11,10 @@ import swervelib.parser.SwerveParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Container class for everything Swerve
@@ -27,8 +31,8 @@ public class SwerveSubsystem implements Subsystem {
      */
     public SwerveSubsystem(MotorType type) throws IOException {
         switch(type) {
-            case NEOS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive();
-            case FALCONS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive();
+            case NEOS -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive(14.5);
+            case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(14.5);
         }
     }
 
@@ -39,10 +43,10 @@ public class SwerveSubsystem implements Subsystem {
      * @param rotation Rotation in Radians/Seconds
      * @param fieldRelative Use the Gyro as the permanent "front" of the Robot
      * @param isOpenLoop Don't use PID
-     * @param headingCorrection Use heading correction.
+     * @param pivotPoint 2d Pivot point for rotation
      */
-    public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean headingCorrection) {
-        swerveDrive.drive(translation2d.times(this.swerveDrive.swerveDriveConfiguration.maxSpeed), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, headingCorrection);
+    public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
+        swerveDrive.drive(translation2d.times(Constants.MAX_SPEED), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, pivotPoint);
     }
 
     /**
@@ -61,5 +65,37 @@ public class SwerveSubsystem implements Subsystem {
      */
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
+    }
+
+    /**
+     * Dashboard logging
+     *
+     * @return Map of Name to Value
+     */
+    public Map<String, String> dashboard() {
+        HashMap<String, String> map = new HashMap<>();
+        for(int i = 0; i < 4; i++) {
+            map.put(String.format("Module %d Drive: Velocity", i),
+                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getVelocity()));
+            map.put(String.format("Module %d Angle: Velocity", i),
+                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getVelocity()));
+
+            map.put(String.format("Module %d Drive: Position", i),
+                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getPosition()));
+            map.put(String.format("Module %d Angle: Position", i),
+                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getPosition()));
+        }
+        return map;
+    }
+
+    /**
+     * Log string, (Could use a buffer here to prevent data race)
+     *
+     * @return List of different Strings.
+     */
+    public List<String> log() {
+        ArrayList<String> list = new ArrayList<>();
+        // Insert string buffer, different logic for detecting errors here
+        return list;
     }
 }

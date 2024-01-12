@@ -1,8 +1,7 @@
 package frc8768.robot.auto;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -10,8 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc8768.robot.subsystems.ArmSubsystem;
-import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveDrive;
 
@@ -20,6 +17,7 @@ import swervelib.SwerveDrive;
  */
 public class Auto {
     private final SendableChooser<Command> autonChooser;
+    private final SwerveSubsystem swerve;
 
     /**
      * Auto constructor, builds everything.
@@ -28,19 +26,17 @@ public class Auto {
      */
     public Auto(SwerveSubsystem swerve) {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
+        this.swerve = swerve;
 
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
                 new PIDConstants(0.00, 0.00, 0.01),
                 new PIDConstants(0.00, 0.00, 0.01),
-                // TODO: Put max module speed here
-                14.2,
-                // TODO: Put your robot chassis radius here
-                5,
+                14.5,
+                327.025,
                 new ReplanningConfig(
                         false,
                         true
                 )
-
         );
 
         AutoBuilder.configureHolonomic(
@@ -49,6 +45,7 @@ public class Auto {
                 swerveDrive::getRobotVelocity,
                 swerveDrive::setChassisSpeeds,
                 config,
+                () -> true,
                 swerve);
 
         autonChooser = new SendableChooser<>();
@@ -71,21 +68,20 @@ public class Auto {
     }
 
     public Command rightPlatform() {
-        return builder.fullAuto(PathPlanner.loadPath("Right Platform", new PathConstraints(7.25, 5)))
-                .andThen(new BalanceChassisCommand(swerve));
+        return new PathPlannerAuto("Right Platform").andThen(new BalanceChassisCommand(swerve));
     }
 
     public Command midPlatform() {
-        return builder.fullAuto(PathPlanner.loadPath("Middle Platform", new PathConstraints(7.25, 5)))
+        return new PathPlannerAuto("Middle Platform")
                 .andThen(new BalanceChassisCommand(swerve));
     }
 
     public Command leftPlatform() {
-        return builder.fullAuto(PathPlanner.loadPath("Left Platform", new PathConstraints(7.25, 5)))
+        return new PathPlannerAuto("Left Platform")
                 .andThen(new BalanceChassisCommand(swerve));
     }
 
     public Command community() {
-        return builder.fullAuto(PathPlanner.loadPath("Community", new PathConstraints(7.25, 5)));
+        return new PathPlannerAuto("Community");
     }
 }

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.subsystems.SwerveSubsystem;
+import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
 
 /**
@@ -31,7 +32,7 @@ public class Auto {
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
                 new PIDConstants(0.00, 0.00, 0.01),
                 new PIDConstants(0.00, 0.00, 0.01),
-                14.5,
+                Constants.SwerveConfig.MAX_SPEED,
                 327.025,
                 new ReplanningConfig(
                         false,

@@ -12,8 +12,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
-import frc8768.robot.util.LogUtil;
 import frc8768.robot.util.Constants;
+import frc8768.robot.util.LogUtil;
+import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
 
 import java.io.IOException;
@@ -81,10 +82,10 @@ public class Robot extends TimedRobot
         }
 
         this.drivebase = new DrivebaseOperator();
-        this.auto = new Auto(swerve);
-        // this.vision = new Vision(Vision.Type.PI);
+        // this.auto = new Auto(swerve);
+        this.vision = new LimelightVision("limelight");
 
-        // drivebase.init();
+        drivebase.init();
     }
 
     /**

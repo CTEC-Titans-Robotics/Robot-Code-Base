@@ -14,7 +14,7 @@ public class DrivebaseOperator extends Operator {
     private final SwerveSubsystem swerve;
 
     // private final ArmSubsystem armSubsystem = new ArmSubsystem(15);
-    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem(16, 17);
+    // private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem(16, 17);
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
 
     public DrivebaseOperator() {
@@ -32,7 +32,7 @@ public class DrivebaseOperator extends Operator {
     @Override
     public void run() {
         swerve.getSwerveDrive().updateOdometry();
-        intakeSubsystem.tick();
+        // intakeSubsystem.tick();
 
         // if(controller.getLeftBumper()) {
         //     armSubsystem.up();
@@ -42,9 +42,9 @@ public class DrivebaseOperator extends Operator {
         //     armSubsystem.stop();
         // }
 
-        if(controller.getRightBumperPressed()) {
-            intakeSubsystem.run();
-        }
+        // if(controller.getRightBumperPressed()) {
+        //     intakeSubsystem.run();
+        // }
 
         if(controller.getBButtonPressed()) {
             swerve.getSwerveDrive().zeroGyro();
@@ -56,20 +56,16 @@ public class DrivebaseOperator extends Operator {
 
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
-                MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
-                MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
+                MathUtil.applyDeadband(Math.pow(-controller.getLeftY(), 3) /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
+                MathUtil.applyDeadband(Math.pow(-controller.getLeftX(), 3) /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
         // Swerve Example
-        swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
+        swerve.drive(translation2d, Math.pow(-controller.getRawAxis(3), 3), true, false, Constants.BOT_CENTER);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);
 
         // Tank Example (Spark)
         // sparkTank.drive(translation2d);
-    }
-
-    public IntakeSubsystem getIntakeSubsystem() {
-        return intakeSubsystem;
     }
 }

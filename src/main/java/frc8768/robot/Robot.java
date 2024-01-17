@@ -5,6 +5,7 @@
 
 package frc8768.robot;
 
+import com.ctre.phoenix.led.CANdle;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -75,17 +76,17 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
-        try {
-          this.swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
-        } catch (IOException io) {
-          throw new RuntimeException("Swerve failed to create!", io);
-        }
+        // try {
+        //   this.swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
+        // } catch (IOException io) {
+        //   throw new RuntimeException("Swerve failed to create!", io);
+        // }
 
-        this.drivebase = new DrivebaseOperator();
+        // this.drivebase = new DrivebaseOperator();
         // this.auto = new Auto(swerve);
         this.vision = new LimelightVision("limelight");
 
-        drivebase.init();
+        // drivebase.init();
     }
 
     /**
@@ -150,20 +151,22 @@ public class Robot extends TimedRobot
     @Override
     public void teleopPeriodic() {}
 
+    CANdle LED = new CANdle(0);
+
     /**
      * Runs at the start of Test state
      */
     @Override
-    public void testInit() {}
+    public void testInit() {
+        LED.configV5Enabled(true);
+        LED.configLEDType(CANdle.LEDStripType.BRGW);
+    }
 
     /**
      * Runs every "tick" of Test time
      */
     @Override
     public void testPeriodic() {
-        SmartDashboard.putString("Encoder 0", String.valueOf(swerve.getSwerveDrive().getModules()[0].getPosition().angle.getDegrees()));
-        SmartDashboard.putString("Encoder 1", String.valueOf(swerve.getSwerveDrive().getModules()[1].getPosition().angle.getDegrees()));
-        SmartDashboard.putString("Encoder 2", String.valueOf(swerve.getSwerveDrive().getModules()[2].getPosition().angle.getDegrees()));
-        SmartDashboard.putString("Encoder 3", String.valueOf(swerve.getSwerveDrive().getModules()[3].getPosition().angle.getDegrees()));
+        LED.setLEDs(255, 0, 0);
     }
 }

@@ -1,25 +1,25 @@
 package frc8768.robot.subsystems;
 
+import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxRelativeEncoder;
+import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ArmSubsystem implements Subsystem {
     private final CANSparkMax armMotor;
-    private final SparkMaxRelativeEncoder armEncoder;
+    private final RelativeEncoder armEncoder;
     private double currAngle;
     private Thread armMovementThread = new Thread();
 
     public ArmSubsystem(int id) {
-        armMotor = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
+        armMotor = new CANSparkMax(id, CANSparkLowLevel.MotorType.kBrushless);
         armMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         armMotor.restoreFactoryDefaults();
         armMotor.setSmartCurrentLimit(25);
         armMotor.burnFlash();
 
-        armEncoder = (SparkMaxRelativeEncoder) armMotor.getEncoder();
+        armEncoder = armMotor.getEncoder();
         armEncoder.setPosition(0);
 
         armMovementThread.start();
@@ -39,11 +39,7 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public void stop() {
-        if(currAngle > -1) {
-            armMotor.set(-0.05);
-        } else {
-            armMotor.stopMotor();
-        }
+        armMotor.stopMotor();
     }
 
     public void down() {

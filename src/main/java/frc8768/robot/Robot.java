@@ -6,6 +6,8 @@
 package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
@@ -149,7 +151,8 @@ public class Robot extends TimedRobot
      * Runs every "tick" of Teleop time
      */
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+    }
 
     /**
      * Runs at the start of Test state

@@ -36,10 +36,5 @@ public class Constants {
          * Max drive motor speed.
          */
         public static final double MAX_SPEED = 14.5;
-
-        /**
-         * Max angular speed.
-         */
-        public static final double MAX_ANGLE_SPEED = 7.85;
     }
 }

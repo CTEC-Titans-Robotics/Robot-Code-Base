@@ -60,7 +60,7 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(Math.pow(-controller.getLeftX(), 3) /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
         // Swerve Example
-        swerve.drive(translation2d, Math.pow(-controller.getRawAxis(3), 3), true, false, Constants.BOT_CENTER);
+        swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

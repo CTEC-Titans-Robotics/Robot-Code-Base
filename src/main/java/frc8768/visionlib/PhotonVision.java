@@ -97,6 +97,15 @@ public class PhotonVision extends Vision {
         return -1;
     }
 
+    @Override
+    public int getTargetID() {
+        PhotonTrackedTarget target = getBestTarget();
+        if(target != null) {
+            return target.getFiducialId();
+        }
+        return -1;
+    }
+
     /**
      * Type of {@link PhotonCamera}
      */

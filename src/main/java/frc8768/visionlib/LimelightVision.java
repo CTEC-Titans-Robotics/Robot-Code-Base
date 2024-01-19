@@ -13,7 +13,7 @@ public class LimelightVision extends Vision {
 
     @Override
     public List<Object> getTargets() {
-        return List.of(LimelightHelpers.getLatestResults(this.limelightName).targetingResults.targets_Classifier);
+        return List.of(LimelightHelpers.getLatestResults(this.limelightName).targetingResults.targets_Fiducials);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class LimelightVision extends Vision {
     // TODO
     @Override
     public Object getBestTarget() {
-        LimelightHelpers.LimelightTarget_Classifier[] classifier = LimelightHelpers.getLatestResults(this.limelightName).targetingResults.targets_Classifier;
+        LimelightHelpers.LimelightTarget_Fiducial[] classifier = LimelightHelpers.getLatestResults(this.limelightName).targetingResults.targets_Fiducials;
         if(classifier.length > 0) {
             return classifier[0];
         }
@@ -34,7 +34,7 @@ public class LimelightVision extends Vision {
 
     @Override
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
-        LimelightHelpers.LimelightTarget_Classifier classifier = (LimelightHelpers.LimelightTarget_Classifier) getBestTarget();
+        LimelightHelpers.LimelightTarget_Fiducial classifier = (LimelightHelpers.LimelightTarget_Fiducial) getBestTarget();
         if(classifier != null) {
             double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : classifier.ty);
             double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
@@ -50,10 +50,19 @@ public class LimelightVision extends Vision {
 
     @Override
     public double getMaxPointY() {
-        LimelightHelpers.LimelightTarget_Classifier classifier = (LimelightHelpers.LimelightTarget_Classifier) getBestTarget();
+        LimelightHelpers.LimelightTarget_Fiducial classifier = (LimelightHelpers.LimelightTarget_Fiducial) getBestTarget();
         if(classifier != null) {
             return classifier.ty + 0.08255;
         }
         return -1;
+    }
+
+    @Override
+    public int getTargetID() {
+        LimelightHelpers.LimelightTarget_Fiducial classifier = (LimelightHelpers.LimelightTarget_Fiducial) getBestTarget();
+        if(classifier == null) {
+            return -1;
+        }
+        return (int) classifier.fiducialID;
     }
 }

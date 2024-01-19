@@ -49,7 +49,7 @@ public class Robot extends TimedRobot
     /**
      * Vision API instance
      */
-    public Vision vision;
+    public LimelightVision vision;
 
     /**
      * Auton Instance
@@ -83,21 +83,13 @@ public class Robot extends TimedRobot
           throw new RuntimeException("Swerve failed to create!", io);
         }
 
-        this.drivebase = new DrivebaseOperator();
+        this.drivebase = new DrivebaseOperator(this.swerve);
         // this.auto = new Auto(swerve);
         this.vision = new LimelightVision("limelight");
 
         drivebase.init();
     }
 
-    /**
-     * Get the swerve subsystem, often for auton mechanics.
-     *
-     * @return The swerve subsystem
-     */
-    public SwerveSubsystem getSwerve() {
-        return this.swerve;
-    }
     /* For tank
     public TankSubsystemFalcon getFalcon() {
         return this.falcon;
@@ -106,6 +98,10 @@ public class Robot extends TimedRobot
         return this.spark;
     }
      */
+
+    public LimelightVision getLimelightVision() {
+        return this.vision;
+    }
 
     /**
      * Runs even if the Robot is disabled.

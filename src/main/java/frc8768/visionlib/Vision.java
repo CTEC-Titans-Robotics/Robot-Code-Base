@@ -5,6 +5,9 @@ import org.photonvision.targeting.TargetCorner;
 
 import java.util.List;
 
+/**
+ * Note: Limelight exposure needs to be tweaked per-comp
+ */
 public abstract class Vision {
 
     /**
@@ -46,4 +49,9 @@ public abstract class Vision {
      * @return The maximum Y point for all corners, or -1 if none is found
      */
     public abstract double getMaxPointY();
+
+    /**
+     * @return ID of the AprilTag if it exists
+     */
+    public abstract int getTargetID();
 }

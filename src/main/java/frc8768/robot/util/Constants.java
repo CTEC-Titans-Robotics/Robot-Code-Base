@@ -37,4 +37,22 @@ public class Constants {
          */
         public static final double MAX_SPEED = 14.5;
     }
+
+    public enum PoseToTagOffset {
+        AMP(new double[] {0, -1.1D});
+        public final double[] offsetVec;
+
+        PoseToTagOffset(double[] offsetVec) {
+            this.offsetVec = offsetVec;
+        }
+
+        public static PoseToTagOffset getTagOffsetsForId(int id) {
+            switch(id) {
+                case 5, 6 -> {
+                    return AMP;
+                }
+            }
+            return null;
+        }
+    }
 }

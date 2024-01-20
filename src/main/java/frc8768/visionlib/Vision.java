@@ -1,57 +1,35 @@
 package frc8768.visionlib;
 
-import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
 import java.util.List;
 
 /**
- * API for Vision-related things.
+ * Note: Limelight exposure needs to be tweaked per-comp
  */
-public class Vision {
-    private final PhotonCamera camera;
-
-    /**
-     * @param type One of {@link Type}
-     *             NOTE: Limelight 3 is pi for now.
-     */
-    public Vision(Type type) {
-        camera = new PhotonCamera(type.name);
-    }
+public abstract class Vision {
 
     /**
      * Get all targets.
      *
      * @return All targets in view.
      */
-    public List<PhotonTrackedTarget> getTargets() {
-        if(camera.getLatestResult().hasTargets()) {
-            return camera.getLatestResult().targets;
-        }
-        return null;
-    }
+    public abstract List<Object> getTargets();
 
     /**
      * Change the current pipeline.
      *
      * @param index Pipeline index, depends on your configuration.
      */
-    public void changePipeline(int index) {
-        camera.setPipelineIndex(index);
-    }
+    public abstract void changePipeline(int index);
 
     /**
      * Get the best target.
      *
      * @return Best target, null if none
      */
-    public PhotonTrackedTarget getBestTarget() {
-        if(camera.getLatestResult().hasTargets()) {
-            return camera.getLatestResult().getBestTarget();
-        }
-        return null;
-    }
+    public abstract Object getBestTarget();
 
     /**
      * Get the Distance to target via trigonometry.
@@ -59,22 +37,10 @@ public class Vision {
      * @param mountAngle The amount of degrees back the limelight is.
      * @param mountHeight Height in inches from center of limelight lens to floor.
      * @param goalHeight Distance in inches from floor to center of target.
+     * @param topY Get the top most location from the camera. See {@link #getMaxPointY() this method.}
      * @return Distance to target, returns -1 on fail.
      */
-    public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
-        PhotonTrackedTarget target = getBestTarget();
-        if(target != null) {
-            double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestCameraToTarget().getY());
-            double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-
-            double distance = (goalHeight - mountHeight) / Math.tan(angleToGoalRadians);
-            if(distance <= 0) {
-                return -1;
-            }
-            return distance;
-        }
-        return -1;
-    }
+    public abstract double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY);
 
     /**
      * Sometimes, you may want to find the maximum Y for corners for the
@@ -82,39 +48,11 @@ public class Vision {
      *
      * @return The maximum Y point for all corners, or -1 if none is found
      */
-    public double getMaxPointY() {
-        PhotonTrackedTarget target = getBestTarget();
-        if(target != null) {
-            double maxY = 0;
-            for(TargetCorner corner : target.getDetectedCorners()) {
-                if(corner.y > maxY) {
-                    maxY = corner.y;
-                }
-            }
-        }
-        return -1;
-    }
+    public abstract double getMaxPointY();
 
     /**
-     * Type of {@link PhotonCamera}
+     * Get the (depending on your configuration, nearest, farthest, etc...) AprilTag id, can be nullable.
+     * @return ID of the AprilTag if it exists
      */
-    public enum Type {
-        /**
-         * Raspberry Pi
-         */
-        PI("pi"),
-        /**
-         * Limelight 1 and 2
-         */
-        LIMELIGHT("limelight"),
-        /**
-         * Glowworm
-         */
-        GLOWWORM("glowworm");
-
-        private String name;
-        Type(String name) {
-            this.name = name;
-        }
-    }
+    public abstract int getTargetID();
 }

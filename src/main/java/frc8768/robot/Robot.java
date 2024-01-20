@@ -6,14 +6,16 @@
 package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
-import frc8768.robot.subsystems.TankSubsystemFalcon;
-import frc8768.robot.subsystems.TankSubsystemSpark;
+import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
+import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
 
 /**
@@ -72,7 +74,7 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
-        drivebase = new DrivebaseOperator();
+        // drivebase = new DrivebaseOperator();
         /*
         * Swerve Example
         * try {
@@ -82,20 +84,13 @@ public class Robot extends TimedRobot
         * }
         */
 
-        this.auto = new Auto(swerve);
-        this.vision = new Vision(Vision.Type.PI);
+        this.drivebase = new DrivebaseOperator(this.swerve);
+        // this.auto = new Auto(swerve);
+        // this.vision = new LimelightVision("limelight");
 
         drivebase.init();
     }
 
-    /**
-     * Get the swerve subsystem, often for auton mechanics.
-     *
-     * @return The swerve subsystem
-     */
-    public SwerveSubsystem getSwerve() {
-        return this.swerve;
-    }
     /* For tank
     public TankSubsystemFalcon getFalcon() {
         return this.falcon;
@@ -104,6 +99,10 @@ public class Robot extends TimedRobot
         return this.spark;
     }
      */
+
+    public Vision getVision() {
+        return this.vision;
+    }
 
     /**
      * Runs even if the Robot is disabled.
@@ -148,7 +147,8 @@ public class Robot extends TimedRobot
      * Runs every "tick" of Teleop time
      */
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+    }
 
     /**
      * Runs at the start of Test state

@@ -107,7 +107,7 @@ public class DrivebaseOperator extends Operator {
 
         if(MathUtil.isNear(offset.offsetVec[0], bestScenarioX, 0.0508) &&
                 MathUtil.isNear(offset.offsetVec[1], bestScenarioZ, 0.0508) &&
-                MathUtil.isNear(0, bestScenarioR, 0.0873)) {
+                MathUtil.isNear(0, bestScenarioR, 0.0349)) {
             isRelocating = false;
             return;
         }
@@ -115,6 +115,6 @@ public class DrivebaseOperator extends Operator {
         Translation2d translation2d = new Translation2d(
                 MathUtil.isNear(offset.offsetVec[1], bestScenarioZ, 0.0508) ? 0 : MathUtil.clamp(-bestScenarioZ * 0.25d, -0.152, 0.152),
                 MathUtil.isNear(offset.offsetVec[0], bestScenarioX, 0.0508) ? 0 : MathUtil.clamp(bestScenarioX * 0.25d, -0.152, 0.152));
-        swerve.drive(translation2d, MathUtil.isNear(0, bestScenarioR, 0.0873) ? 0 : MathUtil.clamp(bestScenarioR, -0.7, 0.7), false, false, Constants.BOT_CENTER);
+        swerve.drive(translation2d, MathUtil.isNear(0, bestScenarioR, 0.0349) ? 0 : MathUtil.clamp(bestScenarioR, -0.7, 0.7), false, false, Constants.BOT_CENTER);
     }
 }

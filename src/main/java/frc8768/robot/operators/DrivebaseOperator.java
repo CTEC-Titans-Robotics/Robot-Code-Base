@@ -23,7 +23,6 @@ public class DrivebaseOperator extends Operator {
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
 
-
     public DrivebaseOperator(SwerveSubsystem swerve) {
         super("Drivebase");
 
@@ -72,6 +71,10 @@ public class DrivebaseOperator extends Operator {
     }
 
     int failCount = 0;
+
+    /**
+     * Relocates the bot based on the nearest AprilTags position, with offsets set in {@link frc8768.robot.util.Constants}
+     */
     private void relocate() {
         Vision vision = Robot.getInstance().vision;
 

@@ -46,7 +46,7 @@ public class Robot extends TimedRobot
     /**
      * Vision API instance
      */
-    public LimelightVision vision;
+    public Vision vision;
 
     /**
      * Auton Instance
@@ -100,7 +100,7 @@ public class Robot extends TimedRobot
     }
      */
 
-    public LimelightVision getLimelightVision() {
+    public Vision getVision() {
         return this.vision;
     }
 

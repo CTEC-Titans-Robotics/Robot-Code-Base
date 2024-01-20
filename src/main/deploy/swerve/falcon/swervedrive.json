@@ -2,9 +2,9 @@
   "maxSpeed": 14.5,
   "optimalVoltage": 12,
   "imu": {
-    "type": "navx",
+    "type": "pigeon2",
     "id": 13,
-    "canbus": "canivore"
+    "canbus": null
   },
   "invertedIMU": true,
   "modules": [

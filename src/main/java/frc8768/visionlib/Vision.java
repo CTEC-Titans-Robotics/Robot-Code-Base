@@ -1,8 +1,5 @@
 package frc8768.visionlib;
 
-import org.photonvision.targeting.PhotonTrackedTarget;
-import org.photonvision.targeting.TargetCorner;
-
 import java.util.List;
 
 /**

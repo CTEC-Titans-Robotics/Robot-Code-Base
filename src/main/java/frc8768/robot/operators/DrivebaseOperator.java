@@ -34,6 +34,7 @@ public class DrivebaseOperator extends Operator {
         LogUtil.registerLogger(swerve::log);
         LogUtil.registerDashLogger(swerve::dashboard);
 
+        // We update odometry on our own thread just in case
         this.swerve.getSwerveDrive().stopOdometryThread();
     }
 

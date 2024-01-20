@@ -51,6 +51,7 @@ public abstract class Vision {
     public abstract double getMaxPointY();
 
     /**
+     * Get the (depending on your configuration, nearest, farthest, etc...) AprilTag id, can be nullable.
      * @return ID of the AprilTag if it exists
      */
     public abstract int getTargetID();

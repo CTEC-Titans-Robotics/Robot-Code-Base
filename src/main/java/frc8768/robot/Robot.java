@@ -6,8 +6,12 @@
 package frc8768.robot;
 
 import com.ctre.phoenix.led.CANdle;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
@@ -28,6 +32,8 @@ import java.io.IOException;
  */
 public class Robot extends TimedRobot
 {
+    private static final XboxController controller = new XboxController(Constants.driverControllerId);
+
     /**
      * Robot instance, can't be seen across threads
      */
@@ -152,6 +158,7 @@ public class Robot extends TimedRobot
     public void teleopPeriodic() {}
 
     CANdle LED = new CANdle(3);
+    CANSparkFlex flex = new CANSparkFlex(4, MotorType.kBrushless);
 
     /**
      * Runs at the start of Test state
@@ -168,5 +175,17 @@ public class Robot extends TimedRobot
     @Override
     public void testPeriodic() {
         LED.setLEDs(255, 0, 0);
+
+        if(controller.getAButtonPressed()) {
+            flex.set(0.25);
+        } else if(controller.getBButtonPressed()) {
+            flex.set(0.5);
+        } else if(controller.getYButtonPressed()) {
+            flex.set(0.75);
+        } else if(controller.getXButtonPressed()) {
+            flex.set(1);
+        } else {
+            flex.set(0);
+        }
     }
 }

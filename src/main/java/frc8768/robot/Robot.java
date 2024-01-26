@@ -151,7 +151,7 @@ public class Robot extends TimedRobot
     @Override
     public void teleopPeriodic() {}
 
-    CANdle LED = new CANdle(0);
+    CANdle LED = new CANdle(3);
 
     /**
      * Runs at the start of Test state

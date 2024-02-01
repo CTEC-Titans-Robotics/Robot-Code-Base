@@ -56,6 +56,8 @@ public abstract class Operator {
         String origName = opThread.getName();
         opThread = new Thread(this::runLoop);
         opThread.setName(String.format("%s Thread", origName));
+
+        opThread.start();
     }
 
     /**

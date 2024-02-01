@@ -46,18 +46,18 @@ public class Constants {
         /**
          * Example Amp offset.
          */
-        AMP(new double[] {0, -1.1D});
+        AMP(new Translation2d(0, -1.1D));
 
         /**
          * 2-dimensional vector.
          */
-        public final double[] offsetVec;
+        public final Translation2d offsetVec;
 
         /**
          * Default constructor
          * @param offsetVec 2-sized array with 2d dimensions from the AprilTag
          */
-        PoseToTagOffset(double[] offsetVec) {
+        PoseToTagOffset(Translation2d offsetVec) {
             this.offsetVec = offsetVec;
         }
 

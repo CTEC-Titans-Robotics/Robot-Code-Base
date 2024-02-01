@@ -1,7 +1,6 @@
 package frc8768.robot.util;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import frc8768.visionlib.Vision;
 
 public class Constants {
     /**
@@ -39,33 +38,14 @@ public class Constants {
         public static final double MAX_SPEED = 14.5;
     }
 
-    /**
-     * Offsets in a 2D environment from an AprilTag based on ID
-     */
     public enum PoseToTagOffset {
-        /**
-         * Example Amp offset.
-         */
-        AMP(new Translation2d(0, -1.1D));
+        AMP(new double[] {0, -1.1D});
+        public final double[] offsetVec;
 
-        /**
-         * 2-dimensional vector.
-         */
-        public final Translation2d offsetVec;
-
-        /**
-         * Default constructor
-         * @param offsetVec 2-sized array with 2d dimensions from the AprilTag
-         */
-        PoseToTagOffset(Translation2d offsetVec) {
+        PoseToTagOffset(double[] offsetVec) {
             this.offsetVec = offsetVec;
         }
 
-        /**
-         * Get the 2D offsets from an AprilTag ID
-         * @param id The ID of the AprilTag, see {@link Vision#getTargetID()}
-         * @return An instance of PoseToTagOffset. Holds a 2-dimensional vector.
-         */
         public static PoseToTagOffset getTagOffsetsForId(int id) {
             switch(id) {
                 case 5, 6 -> {

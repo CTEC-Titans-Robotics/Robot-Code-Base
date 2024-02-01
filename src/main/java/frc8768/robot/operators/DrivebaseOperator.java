@@ -18,13 +18,11 @@ import java.util.logging.Level;
 public class DrivebaseOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
     private final SwerveSubsystem swerve;
-
-    // private final ArmSubsystem armSubsystem = new ArmSubsystem(15);
-    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem(16, 17);
     private boolean isRelocating = false;
 
-    // private final TankSubsystemSpark sparkTank;
-    // private final TankSubsystemFalcon falconTank;
+    // private final ArmSubsystem armSubsystem = new ArmSubsystem(15);
+    // private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem(16, 17);
+
 
     public DrivebaseOperator(SwerveSubsystem swerve) {
         super("Drivebase");
@@ -37,14 +35,14 @@ public class DrivebaseOperator extends Operator {
         LogUtil.registerLogger(swerve::log);
         LogUtil.registerDashLogger(swerve::dashboard);
 
-        // We update odometry on our own thread just in case
         this.swerve.getSwerveDrive().stopOdometryThread();
     }
 
     @Override
     public void run() {
         swerve.getSwerveDrive().updateOdometry();
-        intakeSubsystem.tick();
+
+        // intakeSubsystem.tick();
 
         // if(controller.getLeftBumper()) {
         //     armSubsystem.up();
@@ -54,9 +52,9 @@ public class DrivebaseOperator extends Operator {
         //     armSubsystem.stop();
         // }
 
-        if(controller.getRightBumperPressed()) {
-            intakeSubsystem.run();
-        }
+        // if(controller.getRightBumperPressed()) {
+        //     intakeSubsystem.run();
+        // }
 
         if(controller.getBButtonPressed()) {
             swerve.getSwerveDrive().zeroGyro();
@@ -91,15 +89,7 @@ public class DrivebaseOperator extends Operator {
         // sparkTank.drive(translation2d);
     }
 
-    public IntakeSubsystem getIntakeSubsystem() {
-        return intakeSubsystem;
-    }
-
     int failCount = 0;
-
-    /**
-     * Relocates the bot based on the nearest AprilTags position, with offsets set in {@link frc8768.robot.util.Constants}
-     */
     private void relocate() {
         Vision vision = Robot.getInstance().vision;
 
@@ -128,21 +118,21 @@ public class DrivebaseOperator extends Operator {
 
         Pose3d pose = ((LimelightHelpers.LimelightTarget_Fiducial)target).getRobotPose_TargetSpace();
 
-        double bestScenarioX = pose.getX() - offset.offsetVec.getX();
-        double bestScenarioZ = pose.getZ() - offset.offsetVec.getY();
+        double bestScenarioX = pose.getX() - offset.offsetVec[0];
+        double bestScenarioZ = pose.getZ() - offset.offsetVec[1];
 
         double bestScenarioR = pose.getRotation().getY();
 
-        if(MathUtil.isNear(offset.offsetVec.getX(), bestScenarioX, 0.0508) &&
-                MathUtil.isNear(offset.offsetVec.getY(), bestScenarioZ, 0.0508) &&
+        if(MathUtil.isNear(offset.offsetVec[0], bestScenarioX, 0.0508) &&
+                MathUtil.isNear(offset.offsetVec[1], bestScenarioZ, 0.0508) &&
                 MathUtil.isNear(0, bestScenarioR, 0.0349)) {
             isRelocating = false;
             return;
         }
 
         Translation2d translation2d = new Translation2d(
-                MathUtil.isNear(offset.offsetVec.getY(), bestScenarioZ, 0.0508) ? 0 : MathUtil.clamp(-bestScenarioZ * 0.25d, -0.152, 0.152),
-                MathUtil.isNear(offset.offsetVec.getX(), bestScenarioX, 0.0508) ? 0 : MathUtil.clamp(bestScenarioX * 0.25d, -0.152, 0.152));
+                MathUtil.isNear(offset.offsetVec[1], bestScenarioZ, 0.0508) ? 0 : MathUtil.clamp(-bestScenarioZ * 0.25d, -0.152, 0.152),
+                MathUtil.isNear(offset.offsetVec[0], bestScenarioX, 0.0508) ? 0 : MathUtil.clamp(bestScenarioX * 0.25d, -0.152, 0.152));
         swerve.drive(translation2d, MathUtil.isNear(0, bestScenarioR, 0.0349) ? 0 : MathUtil.clamp(bestScenarioR, -0.7, 0.7), false, false, Constants.BOT_CENTER);
     }
 }

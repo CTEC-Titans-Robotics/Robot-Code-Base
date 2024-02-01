@@ -17,11 +17,9 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.LimelightVision;
-import frc8768.robot.util.Constants;
 import frc8768.visionlib.Vision;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -51,7 +49,7 @@ public class Robot extends TimedRobot
     /**
      * Vision API instance
      */
-    public Vision vision;
+    public LimelightVision vision;
 
     /**
      * Auton Instance
@@ -85,9 +83,9 @@ public class Robot extends TimedRobot
           throw new RuntimeException("Swerve failed to create!", io);
         }
 
-        this.drivebase = new DrivebaseOperator();
-        // this.auto = new Auto(swerve, drivebase.getArmSubsystem(), drivebase.getIntakeSubsystem());
-        this.vision = new Vision(Vision.Type.PI);
+        this.drivebase = new DrivebaseOperator(this.swerve);
+        // this.auto = new Auto(swerve);
+        this.vision = new LimelightVision("limelight");
 
         drivebase.init();
     }
@@ -101,7 +99,7 @@ public class Robot extends TimedRobot
     }
      */
 
-    public Vision getVision() {
+    public LimelightVision getLimelightVision() {
         return this.vision;
     }
 
@@ -110,14 +108,9 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
-
-        if(drivebase != null && !drivebase.isAlive()) {
-            LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
-            drivebase.reviveThread();
-        }
-
         LogUtil.run();
+
+        CommandScheduler.getInstance().run();
     }
 
     /**

@@ -13,7 +13,7 @@ public abstract class Operator {
     /**
      * The thread the operator runs on
      */
-    private final Thread opThread;
+    private Thread opThread;
 
     /**
      * Operator constructor.
@@ -48,4 +48,20 @@ public abstract class Operator {
      * The operator-specific code
      */
     public abstract void run();
+
+    /**
+     * Should an essential subsystem's thread die, restart it.
+     */
+    public void reviveThread() {
+        String origName = opThread.getName();
+        opThread = new Thread(this::runLoop);
+        opThread.setName(String.format("%s Thread", origName));
+    }
+
+    /**
+     * Check thread status
+     */
+    public boolean isAlive() {
+        return opThread.isAlive();
+    }
 }

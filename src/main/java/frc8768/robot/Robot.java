@@ -18,6 +18,8 @@ import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
 
+import java.util.logging.Level;
+
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -109,9 +111,14 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotPeriodic() {
-        LogUtil.run();
-
         CommandScheduler.getInstance().run();
+
+        if(drivebase != null && !drivebase.isAlive()) {
+            LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
+            drivebase.reviveThread();
+        }
+
+        LogUtil.run();
     }
 
     /**

@@ -20,10 +20,6 @@ public class DrivebaseOperator extends Operator {
     private final SwerveSubsystem swerve;
     private boolean isRelocating = false;
 
-    // private final ArmSubsystem armSubsystem = new ArmSubsystem(15);
-    // private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem(16, 17);
-
-
     public DrivebaseOperator(SwerveSubsystem swerve) {
         super("Drivebase");
 

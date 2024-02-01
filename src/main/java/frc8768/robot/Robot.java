@@ -110,6 +110,10 @@ public class Robot extends TimedRobot
     public void robotPeriodic() {
         LogUtil.run();
 
+        if(this.drivebase != null && this.drivebase.isAlive()) {
+            this.drivebase.reviveThread();
+        }
+
         CommandScheduler.getInstance().run();
     }
 

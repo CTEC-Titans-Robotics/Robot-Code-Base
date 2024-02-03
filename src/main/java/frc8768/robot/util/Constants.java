@@ -39,10 +39,10 @@ public class Constants {
     }
 
     public enum PoseToTagOffset {
-        AMP(new double[] {0, -1.1D});
-        public final double[] offsetVec;
+        AMP(new Translation2d(0, -1.1D));
+        public final Translation2d offsetVec;
 
-        PoseToTagOffset(double[] offsetVec) {
+        PoseToTagOffset(Translation2d offsetVec) {
             this.offsetVec = offsetVec;
         }
 

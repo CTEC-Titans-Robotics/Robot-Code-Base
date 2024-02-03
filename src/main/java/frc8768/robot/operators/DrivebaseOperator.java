@@ -34,6 +34,8 @@ public class DrivebaseOperator extends Operator {
         this.swerve.getSwerveDrive().stopOdometryThread();
     }
 
+
+    //RUN TIME
     @Override
     public void run() {
         swerve.getSwerveDrive().updateOdometry();
@@ -85,6 +87,7 @@ public class DrivebaseOperator extends Operator {
         // sparkTank.drive(translation2d);
     }
 
+    //RELOCATION FUNCTION V
     int failCount = 0;
     private void relocate() {
         Vision vision = Robot.getInstance().vision;
@@ -114,21 +117,21 @@ public class DrivebaseOperator extends Operator {
 
         Pose3d pose = ((LimelightHelpers.LimelightTarget_Fiducial)target).getRobotPose_TargetSpace();
 
-        double bestScenarioX = pose.getX() - offset.offsetVec[0];
-        double bestScenarioZ = pose.getZ() - offset.offsetVec[1];
+        double bestScenarioX = pose.getX() - offset.offsetVec.getX();
+        double bestScenarioZ = pose.getZ() - offset.offsetVec.getY();
 
         double bestScenarioR = pose.getRotation().getY();
 
-        if(MathUtil.isNear(offset.offsetVec[0], bestScenarioX, 0.0508) &&
-                MathUtil.isNear(offset.offsetVec[1], bestScenarioZ, 0.0508) &&
+        if(MathUtil.isNear(offset.offsetVec.getX(), bestScenarioX, 0.0508) &&
+                MathUtil.isNear(offset.offsetVec.getY(), bestScenarioZ, 0.0508) &&
                 MathUtil.isNear(0, bestScenarioR, 0.0349)) {
             isRelocating = false;
             return;
         }
 
         Translation2d translation2d = new Translation2d(
-                MathUtil.isNear(offset.offsetVec[1], bestScenarioZ, 0.0508) ? 0 : MathUtil.clamp(-bestScenarioZ * 0.25d, -0.152, 0.152),
-                MathUtil.isNear(offset.offsetVec[0], bestScenarioX, 0.0508) ? 0 : MathUtil.clamp(bestScenarioX * 0.25d, -0.152, 0.152));
+                MathUtil.isNear(offset.offsetVec.getY(), bestScenarioZ, 0.0508) ? 0 : MathUtil.clamp(-bestScenarioZ * 0.25d, -0.152, 0.152),
+                MathUtil.isNear(offset.offsetVec.getX(), bestScenarioX, 0.0508) ? 0 : MathUtil.clamp(bestScenarioX * 0.25d, -0.152, 0.152));
         swerve.drive(translation2d, MathUtil.isNear(0, bestScenarioR, 0.0349) ? 0 : MathUtil.clamp(bestScenarioR, -0.7, 0.7), false, false, Constants.BOT_CENTER);
     }
 }

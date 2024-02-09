@@ -5,9 +5,16 @@
 
 package frc8768.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -49,7 +56,8 @@ public class Robot extends TimedRobot
     /**
      * Vision API instance
      */
-    public LimelightVision vision;
+    public LimelightVision leftVision;
+    public LimelightVision rightVision;
 
     /**
      * Auton Instance
@@ -77,6 +85,9 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
+        this.leftVision = new LimelightVision("limelight-left");
+        this.rightVision = new LimelightVision("limelight-right");
+
         try {
           this.swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
         } catch (IOException io) {
@@ -85,9 +96,28 @@ public class Robot extends TimedRobot
 
         this.drivebase = new DrivebaseOperator(this.swerve);
         // this.auto = new Auto(swerve);
-        this.vision = new LimelightVision("limelight");
 
         drivebase.init();
+
+        HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
+                new PIDConstants(0.045849, 0.00, 0.0068069),
+                new PIDConstants(0.0091857, 0.00, 0.00052987),
+                Constants.SwerveConfig.MAX_SPEED,
+                0.33,
+                new ReplanningConfig(
+                        true,
+                        true
+                )
+        );
+
+        AutoBuilder.configureHolonomic(
+                swerve.getSwerveDrive()::getPose,
+                swerve.getSwerveDrive()::resetOdometry,
+                swerve.getSwerveDrive()::getRobotVelocity,
+                swerve.getSwerveDrive()::setChassisSpeeds,
+                config,
+                () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
+                swerve);
     }
 
     /* For tank
@@ -100,7 +130,7 @@ public class Robot extends TimedRobot
      */
 
     public LimelightVision getLimelightVision() {
-        return this.vision;
+        return this.leftVision;
     }
 
     /**
@@ -108,13 +138,13 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotPeriodic() {
+        CommandScheduler.getInstance().run();
+
         LogUtil.run();
 
         if(this.drivebase != null && !this.drivebase.isAlive()) {
             this.drivebase.reviveThread();
         }
-
-        CommandScheduler.getInstance().run();
     }
 
     /**

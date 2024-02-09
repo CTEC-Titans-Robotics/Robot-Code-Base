@@ -1,13 +1,11 @@
 package frc8768.robot.auto;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
@@ -26,26 +24,6 @@ public class Auto {
     public Auto(SwerveSubsystem swerve) {
         this.swerve = swerve;
         SwerveDrive swerveDrive = this.swerve.getSwerveDrive();
-
-        HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-                new PIDConstants(0.00, 0.00, 0.01),
-                new PIDConstants(0.00, 0.00, 0.01),
-                Constants.SwerveConfig.MAX_SPEED,
-                327.025,
-                new ReplanningConfig(
-                        false,
-                        true
-                )
-        );
-
-        AutoBuilder.configureHolonomic(
-                swerveDrive::getPose,
-                swerveDrive::resetOdometry,
-                swerveDrive::getRobotVelocity,
-                swerveDrive::setChassisSpeeds,
-                config,
-                () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
-                swerve);
     }
 
     /**

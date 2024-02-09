@@ -1,13 +1,21 @@
 package frc8768.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc8768.robot.Robot;
 import frc8768.robot.util.MathUtil;
 import frc8768.robot.util.MotorType;
 import frc8768.robot.util.Constants;
+import frc8768.visionlib.LimelightVision;
+import frc8768.visionlib.Vision;
+import frc8768.visionlib.helpers.LimelightHelpers;
 import swervelib.SwerveDrive;
+import swervelib.SwerveModule;
 import swervelib.parser.SwerveParser;
 
 import java.io.File;
@@ -25,6 +33,7 @@ public class SwerveSubsystem implements Subsystem {
      * The underlying YAGSL implementation
      */
     private SwerveDrive swerveDrive;
+    private VisionOdomThread visionUpdateThread;
 
     /**
      * @param type Neos or Falcons, see {@link MotorType}
@@ -36,6 +45,8 @@ public class SwerveSubsystem implements Subsystem {
             case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
             case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
         }
+        this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLimelightVision(), "VisionOdom Thread");
+        this.visionUpdateThread.start();
     }
 
     /**
@@ -77,15 +88,28 @@ public class SwerveSubsystem implements Subsystem {
     public Map<String, String> dashboard() {
         HashMap<String, String> map = new HashMap<>();
         for(int i = 0; i < 4; i++) {
+            SwerveModule module = swerveDrive.getModules()[i];
+
             map.put(String.format("Module %d Drive: Velocity", i),
-                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getVelocity()));
+                    String.valueOf(module.getDriveMotor().getVelocity()));
             map.put(String.format("Module %d Angle: Velocity", i),
-                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getVelocity()));
+                    String.valueOf(module.getAngleMotor().getVelocity()));
 
             map.put(String.format("Module %d Drive: Position", i),
-                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getPosition()));
+                    String.valueOf(module.getDriveMotor().getPosition()));
             map.put(String.format("Module %d Angle: Position", i),
-                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getPosition()));
+                    String.valueOf(module.getAngleMotor().getPosition()));
+
+            Object angleMotorObj = module.getAngleMotor().getMotor();
+            Object driveMotorObj = module.getDriveMotor().getMotor();
+            if(angleMotorObj instanceof CANSparkMax sparkMax) {
+                map.put(String.format("Module %d Angle: Temp", i),
+                        String.valueOf(sparkMax.getMotorTemperature()));
+            }
+            if(driveMotorObj instanceof CANSparkMax sparkMax) {
+                map.put(String.format("Module %d Drive: Temp", i),
+                        String.valueOf(sparkMax.getMotorTemperature()));
+            }
         }
         return map;
     }
@@ -99,5 +123,29 @@ public class SwerveSubsystem implements Subsystem {
         ArrayList<String> list = new ArrayList<>();
         // Insert string buffer, different logic for detecting errors here
         return list;
+    }
+
+    public static class VisionOdomThread extends Thread {
+        private SwerveSubsystem swerve;
+        private LimelightVision vision;
+
+        public VisionOdomThread(SwerveSubsystem swerve, LimelightVision vision, String name) {
+            super(name);
+            this.swerve = swerve;
+            this.vision = vision;
+        }
+
+        @Override
+        public void run() {
+            while(true) {
+                LimelightHelpers.Results target = (LimelightHelpers.Results) vision.getBestTarget();
+                if(target == null)
+                    continue;
+
+                swerve.getSwerveDrive().addVisionMeasurement(target.getBotPose2d_wpiBlue(), Timer.getFPGATimestamp());
+
+                swerve.getSwerveDrive().setGyroOffset(new Rotation3d(0, 0, target.getBotPose3d_wpiBlue().getRotation().getRadians()));
+            }
+        }
     }
 }

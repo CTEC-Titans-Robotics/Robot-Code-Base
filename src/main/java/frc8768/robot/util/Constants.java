@@ -1,6 +1,9 @@
 package frc8768.robot.util;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import me.nabdev.pathfinding.Pathfinder;
+import me.nabdev.pathfinding.PathfinderBuilder;
+import me.nabdev.pathfinding.utilities.FieldLoader;
 
 public class Constants {
     /**
@@ -23,6 +26,11 @@ public class Constants {
      */
     public static final Translation2d BOT_CENTER = new Translation2d(0, 0);
 
+    public static final Pathfinder PATHFINDER = new PathfinderBuilder(FieldLoader.Field.CRESCENDO_2024)
+            .setRobotWidth(0.66)
+            .setRobotLength(0.66)
+            .build();
+
     /**
      * Swerve-specific configuration.
      */
@@ -39,7 +47,8 @@ public class Constants {
     }
 
     public enum PoseToTagOffset {
-        AMP(new Translation2d(0, -1.1D));
+        AMP(new Translation2d(0, -1.1D)),
+        SPEAKER(new Translation2d(0.11, -1.24D));
         public final Translation2d offsetVec;
 
         PoseToTagOffset(Translation2d offsetVec) {
@@ -50,6 +59,9 @@ public class Constants {
             switch(id) {
                 case 5, 6 -> {
                     return AMP;
+                }
+                case 4, 7 -> {
+                    return SPEAKER;
                 }
             }
             return null;

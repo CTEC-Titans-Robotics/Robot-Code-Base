@@ -18,6 +18,7 @@ import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
 
+import java.io.IOException;
 import java.util.logging.Level;
 
 /**
@@ -76,15 +77,11 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
-        // drivebase = new DrivebaseOperator();
-        /*
-        * Swerve Example
-        * try {
-        *   swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
-        * } catch (IOException io) {
-        *   throw new RuntimeException("Swerve failed to create!", io);
-        * }
-        */
+        try {
+          swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
+        } catch (IOException io) {
+          throw new RuntimeException("Swerve failed to create!", io);
+        }
 
         this.drivebase = new DrivebaseOperator(this.swerve);
         // this.auto = new Auto(swerve);

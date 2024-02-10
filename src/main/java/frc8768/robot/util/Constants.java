@@ -31,7 +31,7 @@ public class Constants {
         /**
          * Current type of swerve motors.
          */
-        public static final MotorType currentType = MotorType.SPARKMAX;
+        public static final MotorType currentType = MotorType.TALONFX;
 
         /**
          * Max drive motor speed.

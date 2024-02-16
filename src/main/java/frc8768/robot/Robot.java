@@ -111,6 +111,11 @@ public class Robot extends TimedRobot
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        LogUtil.run();
+
+        if(this.drivebase != null && !this.drivebase.isAlive()) {
+            this.drivebase.reviveThread();
+        }
 
         if(drivebase != null && !drivebase.isAlive()) {
             LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");

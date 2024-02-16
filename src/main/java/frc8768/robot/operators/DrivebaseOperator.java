@@ -23,7 +23,7 @@ public class DrivebaseOperator extends Operator {
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
 
-    public  DrivebaseOperator(SwerveSubsystem swerve) {
+    public DrivebaseOperator(SwerveSubsystem swerve) {
         super("Drivebase");
 
         this.swerve = swerve;

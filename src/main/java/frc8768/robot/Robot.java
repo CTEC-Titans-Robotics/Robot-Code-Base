@@ -6,22 +6,18 @@
 package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
-import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
 
 import java.io.IOException;
 import java.util.logging.Level;
-
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -173,7 +169,7 @@ public class Robot extends TimedRobot
     @Override
     public void testPeriodic() {
         for(swervelib.SwerveModule module : this.swerve.getSwerveDrive().getModules()) {
-            module.setAngle(90);
+            SmartDashboard.putNumber("Module " + module.moduleNumber + " Encoder", module.getAbsolutePosition());
         }
     }
 }

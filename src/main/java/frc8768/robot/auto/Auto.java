@@ -45,6 +45,7 @@ public class Auto {
                 swerveDrive::getRobotVelocity,
                 swerveDrive::setChassisSpeeds,
                 config,
+                () -> false,
                 swerve);
 
         autonChooser = new SendableChooser<>();

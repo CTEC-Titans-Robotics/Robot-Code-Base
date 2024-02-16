@@ -21,6 +21,8 @@ import frc8768.visionlib.Vision;
 import java.io.IOException;
 import java.util.logging.Level;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
+
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -87,7 +89,7 @@ public class Robot extends TimedRobot
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
-        drivebase.init();
+        this.drivebase.init();
     }
 
     /* For tank
@@ -164,5 +166,9 @@ public class Robot extends TimedRobot
      * Runs every "tick" of Test time
      */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+        for(swervelib.SwerveModule module : this.swerve.getSwerveDrive().getModules()) {
+            module.setAngle(90);
+        }
+    }
 }

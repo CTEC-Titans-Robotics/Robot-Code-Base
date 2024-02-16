@@ -46,6 +46,10 @@ public class DrivebaseOperator extends Operator {
             swerve.getSwerveDrive().zeroGyro();
         }
 
+        if(controller.getXButtonPressed()) {
+            swerve.getSwerveDrive().lockPose();
+        }
+
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
                 MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
@@ -61,7 +65,7 @@ public class DrivebaseOperator extends Operator {
             relocate();
         } else {
             // Swerve Example
-            swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), false, false, Constants.BOT_CENTER);
+            swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
         }
 
         // Tank Example (Falcons)

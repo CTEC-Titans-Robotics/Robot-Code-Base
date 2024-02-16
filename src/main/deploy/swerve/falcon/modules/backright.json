@@ -7,12 +7,12 @@
   "drive": {
     "type": "talonfx",
     "id": 13,
-    "canbus": null
+    "canbus": "swerve"
   },
   "angle": {
     "type": "talonfx",
     "id": 9,
-    "canbus": null
+    "canbus": "swerve"
   },
   "inverted": {
     "angle": true,
@@ -25,6 +25,7 @@
   "encoder": {
     "type": "cancoder",
     "id": 5,
-    "canbus": null
-  }
+    "canbus": "swerve"
+  },
+  "absoluteEncoderInverted": false
 }

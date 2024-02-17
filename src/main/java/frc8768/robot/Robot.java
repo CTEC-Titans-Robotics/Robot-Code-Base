@@ -166,7 +166,7 @@ public class Robot extends TimedRobot
     @Override
     public void testInit() {
         LED.configV5Enabled(true);
-        LED.configLEDType(CANdle.LEDStripType.BRGW);
+        LED.configLEDType(CANdle.LEDStripType.BRG);
     }
 
     /**
@@ -174,18 +174,21 @@ public class Robot extends TimedRobot
      */
     @Override
     public void testPeriodic() {
-        LED.setLEDs(255, 0, 0);
-
-        if(controller.getAButtonPressed()) {
+        if(controller.getAButton()) {
             flex.set(0.25);
-        } else if(controller.getBButtonPressed()) {
+            LED.setLEDs(0, 0, 255);
+        } else if(controller.getBButton()) {
             flex.set(0.5);
-        } else if(controller.getYButtonPressed()) {
+            LED.setLEDs(0, 255, 0);
+        } else if(controller.getYButton()) {
             flex.set(0.75);
-        } else if(controller.getXButtonPressed()) {
+            LED.setLEDs(205, 127, 50);
+        } else if(controller.getXButton()) {
             flex.set(1);
+            LED.setLEDs(255, 0, 0);
         } else {
             flex.set(0);
+            LED.setLEDs(0, 0, 0);
         }
     }
 }

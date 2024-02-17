@@ -97,27 +97,7 @@ public class Robot extends TimedRobot
         this.drivebase = new DrivebaseOperator(this.swerve);
         // this.auto = new Auto(swerve);
 
-        drivebase.init();
-
-        HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-                new PIDConstants(0.045849, 0.00, 0.0068069),
-                new PIDConstants(0.0091857, 0.00, 0.00052987),
-                Constants.SwerveConfig.MAX_SPEED,
-                0.33,
-                new ReplanningConfig(
-                        true,
-                        true
-                )
-        );
-
-        AutoBuilder.configureHolonomic(
-                swerve.getSwerveDrive()::getPose,
-                swerve.getSwerveDrive()::resetOdometry,
-                swerve.getSwerveDrive()::getRobotVelocity,
-                swerve.getSwerveDrive()::setChassisSpeeds,
-                config,
-                () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
-                swerve);
+        this.drivebase.init();
     }
 
     /* For tank

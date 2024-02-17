@@ -1,6 +1,10 @@
 package frc8768.robot.util;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import me.nabdev.pathfinding.Pathfinder;
 import me.nabdev.pathfinding.PathfinderBuilder;
 import me.nabdev.pathfinding.utilities.FieldLoader;
@@ -26,10 +30,7 @@ public class Constants {
      */
     public static final Translation2d BOT_CENTER = new Translation2d(0, 0);
 
-    public static final Pathfinder PATHFINDER = new PathfinderBuilder(FieldLoader.Field.CRESCENDO_2024)
-            .setRobotWidth(0.66)
-            .setRobotLength(0.66)
-            .build();
+    public static final Translation2d FIELD_SIZE = new Translation2d(16.54175, 8.21055);
 
     /**
      * Swerve-specific configuration.
@@ -46,25 +47,25 @@ public class Constants {
         public static final double MAX_SPEED = 14.5;
     }
 
-    public enum PoseToTagOffset {
-        AMP(new Translation2d(0, -1.1D)),
-        SPEAKER(new Translation2d(0.11, -1.24D));
-        public final Translation2d offsetVec;
+    public enum FieldWaypoints {
+        AMP(new Pose2d(new Translation2d(1.79, 7.67),
+                            Rotation2d.fromDegrees(90))),
+        SPEAKER(new Pose2d(new Translation2d(1.25, 5.52),
+                            Rotation2d.fromDegrees(180)));
 
-        PoseToTagOffset(Translation2d offsetVec) {
-            this.offsetVec = offsetVec;
+        private Pose2d redPose;
+        private Pose2d bluePose;
+
+        FieldWaypoints(Pose2d bluePose) {
+            this.bluePose = bluePose;
+            this.redPose = new Pose2d(new Translation2d(FIELD_SIZE.getX() - bluePose.getX(), bluePose.getY()), bluePose.getRotation());
         }
 
-        public static PoseToTagOffset getTagOffsetsForId(int id) {
-            switch(id) {
-                case 5, 6 -> {
-                    return AMP;
-                }
-                case 4, 7 -> {
-                    return SPEAKER;
-                }
+        public Pose2d getPose2d() {
+            if(DriverStation.getAlliance().isPresent()) {
+                return DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? bluePose : redPose;
             }
-            return null;
+            return this.bluePose;
         }
     }
 }

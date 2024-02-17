@@ -25,6 +25,7 @@ import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
+import frc8768.visionlib.helpers.LimelightHelpers;
 
 import java.io.IOException;
 
@@ -98,6 +99,26 @@ public class Robot extends TimedRobot
         // this.auto = new Auto(swerve);
 
         this.drivebase.init();
+
+        HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
+                new PIDConstants(0.045849, 0.00, 0.0068069),
+                new PIDConstants(0.0091857, 0.00, 0.00052987),
+                Constants.SwerveConfig.MAX_SPEED,
+                0.66,
+                new ReplanningConfig(
+                        true,
+                        true
+                )
+        );
+
+        AutoBuilder.configureHolonomic(
+                this.swerve.getSwerveDrive()::getPose,
+                this.swerve.getSwerveDrive()::resetOdometry,
+                this.swerve.getSwerveDrive()::getRobotVelocity,
+                this.swerve.getSwerveDrive()::setChassisSpeeds,
+                config,
+                () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
+                this.swerve);
     }
 
     /* For tank
@@ -124,6 +145,10 @@ public class Robot extends TimedRobot
 
         if(this.drivebase != null && !this.drivebase.isAlive()) {
             this.drivebase.reviveThread();
+        }
+
+        if(DriverStation.getAlliance().isPresent()) {
+            LimelightHelpers.setPipelineIndex("limelight-left", DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 1 : 0);
         }
     }
 

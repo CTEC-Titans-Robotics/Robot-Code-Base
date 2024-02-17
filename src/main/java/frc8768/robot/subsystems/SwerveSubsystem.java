@@ -1,9 +1,11 @@
 package frc8768.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -45,6 +47,7 @@ public class SwerveSubsystem implements Subsystem {
             case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
             case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
         }
+
         this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLimelightVision(), "VisionOdom Thread");
         this.visionUpdateThread.start();
     }
@@ -137,14 +140,23 @@ public class SwerveSubsystem implements Subsystem {
 
         @Override
         public void run() {
+            int i = 0;
             while(true) {
+                i++;
+                if(i < 50000) {
+                    continue;
+                } else if(i > 50000) {
+                    i = 0;
+                }
                 LimelightHelpers.Results target = (LimelightHelpers.Results) vision.getBestTarget();
-                if(target == null)
+                if(target.targets_Fiducials.length == 0)
                     continue;
 
-                swerve.getSwerveDrive().addVisionMeasurement(target.getBotPose2d_wpiBlue(), Timer.getFPGATimestamp());
-
-                swerve.getSwerveDrive().setGyroOffset(new Rotation3d(0, 0, target.getBotPose3d_wpiBlue().getRotation().getRadians()));
+                Pose2d pose = new Pose2d(target.getBotPose2d_wpiBlue().getTranslation(), new Rotation2d(0, target.targets_Fiducials[0].getRobotPose_FieldSpace().getRotation().getZ()));
+                this.swerve.getSwerveDrive().addVisionMeasurement(pose, Timer.getFPGATimestamp());
+                if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+                    this.swerve.getSwerveDrive().setGyro(new Rotation3d(0, 180, 0));
+                }
             }
         }
     }

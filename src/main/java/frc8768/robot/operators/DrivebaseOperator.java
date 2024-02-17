@@ -1,24 +1,22 @@
 package frc8768.robot.operators;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
-import frc8768.robot.util.FollowTrajectory;
 import frc8768.robot.util.LogUtil;
-import frc8768.robot.util.SwerveUtil;
-import me.nabdev.pathfinding.structures.ImpossiblePathException;
 
 public class DrivebaseOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
     private final SwerveSubsystem swerve;
-    private Trajectory pathfindingTrajectory;
-    private boolean isRelocating = false;
+    private Command currCommand;
 
     public DrivebaseOperator(SwerveSubsystem swerve) {
         super("Drivebase");
@@ -38,7 +36,7 @@ public class DrivebaseOperator extends Operator {
     //RUN TIME
     @Override
     public void run() {
-        swerve.getSwerveDrive().updateOdometry();
+        this.swerve.getSwerveDrive().updateOdometry();
 
         // intakeSubsystem.tick();
 
@@ -55,11 +53,11 @@ public class DrivebaseOperator extends Operator {
         // }
 
         if(controller.getBButtonPressed()) {
-            swerve.getSwerveDrive().zeroGyro();
+            this.swerve.getSwerveDrive().zeroGyro();
         }
 
         if(controller.getXButtonPressed()) {
-            swerve.getSwerveDrive().lockPose();
+            this.swerve.getSwerveDrive().lockPose();
         }
 
         // Apply controller deadband
@@ -67,15 +65,20 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
                 MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
-        if(MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
-                MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0) {
+        if((MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
+                MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0) && currCommand != null) {
+            this.currCommand.cancel();
+            this.currCommand = null;
         }
 
-        if(controller.getAButtonPressed() || isRelocating) {
-            relocate(new Pose2d(1.90, 7.44, Rotation2d.fromDegrees(90)));
+        if(controller.getAButtonPressed()) {
+            relocate(Constants.FieldWaypoints.AMP.getPose2d());
         } else {
+            if(this.currCommand != null && !this.currCommand.isFinished()) {
+                return;
+            }
             // Swerve Example
-            swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
+            this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
         }
 
         // Tank Example (Falcons)
@@ -86,18 +89,14 @@ public class DrivebaseOperator extends Operator {
     }
 
     private void relocate(Pose2d desiredLoc) {
-        if(pathfindingTrajectory != null) {
+        if(this.currCommand != null && !this.currCommand.isFinished()) {
             return;
         }
 
-        try {
-            TrajectoryConfig config = new TrajectoryConfig(4.4196 /* Max vel */, 7 /* Max accel */);
-            pathfindingTrajectory = Constants.PATHFINDER.generateTrajectory(swerve.getSwerveDrive().getPose(), desiredLoc, config);
-
-            FollowTrajectory command = new FollowTrajectory(pathfindingTrajectory, SwerveUtil.constructHolonomicFromSwerve(swerve), () -> new Rotation2d(90), swerve, swerve);
-            command.schedule();
-        } catch (ImpossiblePathException e) {
-            e.printStackTrace();
-        }
+        this.currCommand = AutoBuilder.pathfindToPose(desiredLoc, new PathConstraints(
+                Units.feetToMeters(Constants.SwerveConfig.MAX_SPEED * Constants.SwerveConfig.MAX_SPEED/7.375),
+                Units.feetToMeters(Constants.SwerveConfig.MAX_SPEED * Constants.SwerveConfig.MAX_SPEED),
+                Units.radiansToDegrees(450 * 450), Units.radiansToDegrees(720 * 720)));
+        this.currCommand.schedule();
     }
 }

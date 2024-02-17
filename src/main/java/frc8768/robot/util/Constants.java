@@ -2,12 +2,8 @@ package frc8768.robot.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import me.nabdev.pathfinding.Pathfinder;
-import me.nabdev.pathfinding.PathfinderBuilder;
-import me.nabdev.pathfinding.utilities.FieldLoader;
 
 public class Constants {
     /**
@@ -49,7 +45,7 @@ public class Constants {
 
     public enum FieldWaypoints {
         AMP(new Pose2d(new Translation2d(1.79, 7.67),
-                            Rotation2d.fromDegrees(90))),
+                            Rotation2d.fromDegrees(100))),
         SPEAKER(new Pose2d(new Translation2d(1.25, 5.52),
                             Rotation2d.fromDegrees(180)));
 

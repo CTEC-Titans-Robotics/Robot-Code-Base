@@ -87,7 +87,7 @@ public class Robot extends TimedRobot
         // this.auto = new Auto(swerve);
         this.vision = new LimelightVision("limelight");
 
-        drivebase.init();
+        this.drivebase.init();
     }
 
     /* For tank

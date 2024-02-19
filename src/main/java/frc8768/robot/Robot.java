@@ -15,6 +15,7 @@ import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
+import frc8768.robot.util.MathUtil;
 import frc8768.visionlib.Vision;
 
 import java.io.IOException;
@@ -183,5 +184,9 @@ public class Robot extends TimedRobot
         for(swervelib.SwerveModule module : this.swerve.getSwerveDrive().getModules()) {
             SmartDashboard.putNumber("Module " + module.moduleNumber + " Encoder", module.getAbsolutePosition());
         }
+
+        /* PID Tuning
+                this.swerve.getSwerveDrive().drive(Constants.BOT_CENTER, MathUtil.getRadFromDeg(90), true, false, Constants.BOT_CENTER);
+         */
     }
 }

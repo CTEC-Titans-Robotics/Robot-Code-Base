@@ -26,17 +26,16 @@ public class Auto {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-                new PIDConstants(0.00, 0.00, 0.01),
-                new PIDConstants(0.00, 0.00, 0.01),
-                // TODO: Put max module speed here
-                14.2,
-                // TODO: Put your robot chassis radius here
-                5,
+                new PIDConstants(5.0, 0.00, 0.0),
+                new PIDConstants(swerve.getSwerveDrive().swerveController.config.headingPIDF.p,
+                        swerve.getSwerveDrive().swerveController.config.headingPIDF.i,
+                        swerve.getSwerveDrive().swerveController.config.headingPIDF.d),
+                Constants.SwerveConfig.MAX_SPEED,
+                0.267,
                 new ReplanningConfig(
-                        false,
+                        true,
                         true
                 )
-
         );
 
         AutoBuilder.configureHolonomic(

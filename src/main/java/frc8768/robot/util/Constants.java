@@ -1,6 +1,7 @@
 package frc8768.robot.util;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import frc8768.visionlib.Vision;
 
 public class Constants {
@@ -34,9 +35,9 @@ public class Constants {
         public static final MotorType currentType = MotorType.TALONFX;
 
         /**
-         * Max drive motor speed ft/s.
+         * Max drive motor speed m/s.
          */
-        public static final double MAX_SPEED = 14.5;
+        public static final double MAX_SPEED = Units.feetToMeters(17);
     }
 
     /**

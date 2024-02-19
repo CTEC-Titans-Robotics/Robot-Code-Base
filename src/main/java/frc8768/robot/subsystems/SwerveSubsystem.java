@@ -41,8 +41,6 @@ public class SwerveSubsystem implements Subsystem {
             case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/talonfx")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, angleConversionFactor, driveConversionFactor);
             case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, angleConversionFactor, driveConversionFactor);
         }
-        this.swerveDrive.setCosineCompensator(false);
-        this.swerveDrive.chassisVelocityCorrection = false;
     }
 
     /**

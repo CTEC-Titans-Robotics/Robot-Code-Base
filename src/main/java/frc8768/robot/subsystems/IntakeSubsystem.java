@@ -5,18 +5,21 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class IntakeSubsystem implements Subsystem {
-    private final CANSparkFlex initialIntakeMotor = new CANSparkFlex(16, CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkFlex intakeMotor = new CANSparkFlex(16, CANSparkLowLevel.MotorType.kBrushless);
     private final CANSparkFlex holdMotor = new CANSparkFlex(17, CANSparkLowLevel.MotorType.kBrushless);
     private final CANSparkFlex shootMotor = new CANSparkFlex(18, CANSparkLowLevel.MotorType.kBrushless);
     private IntakeStage currStage = IntakeStage.IDLE;
 
     public IntakeSubsystem() {
         // Configure Motor
-        this.initialIntakeMotor.restoreFactoryDefaults();
-        this.initialIntakeMotor.setIdleMode(CANSparkBase.IdleMode.kCoast);
-        this.initialIntakeMotor.setInverted(true);
-        this.initialIntakeMotor.burnFlash();
+        this.intakeMotor.restoreFactoryDefaults();
+        this.intakeMotor.setIdleMode(CANSparkBase.IdleMode.kCoast);
+        this.intakeMotor.setInverted(true);
+        this.intakeMotor.burnFlash();
 
         // Configure Motor
         this.holdMotor.restoreFactoryDefaults();
@@ -34,7 +37,7 @@ public class IntakeSubsystem implements Subsystem {
     public void stop() {
         this.shootMotor.set(0);
         this.holdMotor.set(0);
-        this.initialIntakeMotor.set(0);
+        this.intakeMotor.set(0);
     }
 
     public void setStage(IntakeStage stage) {
@@ -45,22 +48,22 @@ public class IntakeSubsystem implements Subsystem {
             case IDLE -> {
                 this.shootMotor.set(0);
                 this.holdMotor.set(0);
-                this.initialIntakeMotor.set(0);
+                this.intakeMotor.set(0);
             }
             case NOTE_PICKUP -> {
                 this.holdMotor.set(0);
                 this.shootMotor.set(0);
 
-                this.initialIntakeMotor.set(desiredSpeed);
+                this.intakeMotor.set(desiredSpeed);
             }
             case HOLD -> {
                 this.holdMotor.set(0);
 
-                this.initialIntakeMotor.set(desiredSpeed);
+                this.intakeMotor.set(desiredSpeed);
                 this.shootMotor.set(-desiredSpeed);
             }
             case AMP, SPEAKER -> {
-                this.initialIntakeMotor.set(0);
+                this.intakeMotor.set(0);
 
                 this.shootMotor.set(desiredSpeed);
                 this.holdMotor.set(-0.3);
@@ -89,6 +92,20 @@ public class IntakeSubsystem implements Subsystem {
                 case AMP, SPEAKER -> setStage(IntakeStage.IDLE);
             }
         }
+    }
+
+    /**
+     * Dashboard logging
+     *
+     * @return Map of Name to Value
+     */
+    public Map<String, String> dashboard() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("Current IntakeStage", currStage.name());
+        map.put("Hold Amps", String.valueOf(holdMotor.getOutputCurrent()));
+        map.put("Shoot Amps", String.valueOf(shootMotor.getOutputCurrent()));
+        map.put("Intake Amps", String.valueOf(intakeMotor.getOutputCurrent()));
+        return map;
     }
 
     public enum IntakeStage {

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.util.Constants;
+import frc8768.robot.util.LogUtil;
 
 public class AuxiliaryOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.coDriverControllerId);
@@ -16,6 +17,9 @@ public class AuxiliaryOperator extends Operator {
 
         this.arm = new ArmSubsystem();
         this.intake = new IntakeSubsystem();
+
+        LogUtil.registerDashLogger(this.arm::dashboard);
+        LogUtil.registerDashLogger(this.intake::dashboard);
     }
 
     @Override

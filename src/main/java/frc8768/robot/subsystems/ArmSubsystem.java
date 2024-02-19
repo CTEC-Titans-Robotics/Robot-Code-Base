@@ -7,8 +7,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ArmSubsystem implements Subsystem {
-    private static final double ENCODER_OFFSET = 0;
+    private static final double ANGLE_OFFSET = 0;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
     private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(0);
@@ -21,6 +24,9 @@ public class ArmSubsystem implements Subsystem {
         this.armMotor.setIdleMode(CANSparkBase.IdleMode.kBrake);
         this.armMotor.setInverted(true);
         this.armMotor.burnFlash();
+
+        // Configure Encoder
+        this.armEncoder.setDistancePerRotation(41D/360D);
 
         // Setup Auto-Pose Thread
         this.positionThread = new Thread(() -> {
@@ -43,7 +49,7 @@ public class ArmSubsystem implements Subsystem {
     }
 
     private double getPosition() {
-        return armEncoder.getAbsolutePosition() - ENCODER_OFFSET;
+        return (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()) - ANGLE_OFFSET;
     }
 
     public void stop() {
@@ -54,6 +60,18 @@ public class ArmSubsystem implements Subsystem {
 
     public void setDesiredState(ArmState state) {
         this.currState = state;
+    }
+
+    /**
+     * Dashboard logging
+     *
+     * @return Map of Name to Value
+     */
+    public Map<String, String> dashboard() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("Current ArmState", currState.name());
+        map.put("Arm Position", String.valueOf(this.getPosition()));
+        return map;
     }
 
     public enum ArmState {

@@ -152,7 +152,7 @@ public class SwerveSubsystem implements Subsystem {
                 if(target.targets_Fiducials.length == 0)
                     continue;
 
-                Pose2d pose = new Pose2d(target.getBotPose2d_wpiBlue().getTranslation(), new Rotation2d(0, target.targets_Fiducials[0].getRobotPose_FieldSpace().getRotation().getZ()));
+                Pose2d pose = new Pose2d(target.getBotPose2d_wpiBlue().getTranslation(), Rotation2d.fromDegrees(target.targets_Fiducials[0].getRobotPose_FieldSpace().getRotation().getZ() + 90));
                 this.swerve.getSwerveDrive().addVisionMeasurement(pose, Timer.getFPGATimestamp());
             }
         }

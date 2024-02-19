@@ -104,7 +104,7 @@ public class Robot extends TimedRobot
                 new PIDConstants(0.045849, 0.00, 0.0068069),
                 new PIDConstants(0.0091857, 0.00, 0.00052987),
                 Constants.SwerveConfig.MAX_SPEED,
-                0.66,
+                0.267,
                 new ReplanningConfig(
                         true,
                         true

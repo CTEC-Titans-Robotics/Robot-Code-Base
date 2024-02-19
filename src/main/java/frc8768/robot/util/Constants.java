@@ -44,7 +44,7 @@ public class Constants {
     }
 
     public enum FieldWaypoints {
-        AMP(new Pose2d(new Translation2d(2.1075, 7.67),
+        AMP(new Pose2d(new Translation2d(1.75, 7.35),
                             Rotation2d.fromDegrees(90))),
         SPEAKER(new Pose2d(new Translation2d(1.25, 5.52),
                             Rotation2d.fromDegrees(0)));

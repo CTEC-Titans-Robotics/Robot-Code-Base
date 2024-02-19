@@ -96,7 +96,7 @@ public class DrivebaseOperator extends Operator {
         this.currCommand = AutoBuilder.pathfindToPose(desiredLoc, new PathConstraints(
                 Units.feetToMeters(Constants.SwerveConfig.MAX_SPEED * Constants.SwerveConfig.MAX_SPEED/10),
                 Units.feetToMeters(Constants.SwerveConfig.MAX_SPEED * Constants.SwerveConfig.MAX_SPEED),
-                Units.degreesToRadians(450), Units.degreesToRadians(720)));
+                Units.degreesToRadians(450D * 450D), Units.degreesToRadians(720D * 720D/10D)));
         this.currCommand.schedule();
     }
 }

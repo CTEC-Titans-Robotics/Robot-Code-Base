@@ -26,7 +26,7 @@ public class ArmSubsystem implements Subsystem {
         this.armMotor.burnFlash();
 
         // Configure Encoder
-        this.armEncoder.setDistancePerRotation(41D/360D);
+        this.armEncoder.setDistancePerRotation(360D);
 
         // Setup Auto-Pose Thread
         this.positionThread = new Thread(() -> {

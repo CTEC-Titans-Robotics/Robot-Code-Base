@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
+import frc8768.robot.operators.AuxiliaryOperator;
 import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
@@ -36,6 +37,11 @@ public class Robot extends TimedRobot
      * Drivebase Operator
      */
     private DrivebaseOperator drivebase;
+
+    /**
+     * Auxiliary Operator, handles all non-drivebase telelop functions.
+     */
+    private AuxiliaryOperator auxiliary;
 
     /**
      * The swerve subsystem, held in here for Auton.
@@ -82,10 +88,13 @@ public class Robot extends TimedRobot
         }
 
         this.drivebase = new DrivebaseOperator(this.swerve);
+        this.auxiliary = new AuxiliaryOperator();
+
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
         this.drivebase.init();
+        this.auxiliary.init();
     }
 
     /* For tank
@@ -111,6 +120,9 @@ public class Robot extends TimedRobot
 
         if(this.drivebase != null && !this.drivebase.isAlive()) {
             this.drivebase.reviveThread();
+        }
+        if(this.auxiliary != null && !this.auxiliary.isAlive()) {
+            this.auxiliary.reviveThread();
         }
 
         if(drivebase != null && !drivebase.isAlive()) {

@@ -53,7 +53,7 @@ public abstract class Operator {
      * Should an essential subsystem's thread die, restart it.
      */
     public void reviveThread() {
-        String origName = opThread.getName();
+        String origName = opThread.getName().replace(" Thread", "");
         opThread = new Thread(this::runLoop);
         opThread.setName(String.format("%s Thread", origName));
 

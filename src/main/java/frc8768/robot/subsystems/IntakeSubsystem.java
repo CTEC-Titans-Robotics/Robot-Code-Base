@@ -65,8 +65,8 @@ public class IntakeSubsystem implements Subsystem {
             case AMP, SPEAKER -> {
                 this.intakeMotor.set(0);
 
-                this.shootMotor.set(desiredSpeed);
                 this.holdMotor.set(-0.3);
+                this.shootMotor.set(desiredSpeed);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {

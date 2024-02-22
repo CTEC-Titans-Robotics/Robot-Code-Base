@@ -26,24 +26,26 @@ public class AuxiliaryOperator extends Operator {
     public void run() {
         this.intake.tick();
 
-        if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
+        if(controller.getLeftBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
-            this.intake.setStage(IntakeSubsystem.IntakeStage.NOTE_PICKUP);
+            this.intake.setStage(IntakeSubsystem.IntakeStage.INTAKE);
 
-        } else if(controller.getRightTriggerAxis() > Constants.controllerDeadband) {
+        } else if(controller.getRightBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
 
-        } else if(controller.getXButtonPressed()) {
+        } else if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
 
-        } else if(controller.getRightStickButtonPressed()) {
+        } else if(!this.intake.isActive()) {
+            // Don't let the drivers drive around with the arm down.
+            // *we know how that went last time*
             this.arm.setDesiredState(ArmSubsystem.ArmState.IDLE);
-            this.intake.setStage(IntakeSubsystem.IntakeStage.IDLE);
         }
 
-        if(controller.getRightBumperPressed()) {
+        if(controller.getRightTriggerAxis() > Constants.controllerDeadband) {
             this.intake.setStage(this.arm.currState == ArmSubsystem.ArmState.SPEAKER ?
                     IntakeSubsystem.IntakeStage.SPEAKER : IntakeSubsystem.IntakeStage.AMP);
+
         }
 
         // Emergency

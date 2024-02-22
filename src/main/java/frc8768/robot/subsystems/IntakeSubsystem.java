@@ -57,7 +57,7 @@ public class IntakeSubsystem implements Subsystem {
                 this.holdMotor.set(0);
                 this.intakeMotor.set(0);
             }
-            case NOTE_PICKUP -> {
+            case INTAKE -> {
                 this.holdMotor.set(0);
                 this.shootMotor.set(0);
 
@@ -84,10 +84,14 @@ public class IntakeSubsystem implements Subsystem {
         }
     }
 
+    public boolean isActive() {
+        return this.currStage == IntakeStage.SPEAKER || this.currStage == IntakeStage.AMP || this.currStage == IntakeStage.INTAKE;
+    }
+
     public boolean stageTripped() {
         return switch (this.currStage) {
             case IDLE, HOLD -> false;
-            case NOTE_PICKUP -> this.currStage.hasTripped(this.holdMotor.getOutputCurrent());
+            case INTAKE -> this.currStage.hasTripped(this.holdMotor.getOutputCurrent());
             case AMP, SPEAKER -> this.currStage.ampTrip < this.shootMotor.getOutputCurrent();
         };
     }
@@ -95,7 +99,7 @@ public class IntakeSubsystem implements Subsystem {
     public void tick() {
         if(stageTripped()) {
             switch (this.currStage) {
-                case NOTE_PICKUP -> setStage(IntakeStage.HOLD);
+                case INTAKE -> setStage(IntakeStage.HOLD);
                 case AMP, SPEAKER -> setStage(IntakeStage.IDLE);
             }
         }
@@ -119,7 +123,7 @@ public class IntakeSubsystem implements Subsystem {
         SPEAKER(0.7, 20),
         AMP(0.5, 12),
         HOLD(0.1, -1),
-        NOTE_PICKUP(0.4, 26),
+        INTAKE(0.4, 26),
         IDLE(0, -1);
 
         private final double desiredSpeed;

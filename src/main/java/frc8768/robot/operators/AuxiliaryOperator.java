@@ -26,17 +26,17 @@ public class AuxiliaryOperator extends Operator {
     public void run() {
         this.intake.tick();
 
-        if(controller.getAButtonPressed()) {
+        if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
             this.intake.setStage(IntakeSubsystem.IntakeStage.NOTE_PICKUP);
 
-        } else if(controller.getXButtonPressed()) {
+        } else if(controller.getRightTriggerAxis() > Constants.controllerDeadband) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
 
-        } else if(controller.getYButtonPressed()) {
+        } else if(controller.getXButtonPressed()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
 
-        } else if(controller.getBButtonPressed()) {
+        } else if(controller.getRightStickButtonPressed()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.IDLE);
             this.intake.setStage(IntakeSubsystem.IntakeStage.IDLE);
         }

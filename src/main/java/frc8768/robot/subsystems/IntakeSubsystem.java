@@ -4,9 +4,11 @@ import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc8768.robot.util.LogUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class IntakeSubsystem implements Subsystem {
     private final CANSparkFlex intakeMotor = new CANSparkFlex(16, CANSparkLowLevel.MotorType.kBrushless);
@@ -41,6 +43,11 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public void setStage(IntakeStage stage) {
+        if(this.currStage == stage) {
+            LogUtil.LOGGER.log(Level.WARNING, "Stage %s was already set, discarding...", this.currStage.name());
+            return;
+        }
+
         this.currStage = stage;
 
         double desiredSpeed = this.currStage.getDesiredMotorSpeed();

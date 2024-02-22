@@ -55,8 +55,9 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
                 MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
-        if(MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
-                MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0) {
+        boolean joystickInput = MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
+                MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0;
+        if(joystickInput || controller.getPOV() != -1) {
             isRelocating = false;
         }
 
@@ -64,6 +65,14 @@ public class DrivebaseOperator extends Operator {
             isRelocating = true;
             relocate();
         } else {
+            // Robot-Relative control
+            switch(controller.getPOV()) {
+                case 0 -> translation2d = new Translation2d(0.75, 0);
+                case 90 -> translation2d = new Translation2d(0, 0.75);
+                case 180 -> translation2d = new Translation2d(-0.75, 0);
+                case 270 -> translation2d = new Translation2d(0, -0.75);
+            }
+
             // Swerve Example
             swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
         }

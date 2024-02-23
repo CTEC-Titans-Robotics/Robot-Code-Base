@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET = 0;
+    private static final double ANGLE_OFFSET = -127.07813117695328;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
     private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(0);
@@ -22,7 +22,7 @@ public class ArmSubsystem implements Subsystem {
         // Configure Motor
         this.armMotor.restoreFactoryDefaults();
         this.armMotor.setIdleMode(CANSparkBase.IdleMode.kBrake);
-        this.armMotor.setInverted(true);
+        this.armMotor.setInverted(false);
         this.armMotor.burnFlash();
 
         // Configure Encoder
@@ -38,9 +38,9 @@ public class ArmSubsystem implements Subsystem {
                 }
 
                 if(this.currState.getDesiredPosition() > position) {
-                    this.armMotor.set(0.25);
+                    this.armMotor.set(0.15);
                 } else if(this.currState.getDesiredPosition() < position) {
-                    this.armMotor.set(-0.25);
+                    this.armMotor.set(-0.15);
                 }
             }
         });
@@ -49,7 +49,7 @@ public class ArmSubsystem implements Subsystem {
     }
 
     private double getPosition() {
-        return (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()) - ANGLE_OFFSET;
+        return (-this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()) - ANGLE_OFFSET;
     }
 
     public void stop() {
@@ -75,10 +75,10 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public enum ArmState {
-        IDLE(45, 1),
-        INTAKE(0, 1),
-        AMP(85, 1),
-        SPEAKER(35, 1);
+        IDLE(45, 3),
+        INTAKE(0, 3),
+        AMP(85, 3),
+        SPEAKER(35, 3);
 
         private final double tolerance;
         private final double position;

@@ -31,10 +31,10 @@ public class AuxiliaryOperator extends Operator {
             this.intake.setStage(IntakeSubsystem.IntakeStage.INTAKE);
 
         } else if(controller.getRightBumper()) {
-            this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
+            this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
 
         } else if(controller.getLeftBumper()) {
-            this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
+            this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
 
         } else if(!this.intake.isActive()) {
             // Don't let the drivers drive around with the arm down.

@@ -72,7 +72,7 @@ public class IntakeSubsystem implements Subsystem {
             case AMP, SPEAKER -> {
                 this.intakeMotor.set(0);
 
-                this.holdMotor.set(-0.3);
+                this.holdMotor.set(-0.12);
                 this.shootMotor.set(desiredSpeed);
                 try {
                     Thread.sleep(500);
@@ -121,7 +121,7 @@ public class IntakeSubsystem implements Subsystem {
 
     public enum IntakeStage {
         SPEAKER(0.7, 20),
-        AMP(0.5, 12),
+        AMP(0.25, 12),
         HOLD(0.1, -1),
         INTAKE(0.4, 26),
         IDLE(0, -1);

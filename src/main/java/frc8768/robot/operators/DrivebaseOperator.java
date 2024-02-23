@@ -57,8 +57,13 @@ public class DrivebaseOperator extends Operator {
 
         boolean joystickInput = MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
                 MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0;
+        boolean isRobotRelative = false;
         if(joystickInput || controller.getPOV() != -1) {
             isRelocating = false;
+        }
+
+        if(controller.getPOV() != -1) {
+            isRobotRelative = true;
         }
 
         if(controller.getAButtonPressed() || isRelocating) {
@@ -66,15 +71,20 @@ public class DrivebaseOperator extends Operator {
             relocate();
         } else {
             // Robot-Relative control
+            double speed = 0.75;
             switch(controller.getPOV()) {
-                case 0 -> translation2d = new Translation2d(0.75, 0);
-                case 90 -> translation2d = new Translation2d(0, 0.75);
-                case 180 -> translation2d = new Translation2d(-0.75, 0);
-                case 270 -> translation2d = new Translation2d(0, -0.75);
+                case 0 -> translation2d = new Translation2d(speed, 0);
+                case 45 -> translation2d = new Translation2d(speed, speed);
+                case 90 -> translation2d = new Translation2d(0, speed);
+                case 135 -> translation2d = new Translation2d(-speed, speed);
+                case 180 -> translation2d = new Translation2d(-speed, 0);
+                case 225 -> translation2d = new Translation2d(-speed, -speed);
+                case 270 -> translation2d = new Translation2d(0, -speed);
+                case 315 -> translation2d = new Translation2d(speed, -speed);
             }
 
             // Swerve Example
-            swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
+            swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), !isRobotRelative, false, Constants.BOT_CENTER);
         }
 
         // Tank Example (Falcons)

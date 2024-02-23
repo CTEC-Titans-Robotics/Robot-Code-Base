@@ -26,14 +26,14 @@ public class AuxiliaryOperator extends Operator {
     public void run() {
         this.intake.tick();
 
-        if(controller.getLeftBumper()) {
+        if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
             this.intake.setStage(IntakeSubsystem.IntakeStage.INTAKE);
 
         } else if(controller.getRightBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
 
-        } else if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
+        } else if(controller.getLeftBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
 
         } else if(!this.intake.isActive()) {

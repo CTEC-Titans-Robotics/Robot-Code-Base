@@ -26,13 +26,13 @@ public class IntakeSubsystem implements Subsystem {
         // Configure Motor
         this.holdMotor.restoreFactoryDefaults();
         this.holdMotor.setIdleMode(CANSparkBase.IdleMode.kCoast);
-        this.holdMotor.setInverted(true);
+        this.holdMotor.setInverted(false);
         this.holdMotor.burnFlash();
 
         // Configure Motor
         this.shootMotor.restoreFactoryDefaults();
         this.shootMotor.setIdleMode(CANSparkBase.IdleMode.kCoast);
-        this.shootMotor.setInverted(true);
+        this.shootMotor.setInverted(false);
         this.shootMotor.burnFlash();
     }
 
@@ -43,8 +43,8 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public void setStage(IntakeStage stage) {
-        if(this.currStage == stage) {
-            LogUtil.LOGGER.log(Level.WARNING, "Stage %s was already set, discarding...", this.currStage.name());
+        if(this.currStage == stage || this.currStage.cantMoveStage == stage) {
+            LogUtil.LOGGER.log(Level.WARNING, "Stage %s was already set, or was invalid, discarding...", this.currStage.name());
             return;
         }
 
@@ -58,9 +58,9 @@ public class IntakeSubsystem implements Subsystem {
                 this.intakeMotor.set(0);
             }
             case INTAKE -> {
-                this.holdMotor.set(0);
-                this.shootMotor.set(0);
+                this.shootMotor.set(-0.05);
 
+                this.holdMotor.set(desiredSpeed);
                 this.intakeMotor.set(desiredSpeed);
             }
             case HOLD -> {
@@ -84,8 +84,8 @@ public class IntakeSubsystem implements Subsystem {
         }
     }
 
-    public boolean isActive() {
-        return this.currStage == IntakeStage.SPEAKER || this.currStage == IntakeStage.AMP || this.currStage == IntakeStage.INTAKE;
+    public boolean isShooting() {
+        return this.currStage == IntakeStage.SPEAKER || this.currStage == IntakeStage.AMP;
     }
 
     public boolean stageTripped() {
@@ -120,18 +120,20 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public enum IntakeStage {
-        SPEAKER(0.7, 20),
-        AMP(0.25, 12),
-        HOLD(0.1, -1),
-        INTAKE(0.4, 26),
-        IDLE(0, -1);
+        INTAKE(0.2, 70, null),
+        HOLD(0.1, -1, INTAKE),
+        SPEAKER(0.7, 20, HOLD),
+        AMP(0.25, 35, HOLD),
+        IDLE(0, -1, null);
 
         private final double desiredSpeed;
         private final double ampTrip;
+        private final IntakeStage cantMoveStage;
 
-        IntakeStage(double speed, double ampLimit) {
+        IntakeStage(double speed, double ampLimit, IntakeStage cantMoveStage) {
             this.desiredSpeed = speed;
             this.ampTrip = ampLimit;
+            this.cantMoveStage = cantMoveStage;
         }
 
         public double getDesiredMotorSpeed() {

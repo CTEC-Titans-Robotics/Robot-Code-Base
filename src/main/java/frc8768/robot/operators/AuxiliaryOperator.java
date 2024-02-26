@@ -36,7 +36,7 @@ public class AuxiliaryOperator extends Operator {
         } else if(controller.getLeftBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
 
-        } else if(!this.intake.isActive()) {
+        } else if(!this.intake.isShooting()) {
             // Don't let the drivers drive around with the arm down.
             // *we know how that went last time*
             this.arm.setDesiredState(ArmSubsystem.ArmState.IDLE);

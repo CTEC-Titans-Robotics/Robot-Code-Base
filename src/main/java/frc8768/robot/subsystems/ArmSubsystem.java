@@ -38,11 +38,11 @@ public class ArmSubsystem implements Subsystem {
         this.positionThread = new Thread(() -> {
             while(true) {
                 double position = this.getPosition();
+                double feed = this.armController.calculate(position, this.currState.getDesiredPosition());
                 if(this.armController.atSetpoint()) {
                     this.armMotor.set(0);
                 } else {
-                    this.armMotor.set(
-                            this.armController.calculate(position, this.currState.getDesiredPosition()));
+                    this.armMotor.set(feed);
                 }
             }
         });

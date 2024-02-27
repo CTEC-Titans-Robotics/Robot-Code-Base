@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET = -125.07813117695328;
+    private static final double ANGLE_OFFSET = -116.07813117695328;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
     private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(0);
@@ -38,9 +38,9 @@ public class ArmSubsystem implements Subsystem {
                 }
 
                 if(this.currState.getDesiredPosition() > position) {
-                    this.armMotor.set(0.15);
+                    this.armMotor.set(0.13);
                 } else if(this.currState.getDesiredPosition() < position) {
-                    this.armMotor.set(-0.15);
+                    this.armMotor.set(-0.13);
                 }
             }
         });
@@ -75,10 +75,10 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public enum ArmState {
-        IDLE(87, 5),
+        IDLE(84, 4),
         INTAKE(0, 3),
         AMP(85, 3),
-        SPEAKER(35, 3);
+        SPEAKER(47.5, 2.5);
 
         private final double tolerance;
         private final double position;

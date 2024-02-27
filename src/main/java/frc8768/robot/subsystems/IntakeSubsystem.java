@@ -58,10 +58,10 @@ public class IntakeSubsystem implements Subsystem {
                 this.intakeMotor.set(0);
             }
             case INTAKE -> {
-                this.shootMotor.set(-0.05);
+                this.shootMotor.set(-0.03);
 
-                this.holdMotor.set(desiredSpeed);
-                this.intakeMotor.set(desiredSpeed);
+                this.holdMotor.set(0.15);
+                this.intakeMotor.set(desiredSpeed*2);
             }
             case HOLD -> {
                 this.holdMotor.set(0);
@@ -71,15 +71,24 @@ public class IntakeSubsystem implements Subsystem {
             }
             case AMP, SPEAKER -> {
                 this.intakeMotor.set(0);
-
                 this.holdMotor.set(-0.12);
-                this.shootMotor.set(desiredSpeed);
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(150);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                this.holdMotor.set(desiredSpeed);
+                this.shootMotor.set(desiredSpeed);
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                this.holdMotor.set(0.2);
+                try {
+                    Thread.sleep(750);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -92,7 +101,7 @@ public class IntakeSubsystem implements Subsystem {
         return switch (this.currStage) {
             case IDLE, HOLD -> false;
             case INTAKE -> this.currStage.hasTripped(this.holdMotor.getOutputCurrent());
-            case AMP, SPEAKER -> this.currStage.ampTrip < this.shootMotor.getOutputCurrent();
+            case AMP, SPEAKER -> this.shootMotor.getOutputCurrent() < this.currStage.ampTrip;
         };
     }
 
@@ -120,10 +129,10 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public enum IntakeStage {
-        INTAKE(0.2, 70, null),
-        HOLD(0.1, -1, INTAKE),
-        SPEAKER(0.7, 20, HOLD),
-        AMP(0.25, 35, HOLD),
+        INTAKE(0.25, 68, null),
+        HOLD(0.03, -1, INTAKE),
+        SPEAKER(0.75, 40, HOLD),
+        AMP(0.2, 35, HOLD),
         IDLE(0, -1, null);
 
         private final double desiredSpeed;
@@ -141,7 +150,7 @@ public class IntakeSubsystem implements Subsystem {
         }
 
         public boolean hasTripped(double drawnCurrent) {
-            return drawnCurrent >= ampTrip;
+            return drawnCurrent >= this.ampTrip;
         }
     }
 }

@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -16,6 +17,7 @@ public class ArmSubsystem implements Subsystem {
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
     private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(0);
     private final Thread positionThread;
+    private final PIDController armController;
     public ArmState currState = ArmState.IDLE;
 
     public ArmSubsystem() {
@@ -28,19 +30,19 @@ public class ArmSubsystem implements Subsystem {
         // Configure Encoder
         this.armEncoder.setDistancePerRotation(360D);
 
+        // Setup PIDController
+        this.armController = new PIDController(0.01, 0, 0);
+        this.armController.setTolerance(1.5); // Degrees, once PID is fine tuned this should be fine
+
         // Setup Auto-Pose Thread
         this.positionThread = new Thread(() -> {
             while(true) {
                 double position = this.getPosition();
-                if(this.currState.isAngleWithinTolerance(position)) {
+                if(this.armController.atSetpoint()) {
                     this.armMotor.set(0);
-                    continue;
-                }
-
-                if(this.currState.getDesiredPosition() > position) {
-                    this.armMotor.set(0.13);
-                } else if(this.currState.getDesiredPosition() < position) {
-                    this.armMotor.set(-0.13);
+                } else {
+                    this.armMotor.set(
+                            this.armController.calculate(position, this.currState.getDesiredPosition()));
                 }
             }
         });
@@ -75,25 +77,19 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public enum ArmState {
-        IDLE(84, 4),
-        INTAKE(0, 3),
-        AMP(85, 3),
-        SPEAKER(47.5, 2.5);
+        IDLE(84),
+        INTAKE(0),
+        AMP(85),
+        SPEAKER(47.5);
 
-        private final double tolerance;
         private final double position;
 
-        ArmState(double angle, double tolerance) {
+        ArmState(double angle) {
             this.position = angle;
-            this.tolerance = tolerance;
         }
 
         public double getDesiredPosition() {
             return this.position;
-        }
-
-        public boolean isAngleWithinTolerance(double currAngle) {
-            return MathUtil.isNear(this.position, currAngle, this.tolerance);
         }
     }
 }

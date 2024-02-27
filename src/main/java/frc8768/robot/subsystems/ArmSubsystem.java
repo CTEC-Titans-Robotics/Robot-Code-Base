@@ -31,7 +31,7 @@ public class ArmSubsystem implements Subsystem {
         this.armEncoder.setDistancePerRotation(360D);
 
         // Setup PIDController
-        this.armController = new PIDController(0.01, 0, 0);
+        this.armController = new PIDController(0.0001, 0, 0.1);
         this.armController.setTolerance(1.5); // Degrees, once PID is fine tuned this should be fine
 
         // Setup Auto-Pose Thread

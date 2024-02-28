@@ -1,13 +1,21 @@
 package frc8768.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc8768.robot.Robot;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.MathUtil;
 import frc8768.robot.util.MotorType;
+import frc8768.robot.util.Constants;
+import frc8768.visionlib.LimelightVision;
+import frc8768.visionlib.Vision;
+import frc8768.visionlib.helpers.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
@@ -27,6 +35,7 @@ public class SwerveSubsystem implements Subsystem {
      * The underlying YAGSL implementation
      */
     private SwerveDrive swerveDrive;
+    private VisionOdomThread visionUpdateThread;
 
     /**
      * @param type NEOs or Falcons, see {@link MotorType}
@@ -41,6 +50,9 @@ public class SwerveSubsystem implements Subsystem {
             case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/talonfx")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, angleConversionFactor, driveConversionFactor);
             case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, angleConversionFactor, driveConversionFactor);
         }
+
+        // this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLimelightVision(), "VisionOdom Thread");
+        // this.visionUpdateThread.start();
     }
 
     /**
@@ -104,5 +116,35 @@ public class SwerveSubsystem implements Subsystem {
         ArrayList<String> list = new ArrayList<>();
         // Insert string buffer, different logic for detecting errors here
         return list;
+    }
+
+    public static class VisionOdomThread extends Thread {
+        private SwerveSubsystem swerve;
+        private LimelightVision vision;
+
+        public VisionOdomThread(SwerveSubsystem swerve, LimelightVision vision, String name) {
+            super(name);
+            this.swerve = swerve;
+            this.vision = vision;
+        }
+
+        @Override
+        public void run() {
+            int i = 0;
+            while(true) {
+                i++;
+                if(i < 500000) {
+                    continue;
+                } else if(i > 500000) {
+                    i = 0;
+                }
+                LimelightHelpers.Results target = (LimelightHelpers.Results) vision.getBestTarget();
+                if(target.targets_Fiducials.length == 0)
+                    continue;
+
+                Pose2d pose = new Pose2d(target.getBotPose2d_wpiBlue().getTranslation(), Rotation2d.fromDegrees(target.targets_Fiducials[0].getRobotPose_FieldSpace().getRotation().getZ() + 90));
+                this.swerve.getSwerveDrive().addVisionMeasurement(pose, Timer.getFPGATimestamp());
+            }
+        }
     }
 }

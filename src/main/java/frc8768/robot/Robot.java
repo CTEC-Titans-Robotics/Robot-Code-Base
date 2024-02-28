@@ -83,7 +83,7 @@ public class Robot extends TimedRobot
         CameraServer.startAutomaticCapture();
 
         try {
-          swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
+          swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
         } catch (IOException io) {
           throw new RuntimeException("Swerve failed to create!", io);
         }
@@ -135,8 +135,8 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousInit() {
-        if (auto != null) {
-            auto.getSelected().schedule();
+        if (this.auto != null) {
+            this.auto.getSelected().schedule();
         }
     }
 
@@ -145,11 +145,11 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousPeriodic() {
-        if(auto != null) {
-            if(!auto.getSelected().isScheduled()) {
+        if(this.auto != null) {
+            if(!this.auto.getSelected().isScheduled()) {
                 return;
             }
-            auto.getSelected().execute();
+            this.auto.getSelected().execute();
         }
     }
 

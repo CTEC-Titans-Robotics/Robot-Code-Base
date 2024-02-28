@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET = -117.99327894983196;
+    private static final double ANGLE_OFFSET = -129.50758223768955;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
     private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(0);

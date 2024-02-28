@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET = -116.07813117695328;
+    private static final double ANGLE_OFFSET = -117.99327894983196;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
     private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(0);
@@ -31,8 +31,8 @@ public class ArmSubsystem implements Subsystem {
         this.armEncoder.setDistancePerRotation(360D);
 
         // Setup PIDController
-        this.armController = new PIDController(0.0001, 0, 0.1);
-        this.armController.setTolerance(1.5); // Degrees, once PID is fine tuned this should be fine
+        this.armController = new PIDController(0.001, 0, 0.001);
+        this.armController.setTolerance(1); // Degrees, once PID is fine tuned this should be fine
 
         // Setup Auto-Pose Thread
         this.positionThread = new Thread(() -> {

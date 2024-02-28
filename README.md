@@ -1,11 +1,14 @@
 # Robot-Code-Base
 Universal codebase for all of our robots, completely free for other teams to use.
 
+# JavaDocs
+Documentation can be found [here](https://ctec-titans-robotics.github.io/Robot-Code-Base/).
+
 # Example Implementations
 Branches 2023-Athena and 2022 show all our code for those seasons. Feel free to check them out.
 
 # Getting Started
-Should you still be confused on what to do after reviewing the other branches, I have made an outline on how to initialize Swerve
+Should you still be confused about what to do after reviewing the other branches, I have outlined how to initialize Swerve
 and the Drivebase Operator.
 
 Robot Class:
@@ -73,16 +76,16 @@ Translation2d translation2d = new Translation2d(
 MathUtil.applyDeadband(-controller.getLeftY(), Constants.controllerDeadband),
 MathUtil.applyDeadband(-controller.getLeftX(), Constants.controllerDeadband));
 ``
-When using potentiomter analog controllers, there is **always** going to be stick drift. The "Deadzone" is used to
+When using potentiometer analog controllers, there is **always** going to be stick drift. The "Deadzone" is used to
 differentiate real from fake input. But if you just do a check for if the deadzone is passed, then you have a chance to go from
-0 to 100 very quick. MathUtil.applyDeadband allows the deadband to not limit it so heavily, and makes the input smoother.
+0 to 100 very quickly. MathUtil.applyDeadband allows the deadband to not limit it so heavily and makes the input smoother.
 
-Couple notes, Left Y is for translation, and Left X is for strafing. We invert *every* axis because it will go the opposite way you want it to go.
+A couple of notes, Left Y is for translation, and Left X is for strafing. We invert *every* axis because it will go the opposite way you want it to go.
 
 ``
 swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, false);
 ``
-This is what actually drives the swerve subsystem. This specific configuration uses the PIDs supplied in pidfproperties.json,
+This is what drives the swerve subsystem. This specific configuration uses the PIDs supplied in pidfproperties.json,
 is field relative, applies the deadband for rotation, and applies the Translation2d.
 
 Of course, Subsystem setups vary depending on what it is designed for. A claw would use Pneumatics, so you create a ClawSubsystem

@@ -4,22 +4,17 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc8768.robot.Robot;
 import frc8768.robot.subsystems.SwerveSubsystem;
-// import frc8768.robot.subsystems.TankSubsystemFalcon;
-// import frc8768.robot.subsystems.TankSubsystemSpark;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
-import frc8768.visionlib.Vision;
-import frc8768.visionlib.helpers.LimelightHelpers;
 
-import java.util.logging.Level;
-
+/**
+ * Operator for driving the bot
+ */
 public class DrivebaseOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
     private final SwerveSubsystem swerve;
@@ -30,6 +25,9 @@ public class DrivebaseOperator extends Operator {
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
 
+    /**
+     * @param swerve The required subsystem for this operator.
+     */
     public DrivebaseOperator(SwerveSubsystem swerve) {
         super("Drivebase");
 

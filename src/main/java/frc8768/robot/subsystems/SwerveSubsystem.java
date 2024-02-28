@@ -33,6 +33,9 @@ public class SwerveSubsystem implements Subsystem {
      * The underlying YAGSL implementation
      */
     private SwerveDrive swerveDrive;
+    /**
+     * A Thread that updates the swerve odometry based on a apriltag
+     */
     private VisionOdomThread visionUpdateThread;
 
     /**

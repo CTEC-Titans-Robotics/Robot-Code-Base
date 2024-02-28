@@ -28,12 +28,12 @@ public class Auto {
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
                 new PIDConstants(0.00, 0.00, 0.01),
                 new PIDConstants(0.00, 0.00, 0.01),
-                // TODO: Put max module speed here
+                // TODO: Put max module speed here, m/s
                 14.2,
-                // TODO: Put your robot chassis radius here
+                // TODO: Put your robot chassis radius here, from center of bot to furthest module output shaft
                 5,
                 new ReplanningConfig(
-                        false,
+                        true,
                         true
                 )
 
@@ -45,6 +45,7 @@ public class Auto {
                 swerveDrive::getRobotVelocity,
                 swerveDrive::setChassisSpeeds,
                 config,
+                () -> false, // Change if needed
                 swerve);
 
         autonChooser = new SendableChooser<>();

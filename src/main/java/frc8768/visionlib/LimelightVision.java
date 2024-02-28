@@ -24,12 +24,7 @@ public class LimelightVision extends Vision {
     // TODO
     @Override
     public Object getBestTarget() {
-        LimelightHelpers.LimelightTarget_Fiducial[] classifier = LimelightHelpers.getLatestResults(this.limelightName).targetingResults.targets_Fiducials;
-        if(classifier.length > 0) {
-            return classifier[0];
-        }
-
-        return null;
+        return LimelightHelpers.getLatestResults(this.limelightName).targetingResults;
     }
 
     @Override
@@ -50,19 +45,24 @@ public class LimelightVision extends Vision {
 
     @Override
     public double getMaxPointY() {
-        LimelightHelpers.LimelightTarget_Fiducial classifier = (LimelightHelpers.LimelightTarget_Fiducial) getBestTarget();
-        if(classifier != null) {
-            return classifier.ty + 0.08255;
+        LimelightHelpers.Results classifier = (LimelightHelpers.Results) getBestTarget();
+        LimelightHelpers.LimelightTarget_Fiducial newClassifier = classifier.targets_Fiducials[0];
+        if(newClassifier != null) {
+            return newClassifier.ty + 0.25;
         }
         return -1;
     }
 
     @Override
     public int getTargetID() {
-        LimelightHelpers.LimelightTarget_Fiducial classifier = (LimelightHelpers.LimelightTarget_Fiducial) getBestTarget();
+        LimelightHelpers.Results classifier = (LimelightHelpers.Results) getBestTarget();
         if(classifier == null) {
             return -1;
         }
-        return (int) classifier.fiducialID;
+        LimelightHelpers.LimelightTarget_Fiducial newClassifier = classifier.targets_Fiducials[0];
+        if(newClassifier == null) {
+            return -1;
+        }
+        return (int) newClassifier.fiducialID;
     }
 }

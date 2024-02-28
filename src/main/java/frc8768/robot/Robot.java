@@ -6,8 +6,6 @@
 package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
@@ -15,9 +13,9 @@ import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
-import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
 
+import java.io.IOException;
 import java.util.logging.Level;
 
 /**
@@ -76,21 +74,18 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
-        // drivebase = new DrivebaseOperator();
-        /*
-        * Swerve Example
-        * try {
-        *   swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
-        * } catch (IOException io) {
-        *   throw new RuntimeException("Swerve failed to create!", io);
-        * }
-        */
+        try {
+          swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
+        } catch (IOException io) {
+          throw new RuntimeException("Swerve failed to create!", io);
+        }
+
 
         this.drivebase = new DrivebaseOperator(this.swerve);
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
-        drivebase.init();
+        this.drivebase.init();
     }
 
     /* For tank
@@ -113,9 +108,9 @@ public class Robot extends TimedRobot
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-        if(drivebase != null && !drivebase.isAlive()) {
+        if(this.drivebase != null && !this.drivebase.isAlive()) {
             LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
-            drivebase.reviveThread();
+            this.drivebase.reviveThread();
         }
 
         LogUtil.run();
@@ -126,8 +121,8 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousInit() {
-        if (auto != null) {
-            auto.getSelected().schedule();
+        if (this.auto != null) {
+            this.auto.getSelected().schedule();
         }
     }
 
@@ -136,11 +131,11 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousPeriodic() {
-        if(auto != null) {
-            if(!auto.getSelected().isScheduled()) {
+        if(this.auto != null) {
+            if(!this.auto.getSelected().isScheduled()) {
                 return;
             }
-            auto.getSelected().execute();
+            this.auto.getSelected().execute();
         }
     }
 

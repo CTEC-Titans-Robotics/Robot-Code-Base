@@ -131,8 +131,8 @@ public class IntakeSubsystem implements Subsystem {
     public enum IntakeStage {
         INTAKE(0.25, 68, null),
         HOLD(0.03, -1, INTAKE),
-        SPEAKER(0.75, 40, HOLD),
-        AMP(0.2, 35, HOLD),
+        SPEAKER(0.5, 40, HOLD), //speed 0.75
+        AMP(0.5, 35, HOLD), // speed 0.2
         IDLE(0, -1, null);
 
         private final double desiredSpeed;

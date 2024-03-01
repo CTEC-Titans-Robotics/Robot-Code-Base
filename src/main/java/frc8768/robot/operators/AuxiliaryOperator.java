@@ -22,6 +22,8 @@ public class AuxiliaryOperator extends Operator {
         LogUtil.registerDashLogger(this.intake::dashboard);
     }
 
+    boolean idleSet = false;
+
     @Override
     public void run() {
         this.intake.tick();
@@ -30,16 +32,25 @@ public class AuxiliaryOperator extends Operator {
             this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
             this.intake.setStage(IntakeSubsystem.IntakeStage.INTAKE);
 
-        } else if(controller.getRightBumper()) {
+            //idleSet = false;
+        }
+        if(controller.getRightBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
+           // idleSet = false;
 
-        } else if(controller.getLeftBumper()) {
+        }
+        if(controller.getLeftBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
+           // idleSet = false;
 
-        } else if(!this.intake.isShooting()) {
+        }
+        if(!this.intake.isShooting() /*&& !idleSet*/) {
             // Don't let the drivers drive around with the arm down.
             // *we know how that went last time*
             this.arm.setDesiredState(ArmSubsystem.ArmState.IDLE);
+            this.intake.setStage(IntakeSubsystem.IntakeStage.IDLE);
+           // idleSet = true;
+
         }
 
         if(controller.getRightTriggerAxis() > Constants.controllerDeadband) {

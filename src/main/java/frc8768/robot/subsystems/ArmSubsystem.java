@@ -36,10 +36,10 @@ public class ArmSubsystem implements Subsystem {
         this.armEncoder.setDistancePerRotation(360D);
 
         // Configure feedforward
-        this.armFeedforward = new ArmFeedforward(0.0001, 0.53, 0.69, 0.09);
+        this.armFeedforward = new ArmFeedforward(0.0, 0.96, 0.69, 0.05);
 
         // Setup PIDController
-        this.armController = new ProfiledPIDController(6.8, 0.0, 0.0,
+        this.armController = new ProfiledPIDController(0.00001, 0.0, 0.0,
                 new TrapezoidProfile.Constraints(Units.degreesToRadians(5), Units.degreesToRadians(10)));
         this.armController.setTolerance(Units.degreesToRadians(2)); // Degrees, once PID is fine tuned this should be fine
         this.armController.enableContinuousInput(Units.degreesToRadians(0), Units.degreesToRadians(360));
@@ -99,7 +99,7 @@ public class ArmSubsystem implements Subsystem {
         HashMap<String, String> map = new HashMap<>();
         map.put("Current ArmState", currState.name());
         map.put("Arm Position", String.valueOf(this.getPosition()));
-        map.put("Arm Setpoint PID", String.valueOf(this.armController.getSetpoint()));
+        map.put("Arm Setpoint PID", String.valueOf(this.armController.getSetpoint().position));
         map.put("Arm Tolerance PID", String.valueOf(this.armController.getPositionTolerance()));
         return map;
     }

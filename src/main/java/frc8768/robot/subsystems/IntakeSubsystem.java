@@ -93,9 +93,11 @@ public class IntakeSubsystem implements Subsystem {
         }
     }
 
-    public boolean isShooting() {
-        return this.currStage == IntakeStage.SPEAKER || this.currStage == IntakeStage.AMP;
+    public boolean isActive() {
+        return this.currStage == IntakeStage.HOLD || this.currStage == IntakeStage.AMP
+                || this.currStage == IntakeStage.SPEAKER;
     }
+
 
     public boolean stageTripped() {
         return switch (this.currStage) {
@@ -106,12 +108,13 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public void tick() {
-        if(stageTripped()) {
+       /* if(stageTripped()) {
             switch (this.currStage) {
-                case INTAKE -> setStage(IntakeStage.HOLD);
+               case INTAKE -> setStage(IntakeStage.IDLE);
                 case AMP, SPEAKER -> setStage(IntakeStage.IDLE);
             }
         }
+        */
     }
 
     /**
@@ -152,5 +155,6 @@ public class IntakeSubsystem implements Subsystem {
         public boolean hasTripped(double drawnCurrent) {
             return drawnCurrent >= this.ampTrip;
         }
+
     }
 }

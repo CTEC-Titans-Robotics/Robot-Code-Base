@@ -10,6 +10,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc8768.robot.Robot;
+import frc8768.robot.subsystems.ArmSubsystem;
+import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 // import frc8768.robot.subsystems.TankSubsystemFalcon;
 // import frc8768.robot.subsystems.TankSubsystemSpark;
@@ -23,6 +25,10 @@ import java.util.logging.Level;
 public class DrivebaseOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
     private final SwerveSubsystem swerve;
+
+ //   private  final IntakeSubsystem intake;
+
+ //   private  final ArmSubsystem arm;
     private Command currCommand;
 
 
@@ -33,6 +39,8 @@ public class DrivebaseOperator extends Operator {
         super("Drivebase");
 
         this.swerve = swerve;
+      //  this.intake = intake;
+      //  this.arm = arm;
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
 
@@ -46,6 +54,18 @@ public class DrivebaseOperator extends Operator {
 
     @Override
     public void run() {
+        //INTAKE CODE
+       /* if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
+            this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
+            this.intake.setStage(IntakeSubsystem.IntakeStage.INTAKE);
+        } else {
+            this.arm.setDesiredState(ArmSubsystem.ArmState.IDLE);
+            this.intake.setStage(IntakeSubsystem.IntakeStage.IDLE);
+        }
+          */
+
+
+        //SWERVE CODE
         this.swerve.getSwerveDrive().updateOdometry();
 
         if(controller.getBButtonPressed()) {

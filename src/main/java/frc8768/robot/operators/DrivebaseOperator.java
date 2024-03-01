@@ -10,6 +10,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc8768.robot.Robot;
+import frc8768.robot.subsystems.ArmSubsystem;
+import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 // import frc8768.robot.subsystems.TankSubsystemFalcon;
 // import frc8768.robot.subsystems.TankSubsystemSpark;
@@ -23,7 +25,10 @@ import java.util.logging.Level;
 public class DrivebaseOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
     private final SwerveSubsystem swerve;
-    private boolean isRelocating = false;
+
+ //   private  final IntakeSubsystem intake;
+
+ //   private  final ArmSubsystem arm;
     private Command currCommand;
 
 
@@ -34,6 +39,8 @@ public class DrivebaseOperator extends Operator {
         super("Drivebase");
 
         this.swerve = swerve;
+      //  this.intake = intake;
+      //  this.arm = arm;
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
 
@@ -47,6 +54,18 @@ public class DrivebaseOperator extends Operator {
 
     @Override
     public void run() {
+        //INTAKE CODE
+       /* if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
+            this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
+            this.intake.setStage(IntakeSubsystem.IntakeStage.INTAKE);
+        } else {
+            this.arm.setDesiredState(ArmSubsystem.ArmState.IDLE);
+            this.intake.setStage(IntakeSubsystem.IntakeStage.IDLE);
+        }
+          */
+
+
+        //SWERVE CODE
         this.swerve.getSwerveDrive().updateOdometry();
 
         if(controller.getBButtonPressed()) {
@@ -54,7 +73,7 @@ public class DrivebaseOperator extends Operator {
         }
 
         if(controller.getXButtonPressed()) {
-            swerve.getSwerveDrive().lockPose();
+            this.swerve.getSwerveDrive().lockPose();
         }
 
         // Apply controller deadband
@@ -65,7 +84,7 @@ public class DrivebaseOperator extends Operator {
         boolean joystickInput = MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
                 MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0;
         boolean isRobotRelative = false;
-        if(joystickInput || controller.getPOV() != -1) {
+        if((joystickInput || controller.getPOV() != -1) && this.currCommand != null) {
             this.currCommand.cancel();
             this.currCommand = null;
         }
@@ -82,16 +101,18 @@ public class DrivebaseOperator extends Operator {
             }
 
             // Robot-Relative control
-            double speed = 0.75;
-            switch(controller.getPOV()) {
-                case 0 -> translation2d = new Translation2d(speed, 0);
-                case 45 -> translation2d = new Translation2d(speed, speed);
-                case 90 -> translation2d = new Translation2d(0, speed);
-                case 135 -> translation2d = new Translation2d(-speed, speed);
-                case 180 -> translation2d = new Translation2d(-speed, 0);
-                case 225 -> translation2d = new Translation2d(-speed, -speed);
-                case 270 -> translation2d = new Translation2d(0, -speed);
-                case 315 -> translation2d = new Translation2d(speed, -speed);
+            if(isRobotRelative) {
+                double speed = 0.75;
+                switch (controller.getPOV()) {
+                    case 0 -> translation2d = new Translation2d(speed, 0);
+                    case 45 -> translation2d = new Translation2d(speed, speed);
+                    case 90 -> translation2d = new Translation2d(0, speed);
+                    case 135 -> translation2d = new Translation2d(-speed, speed);
+                    case 180 -> translation2d = new Translation2d(-speed, 0);
+                    case 225 -> translation2d = new Translation2d(-speed, -speed);
+                    case 270 -> translation2d = new Translation2d(0, -speed);
+                    case 315 -> translation2d = new Translation2d(speed, -speed);
+                }
             }
             // Swerve Example
             this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), !isRobotRelative, false, Constants.BOT_CENTER);

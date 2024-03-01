@@ -83,7 +83,7 @@ public class Robot extends TimedRobot
         CameraServer.startAutomaticCapture();
 
         try {
-          swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
+          this.swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
         } catch (IOException io) {
           throw new RuntimeException("Swerve failed to create!", io);
         }

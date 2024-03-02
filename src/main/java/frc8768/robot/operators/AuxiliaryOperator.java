@@ -12,40 +12,28 @@ public class AuxiliaryOperator extends Operator {
     private final ArmSubsystem arm;
     private final IntakeSubsystem intake;
 
-    public AuxiliaryOperator() {
+    public AuxiliaryOperator(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem) {
         super("Auxiliary");
 
-        this.arm = new ArmSubsystem();
-        this.intake = new IntakeSubsystem();
-
-        LogUtil.registerDashLogger(this.arm::dashboard);
-        LogUtil.registerDashLogger(this.intake::dashboard);
+        this.arm = armSubsystem;
+        this.intake = intakeSubsystem;
     }
 
     @Override
     public void run() {
-        this.intake.tick();
-
-        if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
-            this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
-            this.intake.setStage(IntakeSubsystem.IntakeStage.INTAKE);
-
-        } else if(controller.getRightBumper()) {
+        if(controller.getRightBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
-
         } else if(controller.getLeftBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
-
-        } else if(!this.intake.isShooting()) {
-            // Don't let the drivers drive around with the arm down.
-            // *we know how that went last time*
-            this.arm.setDesiredState(ArmSubsystem.ArmState.IDLE);
+        } else {
+            this.arm.releaseLock();
         }
 
         if(controller.getRightTriggerAxis() > Constants.controllerDeadband) {
-            this.intake.setStage(this.arm.currState == ArmSubsystem.ArmState.SPEAKER ?
+            this.intake.beginStage(this.arm.currState == ArmSubsystem.ArmState.SPEAKER ?
                     IntakeSubsystem.IntakeStage.SPEAKER : IntakeSubsystem.IntakeStage.AMP);
-
+        } else {
+            this.intake.releaseLock();
         }
 
         // Emergency

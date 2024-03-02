@@ -10,6 +10,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc8768.robot.Robot;
+import frc8768.robot.subsystems.ArmSubsystem;
+import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 // import frc8768.robot.subsystems.TankSubsystemFalcon;
 // import frc8768.robot.subsystems.TankSubsystemSpark;
@@ -23,23 +25,22 @@ import java.util.logging.Level;
 public class DrivebaseOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
     private final SwerveSubsystem swerve;
-    private boolean isRelocating = false;
+    private final ArmSubsystem arm;
+    private final IntakeSubsystem intake;
     private Command currCommand;
 
 
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
 
-    public DrivebaseOperator(SwerveSubsystem swerve) {
+    public DrivebaseOperator(SwerveSubsystem swerve, ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem) {
         super("Drivebase");
 
         this.swerve = swerve;
+        this.arm = armSubsystem;
+        this.intake = intakeSubsystem;
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
-
-        // Init logging
-        LogUtil.registerLogger(swerve::log);
-        LogUtil.registerDashLogger(swerve::dashboard);
 
         // We update odometry on our own thread just in case
         this.swerve.getSwerveDrive().stopOdometryThread();
@@ -57,6 +58,18 @@ public class DrivebaseOperator extends Operator {
             swerve.getSwerveDrive().lockPose();
         }
 
+        if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
+            this.arm.setDesiredState((ArmSubsystem.ArmState.INTAKE));
+            if(this.arm.getPosition() < 8) {
+                this.intake.beginStage(IntakeSubsystem.IntakeStage.INTAKE);
+            }
+        } else if(controller.getRightBumper()) {
+            this.arm.setDesiredState(ArmSubsystem.ArmState.LOW);
+        } else {
+            this.arm.releaseLock();
+            this.intake.releaseLock();
+        }
+
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
                 MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
@@ -65,7 +78,7 @@ public class DrivebaseOperator extends Operator {
         boolean joystickInput = MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
                 MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0;
         boolean isRobotRelative = false;
-        if(joystickInput || controller.getPOV() != -1) {
+        if(this.currCommand != null && (joystickInput || controller.getPOV() != -1)) {
             this.currCommand.cancel();
             this.currCommand = null;
         }

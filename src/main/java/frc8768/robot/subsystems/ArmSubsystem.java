@@ -45,15 +45,26 @@ public class ArmSubsystem implements Subsystem {
         this.positionThread = new Thread(() -> {
             while(true) {
                 double position = this.getPosition();
-                if(this.currState.isAngleWithinTolerance(position)) {
-                    this.armMotor.set(0);
-                    continue;
+
+                if(this.currState.isAngleWithinCoarseTolerance(position)) {
+                    if(this.currState.isAngleWithinFineTolerance(position)) {
+                        //if both within fine and coarse tolerance stop the motor (you have reached your destination!!)
+                        this.armMotor.setVoltage(this.currState.holdVoltage);
+                        continue;
+                    }
+                    //if within coarse tolerance but not within fine tolerance move at slower speed until it reaches fine
+                    if(this.currState.getDesiredPosition() > position) {
+                        this.armMotor.set(0.06); //og value 0.13
+                    } else if(this.currState.getDesiredPosition() < position) {
+                        this.armMotor.set(-0.06); //og value 0.13
+                    }
                 }
 
+                //Goes at normal speed if not in Coarse Tolerance
                 if(this.currState.getDesiredPosition() > position) {
-                    this.armMotor.set(0.12); //og value 0.13
+                    this.armMotor.set(this.currState.speed);
                 } else if(this.currState.getDesiredPosition() < position) {
-                    this.armMotor.set(-0.12); //og value 0.13
+                    this.armMotor.set(-this.currState.speed);
                 }
             }
         });
@@ -85,6 +96,7 @@ public class ArmSubsystem implements Subsystem {
             return;
         }
         this.armLock.set(Thread.currentThread());
+
         this.currState = state;
     }
 
@@ -114,26 +126,35 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public enum ArmState {
-        IDLE(84, 2),
-        LOW(15,2),
-        INTAKE(2, 2),
-        AMP(95, 2),
-        SPEAKER(25, 2);
+        IDLE(84, 2, 5, 0.22, 0),
+        LOW(12,2, 4,0.13, 0.24),
+        INTAKE(2, 2, 5,0.13, 0.24),
+        AMP(95, 2, 5,0.20, 0),
+        SPEAKER(30, 2, 5,0.18, 0.24);
 
-        private final double tolerance;
+        private final double fineTolerance;
         private final double position;
+        private  final double coarseTolerance;
+        private final double speed;
+        private  final  double holdVoltage;
 
-        ArmState(double angle, double tolerance) {
+        ArmState(double angle, double fineTolerance, double coarseTolerance, double speed, double holdVoltage) {
             this.position = angle;
-            this.tolerance = tolerance;
+            this.fineTolerance = fineTolerance;
+            this.coarseTolerance = coarseTolerance;
+            this.speed = speed;
+            this.holdVoltage = holdVoltage;
         }
 
         public double getDesiredPosition() {
             return this.position;
         }
 
-        public boolean isAngleWithinTolerance(double currAngle) {
-            return MathUtil.isNear(this.position, currAngle, this.tolerance);
+        public boolean isAngleWithinCoarseTolerance(double currAngle) {
+            return MathUtil.isNear(this.position, currAngle, this.coarseTolerance);
+        }
+        public boolean isAngleWithinFineTolerance(double currAngle) {
+            return MathUtil.isNear(this.position, currAngle, this.fineTolerance);
         }
     }
 }

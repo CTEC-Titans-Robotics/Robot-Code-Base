@@ -59,12 +59,14 @@ public class DrivebaseOperator extends Operator {
         }
 
         if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
-            this.arm.setDesiredState((ArmSubsystem.ArmState.INTAKE));
+            this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
             if(this.arm.getPosition() < 8) {
                 this.intake.beginStage(IntakeSubsystem.IntakeStage.INTAKE);
             }
         } else if(controller.getRightBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.LOW);
+        } else if(controller.getAButton()) {
+            this.intake.beginStage(IntakeSubsystem.IntakeStage.OUTTAKE);
         } else {
             this.arm.releaseLock();
             this.intake.releaseLock();
@@ -87,28 +89,24 @@ public class DrivebaseOperator extends Operator {
             isRobotRelative = true;
         }
 
-        if(controller.getAButtonPressed()) {
-            relocate(Constants.FieldWaypoints.AMP.getPose2d());
-        } else {
-            if(this.currCommand != null && !this.currCommand.isFinished()) {
-                return;
-            }
-
-            // Robot-Relative control
-            double speed = 0.75;
-            switch(controller.getPOV()) {
-                case 0 -> translation2d = new Translation2d(speed, 0);
-                case 45 -> translation2d = new Translation2d(speed, speed);
-                case 90 -> translation2d = new Translation2d(0, speed);
-                case 135 -> translation2d = new Translation2d(-speed, speed);
-                case 180 -> translation2d = new Translation2d(-speed, 0);
-                case 225 -> translation2d = new Translation2d(-speed, -speed);
-                case 270 -> translation2d = new Translation2d(0, -speed);
-                case 315 -> translation2d = new Translation2d(speed, -speed);
-            }
-            // Swerve Example
-            this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), !isRobotRelative, false, Constants.BOT_CENTER);
+        if(this.currCommand != null && !this.currCommand.isFinished()) {
+            return;
         }
+
+        // Robot-Relative control
+        double speed = 0.75;
+        switch(controller.getPOV()) {
+            case 0 -> translation2d = new Translation2d(speed, 0);
+            case 45 -> translation2d = new Translation2d(speed, speed);
+            case 90 -> translation2d = new Translation2d(0, speed);
+            case 135 -> translation2d = new Translation2d(-speed, speed);
+            case 180 -> translation2d = new Translation2d(-speed, 0);
+            case 225 -> translation2d = new Translation2d(-speed, -speed);
+            case 270 -> translation2d = new Translation2d(0, -speed);
+            case 315 -> translation2d = new Translation2d(speed, -speed);
+        }
+        // Swerve Example
+        this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), !isRobotRelative, false, Constants.BOT_CENTER);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

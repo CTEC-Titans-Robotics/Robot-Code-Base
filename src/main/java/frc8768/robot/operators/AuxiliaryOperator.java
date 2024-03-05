@@ -54,7 +54,7 @@ public class AuxiliaryOperator extends Operator {
                         this.vision.getBestTarget().getBestCameraToTarget().getX(), 0.0508)) {
                     this.caNdle.setLEDs(0, 255, 0);
                 }
-                this.arm.overrideAngle = MathUtil.clamp(Math.pow(distance, 0.675) + 30, 2, 85);
+                this.arm.overrideAngle = MathUtil.clamp(Math.pow(distance, 0.731) + 21.5, 2, 85);
             } else {
                 this.caNdle.setLEDs(255, 0, 0);
                 this.arm.overrideAngle = -1;

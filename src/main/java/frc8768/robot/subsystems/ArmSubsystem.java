@@ -26,6 +26,7 @@ public class ArmSubsystem implements Subsystem {
     private final Thread positionThread;
     private final AtomicReference<Thread> armLock;
     public ArmState currState = ArmState.IDLE;
+    public double overrideAngle = -1;
 
     public ArmSubsystem() {
         // Lock Setup
@@ -46,7 +47,7 @@ public class ArmSubsystem implements Subsystem {
             while(true) {
                 double position = this.getPosition();
 
-                if(this.currState.isAngleWithinCoarseTolerance(position)) {
+                if(this.currState.isAngleWithinCoarseTolerance(position) && this.overrideAngle == -1) {
                     if(this.currState.isAngleWithinFineTolerance(position)) {
                         //if both within fine and coarse tolerance stop the motor (you have reached your destination!!)
                         this.armMotor.setVoltage(this.currState.holdVoltage);
@@ -61,10 +62,18 @@ public class ArmSubsystem implements Subsystem {
                 }
 
                 //Goes at normal speed if not in Coarse Tolerance
-                if(this.currState.getDesiredPosition() > position) {
+                if(this.currState.getDesiredPosition() > position && this.overrideAngle == -1) {
                     this.armMotor.set(this.currState.speed);
-                } else if(this.currState.getDesiredPosition() < position) {
+                } else if(this.currState.getDesiredPosition() < position && this.overrideAngle == -1) {
                     this.armMotor.set(-this.currState.speed);
+                }
+
+                if(this.overrideAngle != -1) {
+                    if(this.overrideAngle > position) {
+                        this.armMotor.set(0.13);
+                    } else if(this.overrideAngle < position) {
+                        this.armMotor.set(-0.13);
+                    }
                 }
             }
         });

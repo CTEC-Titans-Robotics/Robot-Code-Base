@@ -50,7 +50,10 @@ public class AuxiliaryOperator extends Operator {
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
         } else if(controller.getLeftBumper()) {
             if(distance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
-                this.caNdle.setLEDs(0, 255, 0);
+                if(MathUtil.isNear(0,
+                        this.vision.getBestTarget().getBestCameraToTarget().getX(), 0.0508)) {
+                    this.caNdle.setLEDs(0, 255, 0);
+                }
                 this.arm.overrideAngle = MathUtil.clamp(Math.pow(distance, 0.675) + 30, 2, 85);
             } else {
                 this.caNdle.setLEDs(255, 0, 0);

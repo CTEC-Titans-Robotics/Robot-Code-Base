@@ -19,6 +19,8 @@ public class IntakeSubsystem implements Subsystem {
     private IntakeStage currStage = IntakeStage.IDLE;
     private final AtomicReference<Thread> intakeLock;
 
+    public double overrideShootSpeed = -1;
+
     public IntakeSubsystem() {
         // Lock Setup
         this.intakeLock = new AtomicReference<>();
@@ -99,7 +101,7 @@ public class IntakeSubsystem implements Subsystem {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                this.shootMotor.set(desiredSpeed);
+                this.shootMotor.set(this.overrideShootSpeed != -1 ? this.overrideShootSpeed : desiredSpeed);
                 try {
                     Thread.sleep(750);
                 } catch (InterruptedException e) {

@@ -7,6 +7,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
+import java.util.List;
+
 public class Constants {
     /**
      * The Main Driver controller ID
@@ -32,6 +34,9 @@ public class Constants {
      * Field size in meters
      */
     public static final Translation2d FIELD_SIZE = new Translation2d(16.54175, 8.21055);
+
+    public static final List<Integer> SPEAKER_IDS =
+            DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? List.of(3, 4) : List.of(7,8);
 
     /**
      * Swerve-specific configuration.

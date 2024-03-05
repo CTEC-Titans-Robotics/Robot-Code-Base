@@ -15,10 +15,16 @@ public class PhotonVision extends Vision {
 
     /**
      * @param type One of {@link Type}
-     *             NOTE: Limelight 3 is pi for now.
      */
     public PhotonVision(Type type) {
         camera = new PhotonCamera(type.name);
+    }
+
+    /**
+     * @param hostname The hostname
+     */
+    public PhotonVision(String hostname) {
+        camera = new PhotonCamera(hostname);
     }
 
     /**

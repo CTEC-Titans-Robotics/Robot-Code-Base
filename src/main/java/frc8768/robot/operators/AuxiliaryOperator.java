@@ -1,26 +1,50 @@
 package frc8768.robot.operators;
 
+import com.ctre.phoenix.led.CANdle;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
+import frc8768.visionlib.LimelightVision;
+import frc8768.visionlib.PhotonVision;
+
+import java.util.List;
 
 public class AuxiliaryOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.coDriverControllerId);
 
     private final ArmSubsystem arm;
+    private final CANdle caNdle;
     private final IntakeSubsystem intake;
+    private final PhotonVision vision;
 
     public AuxiliaryOperator(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem) {
         super("Auxiliary");
 
         this.arm = armSubsystem;
         this.intake = intakeSubsystem;
+
+        // LEDs
+        this.caNdle = new CANdle(36);
+        this.caNdle.configLEDType(CANdle.LEDStripType.GRB);
+        this.caNdle.configV5Enabled(true);
+        this.caNdle.setLEDs(255, 0, 0);
+
+        this.vision = new PhotonVision("limelight-left");
+
+        LogUtil.registerDashLogger(this.arm::dashboard);
+        LogUtil.registerDashLogger(this.intake::dashboard);
     }
 
     @Override
     public void run() {
+        this.intake.tick();
+
+        double distance =
+                this.vision.getDistanceToTarget(30, 0, 57.13, false);
+
         if(controller.getRightBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
         } else if(controller.getLeftBumper()) {
@@ -30,6 +54,10 @@ public class AuxiliaryOperator extends Operator {
         }
 
         if(controller.getRightTriggerAxis() > Constants.controllerDeadband) {
+            if(distance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
+                this.intake.overrideShootSpeed = distance * 0/* TODO */;
+            }
+
             this.intake.beginStage(this.arm.currState == ArmSubsystem.ArmState.SPEAKER ?
                     IntakeSubsystem.IntakeStage.SPEAKER : IntakeSubsystem.IntakeStage.AMP);
         } else {

@@ -1,6 +1,7 @@
 package frc8768.robot.auto;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -49,6 +50,8 @@ public class Auto {
 
         this.autonChooser = new SendableChooser<>();
         this.autonChooser.setDefaultOption("No-op", new InstantCommand());
+
+        // TODO: NamedCommands.registerCommands();
 
         // Setup Positions
         this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position 1"));

@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.AuxiliaryOperator;
 import frc8768.robot.operators.DrivebaseOperator;
+import frc8768.robot.subsystems.ArmSubsystem;
+import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
@@ -48,6 +50,8 @@ public class Robot extends TimedRobot
      * The swerve subsystem, held in here for Auton.
      */
     private SwerveSubsystem swerve;
+    private ArmSubsystem arm;
+    private IntakeSubsystem intake;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
 
@@ -82,20 +86,32 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
+        // Subsystem init
         try {
-          swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
+          this.swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
         } catch (IOException io) {
           throw new RuntimeException("Swerve failed to create!", io);
         }
+        this.arm = new ArmSubsystem();
+        this.intake = new IntakeSubsystem();
 
-        this.drivebase = new DrivebaseOperator(this.swerve);
-        this.auxiliary = new AuxiliaryOperator();
+        // Operator creation
+        this.drivebase = new DrivebaseOperator(this.swerve, this.arm, this.intake);
+        this.auxiliary = new AuxiliaryOperator(this.arm, this.intake);
 
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
+        // Init
         this.drivebase.init();
         this.auxiliary.init();
+
+        // Init logging
+        LogUtil.registerLogger(this.swerve::log);
+
+        LogUtil.registerDashLogger(this.swerve::dashboard);
+        LogUtil.registerDashLogger(this.arm::dashboard);
+        LogUtil.registerDashLogger(this.intake::dashboard);
     }
 
     /* For tank
@@ -127,6 +143,9 @@ public class Robot extends TimedRobot
             this.auxiliary.reviveThread();
         }
 
+        this.arm.tick();
+        this.intake.tick();
+
         LogUtil.run();
     }
 
@@ -135,8 +154,8 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousInit() {
-        if (auto != null) {
-            auto.getSelected().schedule();
+        if (this.auto != null) {
+            this.auto.getSelected().schedule();
         }
     }
 
@@ -145,11 +164,11 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousPeriodic() {
-        if(auto != null) {
-            if(!auto.getSelected().isScheduled()) {
+        if(this.auto != null) {
+            if(!this.auto.getSelected().isScheduled()) {
                 return;
             }
-            auto.getSelected().execute();
+            this.auto.getSelected().execute();
         }
     }
 

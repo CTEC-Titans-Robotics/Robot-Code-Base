@@ -8,6 +8,8 @@ import frc8768.robot.util.LogUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
 public class IntakeSubsystem implements Subsystem {
@@ -15,8 +17,14 @@ public class IntakeSubsystem implements Subsystem {
     private final CANSparkFlex holdMotor = new CANSparkFlex(17, CANSparkLowLevel.MotorType.kBrushless);
     private final CANSparkFlex shootMotor = new CANSparkFlex(18, CANSparkLowLevel.MotorType.kBrushless);
     private IntakeStage currStage = IntakeStage.IDLE;
+    private final AtomicReference<Thread> intakeLock;
+
+    public double overrideShootSpeed = -1;
 
     public IntakeSubsystem() {
+        // Lock Setup
+        this.intakeLock = new AtomicReference<>();
+
         // Configure Motor
         this.intakeMotor.restoreFactoryDefaults();
         this.intakeMotor.setIdleMode(CANSparkBase.IdleMode.kCoast);
@@ -42,9 +50,25 @@ public class IntakeSubsystem implements Subsystem {
         this.intakeMotor.set(0);
     }
 
-    public void setStage(IntakeStage stage) {
-        if(this.currStage == stage || this.currStage.cantMoveStage == stage) {
-            LogUtil.LOGGER.log(Level.WARNING, "Stage %s was already set, or was invalid, discarding...", this.currStage.name());
+    public void beginStage(IntakeStage stage) {
+        if(this.intakeLock.get() != Thread.currentThread() && this.intakeLock.get() != null) {
+            LogUtil.LOGGER.log(Level.WARNING, "Intake is locked by another thread, disallowing access from a calling thread.");
+            return;
+        }
+        this.intakeLock.set(Thread.currentThread());
+
+        this.setStage(stage);
+    }
+
+    public void releaseLock() {
+        if(this.intakeLock.get() == null || this.intakeLock.get() != Thread.currentThread()) {
+            return;
+        }
+        this.intakeLock.set(null);
+    }
+
+    private void setStage(IntakeStage stage) {
+        if(this.currStage == stage) {
             return;
         }
 
@@ -63,27 +87,27 @@ public class IntakeSubsystem implements Subsystem {
                 this.holdMotor.set(0.15);
                 this.intakeMotor.set(desiredSpeed*2);
             }
-            case HOLD -> {
-                this.holdMotor.set(0);
+            case OUTTAKE -> {
+                this.shootMotor.set(-0.03);
 
-                this.intakeMotor.set(desiredSpeed);
-                this.shootMotor.set(-desiredSpeed);
+                this.holdMotor.set(-0.15);
+                this.intakeMotor.set(desiredSpeed*2);
             }
             case AMP, SPEAKER -> {
                 this.intakeMotor.set(0);
-                this.holdMotor.set(-0.12);
+                this.holdMotor.set(-0.1);
                 try {
                     Thread.sleep(150);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                this.shootMotor.set(desiredSpeed);
+                this.shootMotor.set(this.overrideShootSpeed != -1 ? this.overrideShootSpeed : desiredSpeed);
                 try {
-                    Thread.sleep(150);
+                    Thread.sleep(750);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                this.holdMotor.set(0.2);
+                this.holdMotor.set(0.25);
                 try {
                     Thread.sleep(750);
                 } catch (InterruptedException e) {
@@ -93,24 +117,9 @@ public class IntakeSubsystem implements Subsystem {
         }
     }
 
-    public boolean isShooting() {
-        return this.currStage == IntakeStage.SPEAKER || this.currStage == IntakeStage.AMP;
-    }
-
-    public boolean stageTripped() {
-        return switch (this.currStage) {
-            case IDLE, HOLD -> false;
-            case INTAKE -> this.currStage.hasTripped(this.holdMotor.getOutputCurrent());
-            case AMP, SPEAKER -> this.shootMotor.getOutputCurrent() < this.currStage.ampTrip;
-        };
-    }
-
     public void tick() {
-        if(stageTripped()) {
-            switch (this.currStage) {
-                case INTAKE -> setStage(IntakeStage.HOLD);
-                case AMP, SPEAKER -> setStage(IntakeStage.IDLE);
-            }
+        if(this.intakeLock.get() == null) {
+            this.setStage(IntakeStage.IDLE);
         }
     }
 
@@ -129,20 +138,18 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public enum IntakeStage {
-        INTAKE(0.25, 68, null),
-        HOLD(0.03, -1, INTAKE),
-        SPEAKER(0.75, 40, HOLD),
-        AMP(0.2, 35, HOLD),
-        IDLE(0, -1, null);
+        INTAKE(0.3, -1),
+        OUTTAKE(-0.2, -1),
+        SPEAKER(0.80, 40),
+        AMP(0.2, 35),
+        IDLE(0, -1);
 
         private final double desiredSpeed;
         private final double ampTrip;
-        private final IntakeStage cantMoveStage;
 
-        IntakeStage(double speed, double ampLimit, IntakeStage cantMoveStage) {
+        IntakeStage(double speed, double ampLimit) {
             this.desiredSpeed = speed;
             this.ampTrip = ampLimit;
-            this.cantMoveStage = cantMoveStage;
         }
 
         public double getDesiredMotorSpeed() {
@@ -150,7 +157,7 @@ public class IntakeSubsystem implements Subsystem {
         }
 
         public boolean hasTripped(double drawnCurrent) {
-            return drawnCurrent >= this.ampTrip;
+            return drawnCurrent < this.ampTrip;
         }
     }
 }

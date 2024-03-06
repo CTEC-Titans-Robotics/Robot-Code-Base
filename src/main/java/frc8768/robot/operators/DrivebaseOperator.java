@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc8768.robot.Robot;
 import frc8768.robot.subsystems.ArmSubsystem;
+import frc8768.robot.subsystems.ClimberSubsystem;
 import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
@@ -23,6 +24,7 @@ public class DrivebaseOperator extends Operator {
     private final SwerveSubsystem swerve;
     private final ArmSubsystem arm;
     private final IntakeSubsystem intake;
+    private final ClimberSubsystem climber;
     private Command currCommand;
 
 
@@ -38,11 +40,16 @@ public class DrivebaseOperator extends Operator {
         this.swerve = swerve;
         this.arm = armSubsystem;
         this.intake = intakeSubsystem;
+        this.climber = new ClimberSubsystem();
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
 
         // We update odometry on our own thread just in case
         this.swerve.getSwerveDrive().stopOdometryThread();
+    }
+
+    public void initTeleop() {
+        this.climber.init();
     }
 
     @Override
@@ -57,6 +64,14 @@ public class DrivebaseOperator extends Operator {
             swerve.getSwerveDrive().lockPose();
         }
 
+        if(controller.getAButton()) {
+            this.climber.down();
+        } else if(controller.getYButton()) {
+            this.climber.up();
+        } else {
+            this.climber.stop();
+        }
+
         if(controller.getLeftTriggerAxis() > Constants.controllerDeadband) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
             if(this.arm.getPosition() < 8) {
@@ -64,8 +79,6 @@ public class DrivebaseOperator extends Operator {
             }
         } else if(controller.getRightBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.LOW);
-        } else if(controller.getAButton()) {
-            this.intake.beginStage(IntakeSubsystem.IntakeStage.OUTTAKE);
         } else {
             this.arm.releaseLock();
             this.intake.releaseLock();

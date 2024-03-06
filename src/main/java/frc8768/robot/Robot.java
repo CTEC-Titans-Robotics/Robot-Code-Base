@@ -176,7 +176,9 @@ public class Robot extends TimedRobot
      * Runs at the start of Teleop state
      */
     @Override
-    public void teleopInit() {}
+    public void teleopInit() {
+        this.drivebase.initTeleop();
+    }
 
     /**
      * Runs every "tick" of Teleop time

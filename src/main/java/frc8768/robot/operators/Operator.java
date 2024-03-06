@@ -62,6 +62,7 @@ public abstract class Operator {
 
     /**
      * Check thread status
+     * @return output of {@link java.lang.Thread} isAlive() function for the op thread
      */
     public boolean isAlive() {
         return opThread.isAlive();

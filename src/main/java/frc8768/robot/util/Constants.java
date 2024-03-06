@@ -71,6 +71,10 @@ public class Constants {
                     bluePose.getRotation().times(-1));
         }
 
+        /**
+         * Get the Desired Field pose near a field element
+         * @return The desired Pose2d
+         */
         public Pose2d getPose2d() {
             if(DriverStation.getAlliance().isPresent()) {
                 return DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? bluePose : redPose;

@@ -54,6 +54,8 @@ public class Auto {
         // TODO: NamedCommands.registerCommands();
 
         // Setup Positions
+        this.autonChooser.addOption("Block", AutoBuilder.buildAuto("Block"));
+
         this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position 1"));
         this.autonChooser.addOption("Position 2", AutoBuilder.buildAuto("Position 2"));
         this.autonChooser.addOption("Position 3 N1", AutoBuilder.buildAuto("Position 3 N1"));

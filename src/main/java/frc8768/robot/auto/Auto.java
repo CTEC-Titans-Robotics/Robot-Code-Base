@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.subsystems.SwerveSubsystem;
-import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
 
 /**
@@ -47,8 +46,8 @@ public class Auto {
                 () -> false, // Change if needed
                 swerve);
 
-        autonChooser = new SendableChooser<>();
-        autonChooser.setDefaultOption("No-op", new InstantCommand());
+        this.autonChooser = new SendableChooser<>();
+        this.autonChooser.setDefaultOption("No-op", new InstantCommand());
     }
 
     /**

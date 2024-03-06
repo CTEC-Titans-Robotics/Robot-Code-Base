@@ -2,21 +2,15 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.4951056055958282,
-      "y": 4.440124264863915
+      "x": 1.255039600988293,
+      "y": 5.515621031242063
     },
-    "rotation": 30.0
+    "rotation": 1.2275788321345176
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Shooting Pos 2"
-          }
-        },
         {
           "type": "named",
           "data": {
@@ -62,7 +56,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shooting Pos 1"
+            "pathName": "Shooting Pos 2"
           }
         },
         {
@@ -80,6 +74,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Position 3",
   "choreoAuto": false
 }

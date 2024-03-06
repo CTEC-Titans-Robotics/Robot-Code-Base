@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.5148394912174455,
-      "y": 6.679920282917489
+      "x": 1.338998314360265,
+      "y": 5.515621031242063
     },
     "rotation": 60.018360631150735
   },
@@ -68,12 +68,18 @@
         {
           "type": "named",
           "data": {
+            "name": "speaker_shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "hold_arm_drive"
           }
         }
       ]
     }
   },
-  "folder": "Shooting",
+  "folder": "Position 4",
   "choreoAuto": false
 }

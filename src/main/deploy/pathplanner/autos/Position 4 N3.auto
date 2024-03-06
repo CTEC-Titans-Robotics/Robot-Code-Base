@@ -68,12 +68,18 @@
         {
           "type": "named",
           "data": {
+            "name": "speaker_shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "hold_arm_drive"
           }
         }
       ]
     }
   },
-  "folder": "Shooting",
+  "folder": "Position 4",
   "choreoAuto": false
 }

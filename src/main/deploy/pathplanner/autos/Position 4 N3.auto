@@ -1,0 +1,79 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.4951056055958282,
+      "y": 6.670053340106681
+    },
+    "rotation": 65.55604521958345
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shooting Pos 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speaker_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 3 Prep"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "drop_arm"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 3 Pickup"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "raise_arm_low"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shooting Pos 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "hold_arm_drive"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Shooting",
+  "choreoAuto": false
+}

@@ -28,8 +28,8 @@ public class AuxiliaryOperator extends Operator {
         this.intake = intakeSubsystem;
 
         // LEDs
-        this.caNdle = new CANdle(36);
-        this.caNdle.configLEDType(CANdle.LEDStripType.GRB);
+        this.caNdle = new CANdle(21);
+        this.caNdle.configLEDType(CANdle.LEDStripType.BRG);
         this.caNdle.configV5Enabled(true);
         this.caNdle.setLEDs(0, 0, 255);
 

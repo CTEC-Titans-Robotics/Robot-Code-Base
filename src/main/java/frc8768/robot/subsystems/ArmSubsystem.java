@@ -73,6 +73,8 @@ public class ArmSubsystem implements Subsystem {
                         this.armMotor.set(0.13);
                     } else if(this.overrideAngle < position) {
                         this.armMotor.set(-0.13);
+                    } else {
+                        this.armMotor.set(0);
                     }
                 }
             }

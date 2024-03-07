@@ -136,13 +136,13 @@ public class SwerveSubsystem implements Subsystem {
 
         @Override
         public void run() {
-            int i = 0;
+            Timer timer = new Timer();
+            timer.start();
             while(true) {
-                i++;
-                if(i < 500000) {
+                if(!timer.hasElapsed(5)) {
                     continue;
-                } else if(i > 500000) {
-                    i = 0;
+                } else {
+                    timer.reset();
                 }
                 PhotonPipelineResult target = this.vision.getBestTarget();
                 if(target == null)

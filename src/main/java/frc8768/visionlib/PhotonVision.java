@@ -1,6 +1,7 @@
 package frc8768.visionlib;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
@@ -53,9 +54,9 @@ public class PhotonVision extends Vision {
      *
      * @return Best target, null if none
      */
-    public PhotonTrackedTarget getBestTarget() {
+    public PhotonPipelineResult getBestTarget() {
         if(camera.getLatestResult().hasTargets()) {
-            return camera.getLatestResult().getBestTarget();
+            return camera.getLatestResult();
         }
         return null;
     }
@@ -70,9 +71,9 @@ public class PhotonVision extends Vision {
      * @return Distance to target, returns -1 on fail.
      */
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
-        PhotonTrackedTarget target = getBestTarget();
-        if(target != null) {
-            double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestCameraToTarget().getY());
+        PhotonPipelineResult target = getBestTarget();
+        if(target.getBestTarget() != null) {
+            double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestTarget().getBestCameraToTarget().getY());
             double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180.0);
 
             double distance = (goalHeight - mountHeight) / Math.tan(angleToGoalRadians);
@@ -91,10 +92,10 @@ public class PhotonVision extends Vision {
      * @return The maximum Y point for all corners, or -1 if none is found
      */
     public double getMaxPointY() {
-        PhotonTrackedTarget target = getBestTarget();
-        if(target != null) {
+        PhotonPipelineResult target = getBestTarget();
+        if(target.getBestTarget() != null) {
             double maxY = 0;
-            for(TargetCorner corner : target.getDetectedCorners()) {
+            for(TargetCorner corner : target.getBestTarget().getDetectedCorners()) {
                 if(corner.y > maxY) {
                     maxY = corner.y;
                 }
@@ -105,9 +106,9 @@ public class PhotonVision extends Vision {
 
     @Override
     public int getTargetID() {
-        PhotonTrackedTarget target = getBestTarget();
-        if(target != null) {
-            return target.getFiducialId();
+        PhotonPipelineResult target = getBestTarget();
+        if(target.getBestTarget().getBestCameraToTarget() != null) {
+            return target.getBestTarget().getFiducialId();
         }
         return -1;
     }

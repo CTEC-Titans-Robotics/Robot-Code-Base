@@ -1,9 +1,8 @@
 package frc8768.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
@@ -14,8 +13,12 @@ import frc8768.robot.util.MathUtil;
 import frc8768.robot.util.MotorType;
 import frc8768.robot.util.Constants;
 import frc8768.visionlib.LimelightVision;
+import frc8768.visionlib.PhotonVision;
 import frc8768.visionlib.Vision;
 import frc8768.visionlib.helpers.LimelightHelpers;
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
@@ -38,7 +41,7 @@ public class SwerveSubsystem implements Subsystem {
     /**
      * A Thread that updates the swerve odometry based on a apriltag
      */
-    private VisionOdomThread visionUpdateThread;
+    private final VisionOdomThread visionUpdateThread;
 
     /**
      * @param type NEOs or Falcons, see {@link MotorType}
@@ -54,8 +57,8 @@ public class SwerveSubsystem implements Subsystem {
             case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, angleConversionFactor, driveConversionFactor);
         }
 
-        // this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLimelightVision(), "VisionOdom Thread");
-        // this.visionUpdateThread.start();
+        this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLeftVision(), "VisionOdom Thread");
+        this.visionUpdateThread.start();
     }
 
     /**
@@ -123,9 +126,9 @@ public class SwerveSubsystem implements Subsystem {
 
     public static class VisionOdomThread extends Thread {
         private SwerveSubsystem swerve;
-        private LimelightVision vision;
+        private PhotonVision vision;
 
-        public VisionOdomThread(SwerveSubsystem swerve, LimelightVision vision, String name) {
+        public VisionOdomThread(SwerveSubsystem swerve, PhotonVision vision, String name) {
             super(name);
             this.swerve = swerve;
             this.vision = vision;
@@ -141,12 +144,14 @@ public class SwerveSubsystem implements Subsystem {
                 } else if(i > 500000) {
                     i = 0;
                 }
-                LimelightHelpers.Results target = (LimelightHelpers.Results) this.vision.getBestTarget();
-                if(target.targets_Fiducials.length == 0)
+                PhotonPipelineResult target = this.vision.getBestTarget();
+                if(target == null)
                     continue;
 
-                Pose2d pose = new Pose2d(target.getBotPose2d_wpiBlue().getTranslation(), Rotation2d.fromDegrees(target.targets_Fiducials[0].getRobotPose_FieldSpace().getRotation().getZ() + 90));
-                this.swerve.getSwerveDrive().addVisionMeasurement(pose, Timer.getFPGATimestamp());
+                Pose3d pose = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestTarget().getBestCameraToTarget(),
+                        AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo).getTagPose(target.getBestTarget().getFiducialId()).get(),
+                        new Transform3d(-Units.inchesToMeters(5.25), Units.inchesToMeters(10.75), Units.inchesToMeters(19.25), new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(30), Units.degreesToRadians(180))));
+                this.swerve.getSwerveDrive().addVisionMeasurement(pose.toPose2d(), target.getTimestampSeconds());
             }
         }
     }

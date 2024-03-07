@@ -18,6 +18,7 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.robot.util.MathUtil;
+import frc8768.visionlib.PhotonVision;
 import frc8768.visionlib.Vision;
 
 import java.io.IOException;
@@ -47,6 +48,9 @@ public class Robot extends TimedRobot
      */
     private AuxiliaryOperator auxiliary;
 
+    private PhotonVision leftVision;
+    private PhotonVision rightVision;
+
     /**
      * The swerve subsystem, held in here for Auton.
      */
@@ -74,6 +78,14 @@ public class Robot extends TimedRobot
         return instance;
     }
 
+    public PhotonVision getLeftVision() {
+        return leftVision;
+    }
+
+    public PhotonVision getRightVision() {
+        return rightVision;
+    }
+
     /**
      * This method is run when the robot is first started up and should be used for any
      * initialization code.
@@ -81,6 +93,9 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit() {
         CameraServer.startAutomaticCapture();
+
+        this.leftVision = new PhotonVision("limelight-left");
+        this.rightVision = new PhotonVision("limelight-right");
 
         // Subsystem init
         try {
@@ -91,11 +106,12 @@ public class Robot extends TimedRobot
         this.arm = new ArmSubsystem();
         this.intake = new IntakeSubsystem();
 
+        this.auto = new Auto(this.swerve, this.arm, this.intake);
+
         // Operator creation
         this.drivebase = new DrivebaseOperator(this.swerve, this.arm, this.intake);
         this.auxiliary = new AuxiliaryOperator(this.arm, this.intake);
 
-        this.auto = new Auto(this.swerve, this.arm, this.intake);
         // this.vision = new LimelightVision("limelight");
 
         // Init

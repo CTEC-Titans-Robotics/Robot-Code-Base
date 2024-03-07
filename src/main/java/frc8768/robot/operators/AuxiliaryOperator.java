@@ -47,12 +47,10 @@ public class AuxiliaryOperator extends Operator {
                 this.vision.getDistanceToTarget(30, 0, 57.13, false);
 
         if(controller.getRightBumper()) {
-            this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
-        } else if(controller.getLeftBumper()) {
             if(distance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
                 if(MathUtil.isNear(0,
                         this.vision.getBestTarget().getBestCameraToTarget().getY(), Math.pow(2*distance, 2))
-                    && MathUtil.isNear(0,
+                        && MathUtil.isNear(0,
                         this.vision.getBestTarget().getBestCameraToTarget().getX(), Math.pow(2*distance, 2)/3)) {
                     this.caNdle.setLEDs(0, 255, 0);
                 }
@@ -61,6 +59,8 @@ public class AuxiliaryOperator extends Operator {
                 this.caNdle.setLEDs(255, 0, 0);
                 this.arm.overrideAngle = -1;
             }
+            this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
+        } else if(controller.getLeftBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
         } else {
             this.arm.releaseLock();

@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.4544442298585015,
-      "y": 2.0
+      "x": 0.4591285644768136,
+      "y": 2.025974722420201
     },
     "rotation": 0
   },
@@ -20,42 +20,42 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 Prep"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "drop_arm"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.25
+            "pathName": "SERIOUSSIDEHOPSPREPR"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 Pickup"
+            "pathName": "SERIOUSSIDEHOPSR"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.5
+            "pathName": "SERIOUSSIDEHOPSL"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "hold_arm_drive"
+            "pathName": "SERIOUSSIDEHOPSR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSR"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Block ",
   "choreoAuto": false
 }

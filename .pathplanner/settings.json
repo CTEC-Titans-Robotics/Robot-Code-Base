@@ -1,6 +1,6 @@
 {
-  "robotWidth": 0.66,
-  "robotLength": 0.66,
+  "robotWidth": 0.762,
+  "robotLength": 0.762,
   "holonomicMode": true,
   "pathFolders": [
     "Shooting",
@@ -10,12 +10,13 @@
     "Note 3"
   ],
   "autoFolders": [
+    "Block ",
     "Position 3",
     "Position 4"
   ],
-  "defaultMaxVel": 3.0,
-  "defaultMaxAccel": 3.0,
-  "defaultMaxAngVel": 540.0,
-  "defaultMaxAngAccel": 720.0,
-  "maxModuleSpeed": 4.5
+  "defaultMaxVel": 5.1816,
+  "defaultMaxAccel": 4.0,
+  "defaultMaxAngVel": 450.0,
+  "defaultMaxAngAccel": 620.0,
+  "maxModuleSpeed": 5.1816
 }

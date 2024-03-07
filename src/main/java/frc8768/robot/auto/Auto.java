@@ -13,6 +13,7 @@ import frc8768.robot.auto.commands.*;
 import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
+import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
 
 /**
@@ -30,12 +31,10 @@ public class Auto {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-                new PIDConstants(0.00, 0.00, 0.01),
-                new PIDConstants(0.00, 0.00, 0.01),
-                // TODO: Put max module speed here, m/s
-                14.2,
-                // TODO: Put your robot chassis radius here, from center of bot to furthest module output shaft
-                5,
+                new PIDConstants(12, 0.00, 0.032),
+                new PIDConstants(34.5, 0.00, 0.59161),
+                Constants.SwerveConfig.MAX_SPEED,
+                0.268438249,
                 new ReplanningConfig(
                         true,
                         true
@@ -61,7 +60,11 @@ public class Auto {
         NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
 
         // Setup Positions
-        this.autonChooser.addOption("Block", AutoBuilder.buildAuto("Block"));
+        this.autonChooser.addOption("Position 1 Block", AutoBuilder.buildAuto("Position 1 Block"));
+        this.autonChooser.addOption("Position 2 Block", AutoBuilder.buildAuto("Position 2 Block"));
+        this.autonChooser.addOption("Position 3 Block", AutoBuilder.buildAuto("Position 3 Block"));
+        this.autonChooser.addOption("Position 4 Block", AutoBuilder.buildAuto("Position 4 Block"));
+        this.autonChooser.addOption("Position 5 Block", AutoBuilder.buildAuto("Position 5 Block"));
 
         this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position 1"));
         this.autonChooser.addOption("Position 2", AutoBuilder.buildAuto("Position 2"));

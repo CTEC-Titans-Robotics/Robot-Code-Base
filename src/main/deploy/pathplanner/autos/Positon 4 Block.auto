@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.4544442298585015,
-      "y": 2.0
+      "x": 0.6558706184459434,
+      "y": 6.618964815675708
     },
-    "rotation": 0
+    "rotation": 58.928341939153604
   },
   "command": {
     "type": "sequential",
@@ -20,42 +20,42 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 Prep"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "drop_arm"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.25
+            "pathName": "SERIOUSSIDEHOPSPREPL"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 Pickup"
+            "pathName": "SERIOUSSIDEHOPSL"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.5
+            "pathName": "SERIOUSSIDEHOPSR"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "hold_arm_drive"
+            "pathName": "SERIOUSSIDEHOPSL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSL"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Block ",
   "choreoAuto": false
 }

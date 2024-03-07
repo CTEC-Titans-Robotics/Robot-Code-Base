@@ -141,7 +141,7 @@ public class SwerveSubsystem implements Subsystem {
                 } else if(i > 500000) {
                     i = 0;
                 }
-                LimelightHelpers.Results target = (LimelightHelpers.Results) vision.getBestTarget();
+                LimelightHelpers.Results target = (LimelightHelpers.Results) this.vision.getBestTarget();
                 if(target.targets_Fiducials.length == 0)
                     continue;
 

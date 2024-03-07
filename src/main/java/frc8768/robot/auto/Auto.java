@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc8768.robot.auto.commands.*;
+import frc8768.robot.subsystems.ArmSubsystem;
+import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveDrive;
 
@@ -23,7 +26,7 @@ public class Auto {
      *
      * @param swerve The Robots swerve subsystem
      */
-    public Auto(SwerveSubsystem swerve) {
+    public Auto(SwerveSubsystem swerve, ArmSubsystem arm, IntakeSubsystem intake) {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
@@ -45,13 +48,17 @@ public class Auto {
                 swerveDrive::getRobotVelocity,
                 swerveDrive::setChassisSpeeds,
                 config,
-                () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? true : false, // Change if needed
+                () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red, // Change if needed
                 swerve);
 
         this.autonChooser = new SendableChooser<>();
         this.autonChooser.setDefaultOption("No-op", new InstantCommand());
 
-        // TODO: NamedCommands.registerCommands();
+        NamedCommands.registerCommand("hold_arm_drive", new HoldArmCommand(arm));
+        NamedCommands.registerCommand("amp_shoot", new AmpShootCommand(intake));
+        NamedCommands.registerCommand("amp_raise", new AmpRaiseCommand(arm));
+        NamedCommands.registerCommand("drop_arm", new DropArmCommand(arm));
+        NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
 
         // Setup Positions
         this.autonChooser.addOption("Block", AutoBuilder.buildAuto("Block"));

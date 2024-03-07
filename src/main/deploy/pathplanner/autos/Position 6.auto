@@ -66,6 +66,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "hold_arm_drive"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Amp Position"

@@ -12,6 +12,18 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "hold_arm_drive"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 3 Prep"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Amp Position"
@@ -36,9 +48,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Note 3 Prep"
+            "name": "hold_arm_drive"
           }
         },
         {
@@ -54,6 +66,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "hold_arm_drive"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Note 3 Pickup"
@@ -63,6 +81,12 @@
           "type": "wait",
           "data": {
             "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "hold_arm_drive"
           }
         },
         {

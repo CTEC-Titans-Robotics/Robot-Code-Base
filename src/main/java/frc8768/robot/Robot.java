@@ -35,6 +35,7 @@ public class Robot extends TimedRobot
      * Robot instance, can't be seen across threads
      */
     public static Robot instance;
+    public static boolean goUp = false;
 
     /**
      * Drivebase Operator
@@ -54,11 +55,6 @@ public class Robot extends TimedRobot
     private IntakeSubsystem intake;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
-
-    /**
-     * Vision API instance
-     */
-    public Vision vision;
 
     /**
      * Auton Instance
@@ -99,7 +95,7 @@ public class Robot extends TimedRobot
         this.drivebase = new DrivebaseOperator(this.swerve, this.arm, this.intake);
         this.auxiliary = new AuxiliaryOperator(this.arm, this.intake);
 
-        this.auto = new Auto(this.swerve);
+        this.auto = new Auto(this.swerve, this.arm, this.intake);
         // this.vision = new LimelightVision("limelight");
 
         // Init
@@ -122,10 +118,6 @@ public class Robot extends TimedRobot
         return this.spark;
     }
      */
-
-    public Vision getVision() {
-        return this.vision;
-    }
 
     /**
      * Runs even if the Robot is disabled.

@@ -60,10 +60,6 @@ public class DrivebaseOperator extends Operator {
             this.swerve.getSwerveDrive().zeroGyro();
         }
 
-        if(controller.getXButtonPressed()) {
-            swerve.getSwerveDrive().lockPose();
-        }
-
         if(controller.getAButton()) {
             this.climber.down();
         } else if(controller.getYButton()) {
@@ -77,6 +73,8 @@ public class DrivebaseOperator extends Operator {
             if(this.arm.getPosition() < 8) {
                 this.intake.beginStage(IntakeSubsystem.IntakeStage.INTAKE);
             }
+        } else if(controller.getXButton()) {
+            this.intake.beginStage(IntakeSubsystem.IntakeStage.OUTTAKE);
         } else if(controller.getRightBumper()) {
             this.arm.setDesiredState(ArmSubsystem.ArmState.LOW);
         } else {

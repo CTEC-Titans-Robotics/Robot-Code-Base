@@ -72,7 +72,7 @@ public class PhotonVision extends Vision {
      */
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
         PhotonPipelineResult target = getBestTarget();
-        if(target.getBestTarget() != null) {
+        if(target != null) {
             double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestTarget().getBestCameraToTarget().getY());
             double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180.0);
 
@@ -93,7 +93,7 @@ public class PhotonVision extends Vision {
      */
     public double getMaxPointY() {
         PhotonPipelineResult target = getBestTarget();
-        if(target.getBestTarget() != null) {
+        if(target != null) {
             double maxY = 0;
             for(TargetCorner corner : target.getBestTarget().getDetectedCorners()) {
                 if(corner.y > maxY) {
@@ -107,7 +107,7 @@ public class PhotonVision extends Vision {
     @Override
     public int getTargetID() {
         PhotonPipelineResult target = getBestTarget();
-        if(target.getBestTarget().getBestCameraToTarget() != null) {
+        if(target != null) {
             return target.getBestTarget().getFiducialId();
         }
         return -1;

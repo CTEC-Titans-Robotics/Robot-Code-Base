@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.5762369299346287,
+      "x": 0.5528152568430658,
       "y": 6.698598504187022
     },
-    "rotation": 59.30027744918564
+    "rotation": -29.357753542791187
   },
   "command": {
     "type": "sequential",
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 3 Prep"
+            "pathName": "Note 2 Prep"
           }
         },
         {
@@ -56,7 +56,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 3 Pickup"
+            "pathName": "Note 2 Pickup"
           }
         },
         {
@@ -74,7 +74,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shooting Pos 3"
+            "pathName": "Shooting Pos 1"
           }
         },
         {

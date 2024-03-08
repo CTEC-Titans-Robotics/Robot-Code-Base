@@ -19,7 +19,7 @@ public class SpeakerShootCommand extends Command {
     public void execute() {
         this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

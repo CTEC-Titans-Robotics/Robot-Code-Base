@@ -94,8 +94,8 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
-        this.leftVision = new PhotonVision("limelight-left");
-        this.rightVision = new PhotonVision("limelight-right");
+        this.leftVision = new PhotonVision("photonvision-left");
+        this.rightVision = new PhotonVision("photonvision-right");
 
         // Subsystem init
         try {

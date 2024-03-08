@@ -2,6 +2,7 @@ package frc8768.robot.operators;
 
 import com.ctre.phoenix.led.CANdle;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import frc8768.robot.subsystems.ArmSubsystem;
@@ -19,7 +20,7 @@ public class AuxiliaryOperator extends Operator {
     private final ArmSubsystem arm;
     private final CANdle caNdle;
     private final IntakeSubsystem intake;
-    private final PhotonVision vision;
+    private PhotonVision vision;
 
     public AuxiliaryOperator(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem) {
         super("Auxiliary");
@@ -33,7 +34,7 @@ public class AuxiliaryOperator extends Operator {
         this.caNdle.configV5Enabled(true);
         this.caNdle.setLEDs(0, 0, 255);
 
-        this.vision = new PhotonVision("limelight-left");
+        // this.vision = new PhotonVision("limelight-left");
 
         LogUtil.registerDashLogger(this.arm::dashboard);
         LogUtil.registerDashLogger(this.intake::dashboard);
@@ -43,15 +44,15 @@ public class AuxiliaryOperator extends Operator {
     public void run() {
         this.intake.tick();
 
-        double distance =
-                this.vision.getDistanceToTarget(30, 0, 57.13, false);
+        double distance = -1;
+                /* Units.metersToInches(this.vision.getDistanceToTarget(30, 21, 57.13, false)) */
 
         if(controller.getRightBumper()) {
             if(distance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
                 if(MathUtil.isNear(0,
-                        this.vision.getBestTarget().getBestCameraToTarget().getY(), Math.pow(2*distance, 2))
+                        this.vision.getBestTarget().getBestTarget().getBestCameraToTarget().getY(), Math.pow(2*distance, 2))
                         && MathUtil.isNear(0,
-                        this.vision.getBestTarget().getBestCameraToTarget().getX(), Math.pow(2*distance, 2)/3)) {
+                        this.vision.getBestTarget().getBestTarget().getBestCameraToTarget().getX(), Math.pow(2*distance, 2)/3)) {
                     this.caNdle.setLEDs(0, 255, 0);
                 }
                 this.arm.overrideAngle = MathUtil.clamp(Math.pow(distance, 0.731) + 21.5, 2, 85);

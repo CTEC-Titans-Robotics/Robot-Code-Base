@@ -7,6 +7,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.auto.commands.*;
@@ -50,8 +51,6 @@ public class Auto {
                 () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red, // Change if needed
                 swerve);
 
-        this.autonChooser = new SendableChooser<>();
-        this.autonChooser.setDefaultOption("No-op", new InstantCommand());
 
         NamedCommands.registerCommand("hold_arm_drive", new HoldArmCommand(arm));
         NamedCommands.registerCommand("amp_shoot", new AmpShootCommand(intake));
@@ -59,22 +58,26 @@ public class Auto {
         NamedCommands.registerCommand("drop_arm", new DropArmCommand(arm));
         NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
 
-        // Setup Positions
-        this.autonChooser.addOption("Position 1 Block", AutoBuilder.buildAuto("Position 1 Block"));
-        this.autonChooser.addOption("Position 2 Block", AutoBuilder.buildAuto("Position 2 Block"));
-        this.autonChooser.addOption("Position 3 Block", AutoBuilder.buildAuto("Position 3 Block"));
-        this.autonChooser.addOption("Position 4 Block", AutoBuilder.buildAuto("Position 4 Block"));
-        this.autonChooser.addOption("Position 5 Block", AutoBuilder.buildAuto("Position 5 Block"));
+        this.autonChooser = AutoBuilder.buildAutoChooser("Position_1");
+        this.autonChooser.addOption("No-Op", new InstantCommand());
 
-        this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position 1"));
-        this.autonChooser.addOption("Position 2", AutoBuilder.buildAuto("Position 2"));
-        this.autonChooser.addOption("Position 3 N1", AutoBuilder.buildAuto("Position 3 N1"));
-        this.autonChooser.addOption("Position 3 N2", AutoBuilder.buildAuto("Position 3 N2"));
-        this.autonChooser.addOption("Position 3 N3", AutoBuilder.buildAuto("Position 3 N3"));
-        this.autonChooser.addOption("Position 4 N2", AutoBuilder.buildAuto("Position 4 N2"));
-        this.autonChooser.addOption("Position 4 N3", AutoBuilder.buildAuto("Position 4 N3"));
-        this.autonChooser.addOption("Position 5", AutoBuilder.buildAuto("Position 5"));
-        this.autonChooser.addOption("Position 6", AutoBuilder.buildAuto("Position 6"));
+        // Setup Positions
+        // this.autonChooser.addOption("Position 1 Disruptor", AutoBuilder.buildAuto("Position_1_Block"));
+        // this.autonChooser.addOption("Position 2 Disruptor", AutoBuilder.buildAuto("Position_2_Block"));
+        // this.autonChooser.addOption("Position 3 Disruptor", AutoBuilder.buildAuto("Position_3_Block"));
+        // this.autonChooser.addOption("Position 4 Disruptor", AutoBuilder.buildAuto("Position_4_Block"));
+        // this.autonChooser.addOption("Position 5 Disruptor", AutoBuilder.buildAuto("Position_5_Block"));
+
+        this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position_1"));
+        this.autonChooser.addOption("Position 2", AutoBuilder.buildAuto("Position_2"));
+        this.autonChooser.addOption("Position 3 N1", AutoBuilder.buildAuto("Position_3_N1"));
+        this.autonChooser.addOption("Position 3 N2", AutoBuilder.buildAuto("Position_3_N2"));
+        this.autonChooser.addOption("Position 3 N3", AutoBuilder.buildAuto("Position_3_N3"));
+        this.autonChooser.addOption("Position 4 N2", AutoBuilder.buildAuto("Position_4_N2"));
+        this.autonChooser.addOption("Position 4 N3", AutoBuilder.buildAuto("Position_4_N3"));
+        this.autonChooser.addOption("Position 5", AutoBuilder.buildAuto("Position_5"));
+
+        SmartDashboard.putData(this.autonChooser);
     }
 
     /**

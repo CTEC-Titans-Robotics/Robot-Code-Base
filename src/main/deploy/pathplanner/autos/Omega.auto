@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.4474177279310323,
-      "y": 6.9
+      "x": 1.290597959227301,
+      "y": 5.492382339971527
     },
-    "rotation": 0.062142903521047885
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -20,37 +20,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 3 Prep"
+            "pathName": "Shooting Pos 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speaker_shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Amp Position"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "amp_raise"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "amp_shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "hold_arm_drive"
+            "pathName": "Note 1 Prep"
           }
         },
         {
@@ -66,9 +48,99 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Note 1 Pickup"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "hold_arm_drive"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shooting Pos 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speaker_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 2 Prep"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "drop_arm"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 2 Pickup"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "hold_arm_drive"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shooting Pos 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speaker_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 3 Prep"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "drop_arm"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
           }
         },
         {
@@ -92,31 +164,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Amp Position"
+            "pathName": "Shooting Pos 3"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "amp_raise"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "amp_shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "hold_arm_drive"
+            "name": "speaker_shoot"
           }
         }
       ]

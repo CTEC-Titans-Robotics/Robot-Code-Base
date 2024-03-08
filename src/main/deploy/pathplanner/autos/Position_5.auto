@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.4474177279310322,
-      "y": 7.366116187296568
+      "x": 0.4474177279310323,
+      "y": 6.9
     },
     "rotation": 0.062142903521047885
   },
@@ -11,6 +11,12 @@
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "hold_arm_drive"
+          }
+        },
         {
           "type": "path",
           "data": {
@@ -36,6 +42,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "hold_arm_drive"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Note 3 Prep"
@@ -51,6 +63,12 @@
           "type": "wait",
           "data": {
             "waitTime": 1.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "hold_arm_drive"
           }
         },
         {

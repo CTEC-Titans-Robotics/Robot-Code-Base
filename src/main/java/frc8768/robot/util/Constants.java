@@ -36,26 +36,6 @@ public class Constants {
     public static final List<Integer> SPEAKER_IDS =
             DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? List.of(3, 4) : List.of(7,8);
 
-    // See
-    // https://firstfrc.blob.core.windows.net/frc2020/PlayingField/2020FieldDrawing-SeasonSpecific.pdf
-    // page 208
-    public static final double targetWidth =
-            Units.inchesToMeters(41.30) - Units.inchesToMeters(6.5); // meters
-
-    // See
-    // https://firstfrc.blob.core.windows.net/frc2020/PlayingField/2020FieldDrawing-SeasonSpecific.pdf
-    // page 197
-    public static final double targetHeight =
-            Units.inchesToMeters(98.19) - Units.inchesToMeters(81.19); // meters
-
-    // See https://firstfrc.blob.core.windows.net/frc2020/PlayingField/LayoutandMarkingDiagram.pdf
-    // pages 4 and 5
-    public static final double kFarTgtXPos = Units.feetToMeters(54);
-    public static final double kFarTgtYPos =
-            Units.feetToMeters(27 / 2) - Units.inchesToMeters(43.75) - Units.inchesToMeters(48.0 / 2.0);
-    public static final double kFarTgtZPos =
-            (Units.inchesToMeters(98.19) - targetHeight) / 2 + targetHeight;
-
     /**
      * Swerve-specific configuration.
      */
@@ -66,7 +46,7 @@ public class Constants {
         public static final MotorType CURRENT_TYPE = MotorType.TALONFX;
 
         /**
-         * Max drive motor speed m/s. m/s
+         * Max drive motor speed m/s.
          */
         public static final double MAX_SPEED = Units.feetToMeters(17);
     }

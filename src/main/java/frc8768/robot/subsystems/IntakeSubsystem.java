@@ -84,14 +84,14 @@ public class IntakeSubsystem implements Subsystem {
             case INTAKE -> {
                 this.shootMotor.set(-0.03);
 
-                this.holdMotor.set(0.15);
-                this.intakeMotor.set(desiredSpeed*2);
+                this.holdMotor.set(0.2);
+                this.intakeMotor.set(desiredSpeed);
             }
             case OUTTAKE -> {
                 this.shootMotor.set(-0.03);
 
-                this.holdMotor.set(-0.15);
-                this.intakeMotor.set(desiredSpeed*2);
+                this.holdMotor.set(-0.2);
+                this.intakeMotor.set(desiredSpeed);
             }
             case AMP, SPEAKER -> {
                 this.intakeMotor.set(0);
@@ -138,7 +138,7 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public enum IntakeStage {
-        INTAKE(0.3, -1),
+        INTAKE(0.73, -1),
         OUTTAKE(-0.2, -1),
         SPEAKER(0.80, 40),
         AMP(0.2, 35),

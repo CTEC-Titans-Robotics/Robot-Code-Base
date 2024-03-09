@@ -15,4 +15,15 @@ public class AmpShootCommand extends Command {
     public void execute() {
         this.intake.beginStage(IntakeSubsystem.IntakeStage.AMP);
     }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        this.intake.releaseLock();
+        super.end(interrupted);
+    }
 }

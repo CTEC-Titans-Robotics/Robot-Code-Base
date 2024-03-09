@@ -36,8 +36,8 @@ public class AuxiliaryOperator extends Operator {
 
         // this.vision = new PhotonVision("limelight-left");
 
-        LogUtil.registerDashLogger(this.arm::dashboard);
-        LogUtil.registerDashLogger(this.intake::dashboard);
+        // LogUtil.registerDashLogger(this.arm::dashboard);
+        // LogUtil.registerDashLogger(this.intake::dashboard);
     }
 
     @Override

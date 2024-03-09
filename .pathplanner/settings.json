@@ -3,14 +3,14 @@
   "robotLength": 0.762,
   "holonomicMode": true,
   "pathFolders": [
-    "Shooting",
     "Amp",
+    "Disruptor",
     "Note 1",
     "Note 2",
-    "Note 3"
+    "Note 3",
+    "Shooting"
   ],
   "autoFolders": [
-    "Block",
     "Position 3",
     "Position 4"
   ],

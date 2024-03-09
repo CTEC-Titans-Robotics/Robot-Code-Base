@@ -23,6 +23,12 @@ public class DropArmCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return Robot.goUp;
+        return this.arm.currState.isAngleWithinCoarseTolerance(this.arm.getPosition());
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        this.arm.releaseLock();
+        super.end(interrupted);
     }
 }

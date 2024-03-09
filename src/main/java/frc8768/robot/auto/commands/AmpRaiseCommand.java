@@ -16,4 +16,15 @@ public class AmpRaiseCommand extends Command {
     public void execute() {
         this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
     }
+
+    @Override
+    public boolean isFinished() {
+        return this.arm.currState.isAngleWithinCoarseTolerance(this.arm.getPosition());
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        this.arm.releaseLock();
+        super.end(interrupted);
+    }
 }

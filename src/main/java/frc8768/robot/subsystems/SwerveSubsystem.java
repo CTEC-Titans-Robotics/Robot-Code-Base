@@ -58,7 +58,7 @@ public class SwerveSubsystem implements Subsystem {
         }
 
         this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLeftVision(), "VisionOdom Thread");
-        this.visionUpdateThread.start();
+        // this.visionUpdateThread.start();
     }
 
     /**
@@ -71,7 +71,7 @@ public class SwerveSubsystem implements Subsystem {
      * @param pivotPoint 2d Pivot point for rotation
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
-        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(720), fieldRelative, isOpenLoop, pivotPoint);
+        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, pivotPoint);
     }
 
     /**

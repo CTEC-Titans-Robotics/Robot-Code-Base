@@ -5,6 +5,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,9 +32,10 @@ public class Auto {
     public Auto(SwerveSubsystem swerve, ArmSubsystem arm, IntakeSubsystem intake) {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
+        PIDController theta = swerve.getSwerveDrive().swerveController.thetaController;
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-                new PIDConstants(12, 0.00, 0.032),
-                new PIDConstants(34.5, 0.00, 0.59161),
+                new PIDConstants(0.1, 0.0, 0.0),
+                new PIDConstants(theta.getP(), theta.getI(), theta.getD()),
                 Constants.SwerveConfig.MAX_SPEED,
                 0.268438249,
                 new ReplanningConfig(
@@ -50,7 +52,6 @@ public class Auto {
                 config,
                 () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red, // Change if needed
                 swerve);
-
 
         NamedCommands.registerCommand("hold_arm_drive", new HoldArmCommand(arm));
         NamedCommands.registerCommand("amp_shoot", new AmpShootCommand(intake));
@@ -77,7 +78,7 @@ public class Auto {
         this.autonChooser.addOption("Position 4 N3", AutoBuilder.buildAuto("Position_4_N3"));
         this.autonChooser.addOption("Position 5", AutoBuilder.buildAuto("Position_5"));
 
-        SmartDashboard.putData(this.autonChooser);
+        SmartDashboard.putData("Auto", this.autonChooser);
     }
 
     /**

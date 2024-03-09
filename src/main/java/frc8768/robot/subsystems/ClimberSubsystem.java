@@ -29,17 +29,17 @@ public class ClimberSubsystem implements Subsystem {
 
     public void init() {
         while (!(this.rightMotor.getOutputCurrent() > 21)) {
-            this.rightMotor.set(-0.04);
+            this.rightMotor.set(-0.08);
         }
         this.rightMotor.set(-0.02);
     }
 
     public void up() {
-        this.rightMotor.set(0.15);
+        this.rightMotor.set(0.25);
     }
 
     public void down() {
-        this.rightMotor.set(-0.15);
+        this.rightMotor.set(-0.25);
     }
 
     public void stop() {

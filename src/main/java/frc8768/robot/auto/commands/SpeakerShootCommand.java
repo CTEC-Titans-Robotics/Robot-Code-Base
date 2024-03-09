@@ -25,4 +25,16 @@ public class SpeakerShootCommand extends Command {
         }
         this.intake.beginStage(IntakeSubsystem.IntakeStage.SPEAKER);
     }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        this.arm.releaseLock();
+        this.intake.releaseLock();
+        super.end(interrupted);
+    }
 }

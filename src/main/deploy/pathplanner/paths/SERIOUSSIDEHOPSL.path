@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Disruptor",
   "previewStartingState": {
     "rotation": -179.33273726692113,
     "velocity": 0

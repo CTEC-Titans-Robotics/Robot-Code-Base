@@ -95,7 +95,7 @@ public class Robot extends TimedRobot
         CameraServer.startAutomaticCapture();
 
         this.leftVision = new PhotonVision("photonvision-left");
-        this.rightVision = new PhotonVision("photonvision-right");
+        //this.rightVision = new PhotonVision("photonvision-right");
 
         // Subsystem init
         try {
@@ -119,11 +119,11 @@ public class Robot extends TimedRobot
         this.auxiliary.init();
 
         // Init logging
-        LogUtil.registerLogger(this.swerve::log);
+        // LogUtil.registerLogger(this.swerve::log);
 
-        LogUtil.registerDashLogger(this.swerve::dashboard);
-        LogUtil.registerDashLogger(this.arm::dashboard);
-        LogUtil.registerDashLogger(this.intake::dashboard);
+        // LogUtil.registerDashLogger(this.swerve::dashboard);
+        // LogUtil.registerDashLogger(this.arm::dashboard);
+        // LogUtil.registerDashLogger(this.intake::dashboard);
     }
 
     /* For tank
@@ -154,7 +154,7 @@ public class Robot extends TimedRobot
         this.arm.tick();
         this.intake.tick();
 
-        LogUtil.run();
+        // LogUtil.run();
     }
 
     /**

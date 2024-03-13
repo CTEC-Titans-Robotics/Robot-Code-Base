@@ -2,12 +2,14 @@ package frc8768.robot.operators;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.Robot;
 import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.ClimberSubsystem;
@@ -15,6 +17,8 @@ import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 /**
  * Operator for driving the bot
@@ -43,9 +47,6 @@ public class DrivebaseOperator extends Operator {
         this.climber = new ClimberSubsystem();
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
-
-        // We update odometry on our own thread just in case
-        this.swerve.getSwerveDrive().stopOdometryThread();
     }
 
     public void initTeleop() {
@@ -54,8 +55,6 @@ public class DrivebaseOperator extends Operator {
 
     @Override
     public void run() {
-        this.swerve.getSwerveDrive().updateOdometry();
-
         if(controller.getBButtonPressed()) {
             this.swerve.getSwerveDrive().zeroGyro();
         }
@@ -99,6 +98,14 @@ public class DrivebaseOperator extends Operator {
             isRobotRelative = true;
         }
 
+        // if(controller.getLeftBumperPressed()) {
+        //     this.relocate(Constants.FieldWaypoints.AMP.getPose2d());
+        // }
+
+        // if(controller.getRightTriggerAxis() > Constants.controllerDeadband) {
+        //     visionMeasureOdometry();
+        // }
+
         if(this.currCommand != null && !this.currCommand.isFinished()) {
             return;
         }
@@ -125,6 +132,21 @@ public class DrivebaseOperator extends Operator {
         // sparkTank.drive(translation2d);
     }
 
+    private void visionMeasureOdometry() {
+        PhotonPipelineResult target = Robot.getInstance().getLeftVision().getBestTarget();
+        if(target == null)
+            return;
+        if(!target.hasTargets())
+            return;
+
+        Pose3d pose = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestTarget().getBestCameraToTarget(),
+                AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo)
+                        .getTagPose(target.getBestTarget().getFiducialId()).get(),
+                new Transform3d(Units.inchesToMeters(5.25), Units.inchesToMeters(10.75), -Units.inchesToMeters(19.25),
+                        new Rotation3d(Units.degreesToRadians(-30), Units.degreesToRadians(0), Units.degreesToRadians(0))));
+        this.swerve.getSwerveDrive().addVisionMeasurement(pose.toPose2d(), target.getTimestampSeconds());
+    }
+
     /**
      * Relocates the bot based on the nearest AprilTags position, with offsets set in {@link frc8768.robot.util.Constants}
      */
@@ -136,7 +158,7 @@ public class DrivebaseOperator extends Operator {
         this.currCommand = AutoBuilder.pathfindToPose(desiredLoc, new PathConstraints(
                 Units.feetToMeters(Constants.SwerveConfig.MAX_SPEED * Constants.SwerveConfig.MAX_SPEED/10),
                 Units.feetToMeters(Constants.SwerveConfig.MAX_SPEED * Constants.SwerveConfig.MAX_SPEED),
-                Units.degreesToRadians(450D * 450D), Units.degreesToRadians(720D * 720D/10D)));
+                Units.degreesToRadians(225 * 225), Units.degreesToRadians(450D * 450D/10D)));
         this.currCommand.schedule();
     }
 }

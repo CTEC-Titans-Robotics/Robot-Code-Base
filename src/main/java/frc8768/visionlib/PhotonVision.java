@@ -22,10 +22,10 @@ public class PhotonVision extends Vision {
     }
 
     /**
-     * @param hostname The hostname
+     * @param cameraName The hostname
      */
-    public PhotonVision(String hostname) {
-        camera = new PhotonCamera(hostname);
+    public PhotonVision(String cameraName) {
+        camera = new PhotonCamera(cameraName);
     }
 
     /**

@@ -46,16 +46,16 @@ public class Constants {
         public static final MotorType CURRENT_TYPE = MotorType.TALONFX;
 
         /**
-         * Max drive motor speed m/s.
+         * Max drive motor speed ft/s.
          */
-        public static final double MAX_SPEED = Units.feetToMeters(17);
+        public static final double MAX_SPEED = 17;
     }
 
     /**
      * Offsets in a 2D environment from an AprilTag based on ID
      */
     public enum FieldWaypoints {
-        AMP(new Pose2d(new Translation2d(1.75, 7.35),
+        AMP(new Pose2d(new Translation2d(1.78, 7.72),
                 Rotation2d.fromDegrees(90))),
         SPEAKER(new Pose2d(new Translation2d(1.25, 5.52),
                 Rotation2d.fromDegrees(0)));

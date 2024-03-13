@@ -52,7 +52,7 @@ public class IntakeSubsystem implements Subsystem {
 
     public void beginStage(IntakeStage stage) {
         if(this.intakeLock.get() != Thread.currentThread() && this.intakeLock.get() != null) {
-            LogUtil.LOGGER.log(Level.WARNING, "Intake is locked by another thread, disallowing access from a calling thread.");
+            LogUtil.LOGGER.log(Level.WARNING, "Intake is locked by " + this.intakeLock.get() + " thread, disallowing access from " + Thread.currentThread() + " thread.");
             return;
         }
         this.intakeLock.set(Thread.currentThread());
@@ -95,9 +95,9 @@ public class IntakeSubsystem implements Subsystem {
             }
             case AMP, SPEAKER -> {
                 this.intakeMotor.set(0);
-                this.holdMotor.set(-0.1);
+                this.holdMotor.set(-0.17);
                 try {
-                    Thread.sleep(150);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -138,8 +138,8 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public enum IntakeStage {
-        INTAKE(0.73, -1),
-        OUTTAKE(-0.2, -1),
+        INTAKE(0.8, -1),
+        OUTTAKE(-0.3, -1),
         SPEAKER(0.80, 40),
         AMP(0.2, 35),
         IDLE(0, -1);

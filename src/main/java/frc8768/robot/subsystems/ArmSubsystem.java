@@ -11,15 +11,12 @@ import frc8768.robot.util.LogUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET1 = 60 ;
-    private static final double ANGLE_OFFSET2 = 420 ;
+    private static final double ANGLE_OFFSET1 = 118;
+    private static final double ANGLE_OFFSET2 = 360 + ANGLE_OFFSET1;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
     private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(0);
@@ -50,41 +47,57 @@ public class ArmSubsystem implements Subsystem {
                 if(this.currState.isAngleWithinCoarseTolerance(position) && this.overrideAngle == -1) {
                     if(this.currState.isAngleWithinFineTolerance(position)) {
                         //if both within fine and coarse tolerance stop the motor (you have reached your destination!!)
-                        this.armMotor.setVoltage(this.currState.holdVoltage);
+                        if(this.armMotor.get() != this.currState.holdPercent) {
+                            this.armMotor.set(this.currState.holdPercent); //og value 0.13
+                        }
                         continue;
                     }
                     //if within coarse tolerance but not within fine tolerance move at slower speed until it reaches fine
                     if(this.currState.getDesiredPosition() > position) {
-                        this.armMotor.set(0.06); //og value 0.13
+                        if(this.armMotor.get() != 0.06) {
+                            this.armMotor.set(0.06); //og value 0.13
+                        }
                     } else if(this.currState.getDesiredPosition() < position) {
-                        this.armMotor.set(-0.06); //og value 0.13
+                        if(this.armMotor.get() != -0.06) {
+                            this.armMotor.set(-0.06); //og value 0.13
+                        }
                     }
                 }
 
                 //Goes at normal speed if not in Coarse Tolerance
                 if(this.currState.getDesiredPosition() > position && this.overrideAngle == -1) {
-                    this.armMotor.set(this.currState.speed);
+                    if(this.armMotor.get() != this.currState.speed) {
+                        this.armMotor.set(this.currState.speed);
+                    }
                 } else if(this.currState.getDesiredPosition() < position && this.overrideAngle == -1) {
-                    this.armMotor.set(-this.currState.speed);
+                    if(this.armMotor.get() != -this.currState.speed) {
+                        this.armMotor.set(-this.currState.speed);
+                    }
                 }
 
                 if(this.overrideAngle != -1) {
                     if(this.overrideAngle > position) {
-                        this.armMotor.set(0.13);
+                        if(this.armMotor.get() != 0.13) {
+                            this.armMotor.set(0.13);
+                        }
                     } else if(this.overrideAngle < position) {
-                        this.armMotor.set(-0.13);
+                        if(this.armMotor.get() != -0.13) {
+                            this.armMotor.set(-0.13);
+                        }
                     } else {
-                        this.armMotor.set(0);
+                        if(this.armMotor.get() != 0) {
+                            this.armMotor.set(0);
+                        }
                     }
                 }
             }
         });
         this.positionThread.setName("Position Thread");
-        this.positionThread.start();
+        // this.positionThread.start();
     }
 
     public double getPosition() {
-         if((this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()) <= 65)
+         if((this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()) <= ANGLE_OFFSET1 + 5)
          {
              return ANGLE_OFFSET1 - (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation());
          } else {
@@ -102,8 +115,7 @@ public class ArmSubsystem implements Subsystem {
 
     public void setDesiredState(ArmState state) {
         if(this.armLock.get() != Thread.currentThread() && this.armLock.get() != null) {
-            LogUtil.LOGGER.log(Level.WARNING, "Arm is locked by another thread, disallowing access from thread %s",
-                    Thread.currentThread().getName());
+            LogUtil.LOGGER.log(Level.WARNING, "Arm is locked by " + this.armLock.get() + " thread, disallowing access from " + Thread.currentThread() + " thread.");
             return;
         }
         this.armLock.set(Thread.currentThread());
@@ -132,29 +144,31 @@ public class ArmSubsystem implements Subsystem {
     public Map<String, String> dashboard() {
         HashMap<String, String> map = new HashMap<>();
         map.put("Current ArmState", currState.name());
-        map.put("Arm Position", String.valueOf(this.getPosition()));
+        map.put("Arm Position", String.valueOf(+
+                this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()));
+        map.put("Arm Position2", String.valueOf(this.getPosition()));
         return map;
     }
 
     public enum ArmState {
-        IDLE(84, 2, 5, 0.22, 0),
-        LOW(12,2, 4,0.13, 0.24),
-        INTAKE(2, 2, 5,0.13, 0.24),
-        AMP(95, 2, 5,0.20, 0),
-        SPEAKER(30, 2, 5,0.18, 0.24);
+        IDLE(83, 2, 5, 0.22, 0),
+        LOW(12,2, 4,0.13, 0.03),
+        INTAKE(2, 2, 5,0.13, 0.03),
+        AMP(89, 2, 5,0.20, 0),
+        SPEAKER(30, 2, 5,0.18, 0.03);
 
         private final double fineTolerance;
         private final double position;
         private  final double coarseTolerance;
         private final double speed;
-        private  final  double holdVoltage;
+        private  final  double holdPercent;
 
-        ArmState(double angle, double fineTolerance, double coarseTolerance, double speed, double holdVoltage) {
+        ArmState(double angle, double fineTolerance, double coarseTolerance, double speed, double holdPercent) {
             this.position = angle;
             this.fineTolerance = fineTolerance;
             this.coarseTolerance = coarseTolerance;
             this.speed = speed;
-            this.holdVoltage = holdVoltage;
+            this.holdPercent = holdPercent;
         }
 
         public double getDesiredPosition() {

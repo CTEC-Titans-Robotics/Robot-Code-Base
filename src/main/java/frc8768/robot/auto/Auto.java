@@ -63,11 +63,13 @@ public class Auto {
         this.autonChooser.addOption("No-Op", new InstantCommand());
 
         // Setup Positions
-        // this.autonChooser.addOption("Position 1 Disruptor", AutoBuilder.buildAuto("Position_1_Block"));
-        // this.autonChooser.addOption("Position 2 Disruptor", AutoBuilder.buildAuto("Position_2_Block"));
-        // this.autonChooser.addOption("Position 3 Disruptor", AutoBuilder.buildAuto("Position_3_Block"));
-        // this.autonChooser.addOption("Position 4 Disruptor", AutoBuilder.buildAuto("Position_4_Block"));
-        // this.autonChooser.addOption("Position 5 Disruptor", AutoBuilder.buildAuto("Position_5_Block"));
+        this.autonChooser.addOption("Position 1 Disruptor", AutoBuilder.buildAuto("Position_1_Block"));
+        this.autonChooser.addOption("Position 2 Disruptor", AutoBuilder.buildAuto("Position_2_Block"));
+        this.autonChooser.addOption("Position 3 Disruptor", AutoBuilder.buildAuto("Position_3_Block"));
+        this.autonChooser.addOption("Position 4 Disruptor", AutoBuilder.buildAuto("Position_4_Block"));
+        this.autonChooser.addOption("Position 5 Disruptor", AutoBuilder.buildAuto("Position_5_Block"));
+
+        this.autonChooser.addOption("Omega", AutoBuilder.buildAuto("Omega"));
 
         this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position_1"));
         this.autonChooser.addOption("Position 2", AutoBuilder.buildAuto("Position_2"));

@@ -11,12 +11,13 @@
     "Shooting"
   ],
   "autoFolders": [
+    "Disruption",
     "Position 3",
     "Position 4"
   ],
   "defaultMaxVel": 5.1816,
   "defaultMaxAccel": 2.452,
-  "defaultMaxAngVel": 720.0,
+  "defaultMaxAngVel": 450.0,
   "defaultMaxAngAccel": 720.0,
   "maxModuleSpeed": 5.1816
 }

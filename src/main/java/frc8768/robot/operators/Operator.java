@@ -41,6 +41,9 @@ public abstract class Operator {
                 continue;
             }
             run();
+
+            // Due to the limitation of 2 threads on the RoboRIO, yield each loop.
+            Thread.yield();
         }
     }
 

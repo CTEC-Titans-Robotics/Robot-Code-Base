@@ -35,14 +35,14 @@ public class ClimberSubsystem implements Subsystem {
     }
 
     public void up() {
-        if(this.rightMotor.get() != 0.25) {
-            this.rightMotor.set(0.25);
+        if(this.rightMotor.get() != 0.4) {
+            this.rightMotor.set(0.4);
         }
     }
 
     public void down() {
-        if(this.rightMotor.get() != -0.25) {
-            this.rightMotor.set(-0.25);
+        if(this.rightMotor.get() != -0.4) {
+            this.rightMotor.set(-0.4);
         }
     }
 

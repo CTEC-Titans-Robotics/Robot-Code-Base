@@ -121,8 +121,8 @@ public class Robot extends TimedRobot
         // Init logging
         // LogUtil.registerLogger(this.swerve::log);
 
-        // LogUtil.registerDashLogger(this.swerve::dashboard);
-        // LogUtil.registerDashLogger(this.arm::dashboard);
+        LogUtil.registerDashLogger(this.swerve::dashboard);
+        LogUtil.registerDashLogger(this.arm::dashboard);
         // LogUtil.registerDashLogger(this.intake::dashboard);
     }
 
@@ -154,7 +154,7 @@ public class Robot extends TimedRobot
         this.arm.tick();
         this.intake.tick();
 
-        // LogUtil.run();
+        LogUtil.run();
     }
 
     /**

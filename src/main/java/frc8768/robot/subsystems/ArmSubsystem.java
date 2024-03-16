@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET1 = 118;
+    private static final double ANGLE_OFFSET1 = 100.52409851310246;
     private static final double ANGLE_OFFSET2 = 360 + ANGLE_OFFSET1;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
@@ -54,12 +54,12 @@ public class ArmSubsystem implements Subsystem {
                     }
                     //if within coarse tolerance but not within fine tolerance move at slower speed until it reaches fine
                     if(this.currState.getDesiredPosition() > position) {
-                        if(this.armMotor.get() != 0.06) {
-                            this.armMotor.set(0.06); //og value 0.13
+                        if(this.armMotor.get() != 0.02) {
+                            this.armMotor.set(0.02); //og value 0.13
                         }
                     } else if(this.currState.getDesiredPosition() < position) {
-                        if(this.armMotor.get() != -0.06) {
-                            this.armMotor.set(-0.06); //og value 0.13
+                        if(this.armMotor.get() != -0.02) {
+                            this.armMotor.set(-0.02); //og value 0.13
                         }
                     }
                 }
@@ -70,8 +70,8 @@ public class ArmSubsystem implements Subsystem {
                         this.armMotor.set(this.currState.speed);
                     }
                 } else if(this.currState.getDesiredPosition() < position && this.overrideAngle == -1) {
-                    if(this.armMotor.get() != -this.currState.speed) {
-                        this.armMotor.set(-this.currState.speed);
+                    if(this.armMotor.get() != -this.currState.speed/1.5) {
+                        this.armMotor.set(-this.currState.speed/1.5);
                     }
                 }
 
@@ -93,7 +93,7 @@ public class ArmSubsystem implements Subsystem {
             }
         });
         this.positionThread.setName("Position Thread");
-        // this.positionThread.start();
+        this.positionThread.start();
     }
 
     public double getPosition() {
@@ -146,16 +146,16 @@ public class ArmSubsystem implements Subsystem {
         map.put("Current ArmState", currState.name());
         map.put("Arm Position", String.valueOf(+
                 this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()));
-        map.put("Arm Position2", String.valueOf(this.getPosition()));
+        map.put("Adjusted Arm Position", String.valueOf(this.getPosition()));
         return map;
     }
 
     public enum ArmState {
-        IDLE(83, 2, 5, 0.22, 0),
-        LOW(12,2, 4,0.13, 0.03),
-        INTAKE(2, 2, 5,0.13, 0.03),
-        AMP(89, 2, 5,0.20, 0),
-        SPEAKER(30, 2, 5,0.18, 0.03);
+        IDLE(83, 2, 5, 0.12, 0.02),
+        LOW(12,2, 4,0.09, 0.02),
+        INTAKE(2, 2, 5,0.09, 0.02),
+        AMP(94, 2, 5,0.06, 0.02),
+        SPEAKER(30, 2, 5,0.12, 0.02);
 
         private final double fineTolerance;
         private final double position;

@@ -37,7 +37,6 @@ public class ArmSubsystem implements Subsystem {
 
         // Configure Encoder
         this.armEncoder.setDistancePerRotation(360D);
-        this.armEncoder.setPositionOffset(this.armEncoder.getAbsolutePosition() - Units.degreesToRotations(129.50758223768955));
 
         // Setup Auto-Pose Thread (Thread moves arm to the states position )
         this.positionThread = new Thread(() -> {
@@ -115,7 +114,7 @@ public class ArmSubsystem implements Subsystem {
 
     public void setDesiredState(ArmState state) {
         if(this.armLock.get() != Thread.currentThread() && this.armLock.get() != null) {
-            LogUtil.LOGGER.log(Level.WARNING, "Arm is locked by " + this.armLock.get() + " thread, disallowing access from " + Thread.currentThread() + " thread.");
+            LogUtil.LOGGER.log(Level.WARNING, "Arm is locked by " + this.armLock.get().getName() + " thread, disallowing access from " + Thread.currentThread().getName() + " thread.");
             return;
         }
         this.armLock.set(Thread.currentThread());
@@ -152,9 +151,9 @@ public class ArmSubsystem implements Subsystem {
 
     public enum ArmState {
         IDLE(83, 2, 5, 0.12, 0.02),
-        LOW(12,2, 4,0.09, 0.02),
-        INTAKE(2, 2, 5,0.09, 0.02),
-        AMP(94, 2, 5,0.06, 0.02),
+        LOW(12,2, 4,0.14, 0.02),
+        INTAKE(2, 2, 5,0.14, 0.02),
+        AMP(94, 2, 5,0.12, 0.02),
         SPEAKER(30, 2, 5,0.12, 0.02);
 
         private final double fineTolerance;

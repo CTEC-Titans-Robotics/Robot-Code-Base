@@ -62,6 +62,8 @@ public class ArmSubsystem implements Subsystem {
                 double speed = this.zone == ArmZone.GRAVITY_ZONE ? this.currState.speed : this.currState.speed/2;
                 if(this.currState.getDesiredPosition() > position && this.overrideAngle == -1) {
                     this.armMotor.set(speed);
+                } else if(this.currState.getDesiredPosition() < position && this.overrideAngle == -1 && this.zone == ArmZone.GRAVITY_ZONE) {
+                    this.armMotor.set(-speed*0.5);
                 } else if(this.currState.getDesiredPosition() < position && this.overrideAngle == -1) {
                     this.armMotor.set(-speed*1.75);
                 }
@@ -137,8 +139,8 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public enum ArmZone {
-        GRAVITY_ZONE(-90, 60),
-        UP(60, 180);
+        GRAVITY_ZONE(-90, 35),
+        UP(35, 180);
 
         private final double minAngle;
         private final double maxAngle;
@@ -156,7 +158,7 @@ public class ArmSubsystem implements Subsystem {
     public enum ArmState {
         IDLE(83, 2, 5, 0.18, 0.02),
         LOW(12,2, 4,0.12, 0.02),
-        INTAKE(2, 2, 5,0.12, 0.02),
+        INTAKE(4, 2, 5,0.12, 0.02),
         AMP(94, 2, 5,0.18, 0.02),
         SPEAKER(30, 2, 5,0.18, 0.025);
 

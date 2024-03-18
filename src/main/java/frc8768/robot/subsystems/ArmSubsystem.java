@@ -23,6 +23,7 @@ public class ArmSubsystem implements Subsystem {
     private final Thread positionThread;
     private final AtomicReference<Thread> armLock;
     public ArmState currState = ArmState.IDLE;
+    private ArmZone zone;
     public double overrideAngle = -1;
 
     public ArmSubsystem() {
@@ -46,47 +47,32 @@ public class ArmSubsystem implements Subsystem {
                 if(this.currState.isAngleWithinCoarseTolerance(position) && this.overrideAngle == -1) {
                     if(this.currState.isAngleWithinFineTolerance(position)) {
                         //if both within fine and coarse tolerance stop the motor (you have reached your destination!!)
-                        if(this.armMotor.get() != this.currState.holdPercent) {
-                            this.armMotor.set(this.currState.holdPercent); //og value 0.13
-                        }
+                        this.armMotor.set(this.currState.holdPercent); //og value 0.13
                         continue;
                     }
                     //if within coarse tolerance but not within fine tolerance move at slower speed until it reaches fine
                     if(this.currState.getDesiredPosition() > position) {
-                        if(this.armMotor.get() != 0.02) {
-                            this.armMotor.set(0.02); //og value 0.13
-                        }
+                        this.armMotor.set(0.02); //og value 0.13
                     } else if(this.currState.getDesiredPosition() < position) {
-                        if(this.armMotor.get() != -0.02) {
-                            this.armMotor.set(-0.02); //og value 0.13
-                        }
+                        this.armMotor.set(-0.02); //og value 0.13
                     }
                 }
 
                 //Goes at normal speed if not in Coarse Tolerance
+                double speed = this.zone == ArmZone.GRAVITY_ZONE ? this.currState.speed : this.currState.speed/2;
                 if(this.currState.getDesiredPosition() > position && this.overrideAngle == -1) {
-                    if(this.armMotor.get() != this.currState.speed) {
-                        this.armMotor.set(this.currState.speed);
-                    }
+                    this.armMotor.set(speed);
                 } else if(this.currState.getDesiredPosition() < position && this.overrideAngle == -1) {
-                    if(this.armMotor.get() != -this.currState.speed/1.5) {
-                        this.armMotor.set(-this.currState.speed/1.5);
-                    }
+                    this.armMotor.set(-speed*1.75);
                 }
 
                 if(this.overrideAngle != -1) {
                     if(this.overrideAngle > position) {
-                        if(this.armMotor.get() != 0.13) {
-                            this.armMotor.set(0.13);
-                        }
+                        this.armMotor.set(0.13);
                     } else if(this.overrideAngle < position) {
-                        if(this.armMotor.get() != -0.13) {
-                            this.armMotor.set(-0.13);
-                        }
+                        this.armMotor.set(-0.13);
                     } else {
-                        if(this.armMotor.get() != 0) {
-                            this.armMotor.set(0);
-                        }
+                        this.armMotor.set(0);
                     }
                 }
             }
@@ -133,6 +119,7 @@ public class ArmSubsystem implements Subsystem {
         if(this.armLock.get() == null) {
             this.currState = ArmState.IDLE;
         }
+        this.zone = ArmZone.GRAVITY_ZONE.isInZone(this.getPosition()) ? ArmZone.GRAVITY_ZONE : ArmZone.UP;
     }
 
     /**
@@ -149,12 +136,29 @@ public class ArmSubsystem implements Subsystem {
         return map;
     }
 
+    public enum ArmZone {
+        GRAVITY_ZONE(-90, 60),
+        UP(60, 180);
+
+        private final double minAngle;
+        private final double maxAngle;
+
+        ArmZone(double minAngle, double maxAngle) {
+            this.minAngle = minAngle;
+            this.maxAngle = maxAngle;
+        }
+
+        public boolean isInZone(double armPos) {
+            return armPos > this.minAngle && armPos < this.maxAngle;
+        }
+    }
+
     public enum ArmState {
-        IDLE(83, 2, 5, 0.12, 0.02),
-        LOW(12,2, 4,0.14, 0.02),
-        INTAKE(2, 2, 5,0.14, 0.02),
-        AMP(94, 2, 5,0.12, 0.02),
-        SPEAKER(30, 2, 5,0.12, 0.02);
+        IDLE(83, 2, 5, 0.18, 0.02),
+        LOW(12,2, 4,0.12, 0.02),
+        INTAKE(2, 2, 5,0.12, 0.02),
+        AMP(94, 2, 5,0.18, 0.02),
+        SPEAKER(30, 2, 5,0.18, 0.025);
 
         private final double fineTolerance;
         private final double position;

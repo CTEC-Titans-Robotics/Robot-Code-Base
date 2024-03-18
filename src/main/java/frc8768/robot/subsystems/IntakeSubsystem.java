@@ -61,7 +61,7 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public void releaseLock() {
-        if(this.intakeLock.get() == null || this.intakeLock.get() != Thread.currentThread()) {
+        if(this.intakeLock.get() != Thread.currentThread()) {
             return;
         }
         this.intakeLock.set(null);

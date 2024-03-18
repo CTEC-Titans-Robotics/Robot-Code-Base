@@ -123,7 +123,7 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public void releaseLock() {
-        if(this.armLock.get() == null || this.armLock.get() != Thread.currentThread()) {
+        if(this.armLock.get() != Thread.currentThread()) {
             return;
         }
         this.armLock.set(null);

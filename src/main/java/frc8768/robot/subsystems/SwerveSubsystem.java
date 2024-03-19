@@ -70,11 +70,11 @@ public class SwerveSubsystem implements Subsystem {
      * @param pivotPoint 2d Pivot point for rotation
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
-        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(225), fieldRelative, isOpenLoop, pivotPoint);
+        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, pivotPoint);
     }
 
     public void autonInit() {
-        this.visionUpdateThread.start();
+        // this.visionUpdateThread.start();
     }
 
     /**
@@ -100,8 +100,7 @@ public class SwerveSubsystem implements Subsystem {
      *
      * @return Map of Name to Value
      */
-    public Map<String, String> dashboard() {
-        HashMap<String, String> map = new HashMap<>();
+    public void dashboard(Map<String, String> map) {
         for(int i = 0; i < 4; i++) {
             map.put(String.format("Module %d Drive: Velocity", i),
                     String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getVelocity()));
@@ -113,18 +112,6 @@ public class SwerveSubsystem implements Subsystem {
             map.put(String.format("Module %d Angle: Position", i),
                     String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getPosition()));
         }
-        return map;
-    }
-
-    /**
-     * Log string, (Could use a buffer here to prevent data race)
-     *
-     * @return List of different Strings.
-     */
-    public List<String> log() {
-        ArrayList<String> list = new ArrayList<>();
-        // Insert string buffer, different logic for detecting errors here
-        return list;
     }
 
     public static class VisionOdomThread extends Thread {

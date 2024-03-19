@@ -64,7 +64,6 @@ public class Auto {
 
         // Setup Positions
         this.autonChooser.addOption("Position 1 Disruptor", AutoBuilder.buildAuto("Position_1_Block"));
-        this.autonChooser.addOption("Position 2 Disruptor", AutoBuilder.buildAuto("Position_2_Block"));
         this.autonChooser.addOption("Position 3 Disruptor", AutoBuilder.buildAuto("Position_3_Block"));
         this.autonChooser.addOption("Position 4 Disruptor", AutoBuilder.buildAuto("Position_4_Block"));
         this.autonChooser.addOption("Position 5 Disruptor", AutoBuilder.buildAuto("Position_5_Block"));

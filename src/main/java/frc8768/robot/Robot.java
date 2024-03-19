@@ -8,6 +8,7 @@ package frc8768.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.AuxiliaryOperator;
@@ -94,7 +95,7 @@ public class Robot extends TimedRobot
     public void robotInit() {
         // CameraServer.startAutomaticCapture();
 
-        this.leftVision = new PhotonVision("Camera_Module_v1");
+        // this.leftVision = new PhotonVision("Camera_Module_v1");
         //this.rightVision = new PhotonVision("photonvision-right");
 
         // Subsystem init
@@ -110,7 +111,7 @@ public class Robot extends TimedRobot
 
         // Operator creation
         this.drivebase = new DrivebaseOperator(this.swerve, this.arm, this.intake);
-        this.auxiliary = new AuxiliaryOperator(this.arm, this.intake);
+        this.auxiliary = new AuxiliaryOperator(this.arm, this.intake, this.leftVision);
 
         // this.vision = new LimelightVision("limelight");
 
@@ -118,12 +119,12 @@ public class Robot extends TimedRobot
         this.drivebase.init();
         this.auxiliary.init();
 
-        // Init logging
-        // LogUtil.registerLogger(this.swerve::log);
+        CommandScheduler.getInstance().setPeriod(99);
 
-        // LogUtil.registerDashLogger(this.swerve::dashboard);
+        // Init logging
+        LogUtil.registerDashLogger(this.swerve::dashboard);
         LogUtil.registerDashLogger(this.arm::dashboard);
-        // LogUtil.registerDashLogger(this.intake::dashboard);
+        LogUtil.registerDashLogger(this.intake::dashboard);
     }
 
     /* For tank
@@ -162,8 +163,10 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousInit() {
-        this.swerve.autonInit();
         if (this.auto != null) {
+            if(!this.auto.getSelected().getName().contains("Block")) {
+                this.swerve.autonInit();
+            }
             this.auto.getSelected().schedule();
         }
     }
@@ -177,7 +180,7 @@ public class Robot extends TimedRobot
             if(!this.auto.getSelected().isScheduled()) {
                 return;
             }
-            this.auto.getSelected().execute();
+            //this.auto.getSelected().execute();
         }
     }
 

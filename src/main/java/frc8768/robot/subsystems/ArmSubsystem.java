@@ -22,7 +22,7 @@ public class ArmSubsystem implements Subsystem {
     private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(0);
     private final Thread positionThread;
     private final AtomicReference<Thread> armLock;
-    public ArmState currState = ArmState.IDLE;
+    public ArmState currState = ArmState.IDLE_AMP;
     private ArmZone zone;
     public double overrideAngle = -1;
 
@@ -59,7 +59,7 @@ public class ArmSubsystem implements Subsystem {
                 }
 
                 //Goes at normal speed if not in Coarse Tolerance
-                double speed = this.zone == ArmZone.GRAVITY_ZONE ? this.currState.speed : this.currState.speed/2;
+                double speed = this.zone == ArmZone.GRAVITY_ZONE ? this.currState.speed : this.currState.speed/1.5;
                 if(this.currState.getDesiredPosition() > position && this.overrideAngle == -1) {
                     this.armMotor.set(speed);
                 } else if(this.currState.getDesiredPosition() < position && this.overrideAngle == -1 && this.zone == ArmZone.GRAVITY_ZONE) {
@@ -119,7 +119,7 @@ public class ArmSubsystem implements Subsystem {
 
     public void tick() {
         if(this.armLock.get() == null) {
-            this.currState = ArmState.IDLE;
+            this.currState = ArmState.IDLE_AMP;
         }
         this.zone = ArmZone.GRAVITY_ZONE.isInZone(this.getPosition()) ? ArmZone.GRAVITY_ZONE : ArmZone.UP;
     }
@@ -127,15 +127,13 @@ public class ArmSubsystem implements Subsystem {
     /**
      * Dashboard logging
      *
-     * @return Map of Name to Value
+     * @param map Map of Name to Value
      */
-    public Map<String, String> dashboard() {
-        HashMap<String, String> map = new HashMap<>();
+    public void dashboard(Map<String, String> map) {
         map.put("Current ArmState", currState.name());
         map.put("Arm Position", String.valueOf(+
                 this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()));
         map.put("Adjusted Arm Position", String.valueOf(this.getPosition()));
-        return map;
     }
 
     public enum ArmZone {
@@ -156,11 +154,10 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public enum ArmState {
-        IDLE(83, 2, 5, 0.18, 0.02),
         LOW(12,2, 4,0.12, 0.02),
         INTAKE(4, 2, 5,0.12, 0.02),
-        AMP(94, 2, 5,0.18, 0.02),
-        SPEAKER(30, 2, 5,0.18, 0.025);
+        IDLE_AMP(97, 2, 5,0.22, 0.02),
+        SPEAKER(32, 2, 5,0.18, 0.025);
 
         private final double fineTolerance;
         private final double position;

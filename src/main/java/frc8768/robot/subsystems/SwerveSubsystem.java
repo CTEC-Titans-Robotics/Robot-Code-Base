@@ -95,25 +95,6 @@ public class SwerveSubsystem implements Subsystem {
         return swerveDrive;
     }
 
-    /**
-     * Dashboard logging
-     *
-     * @return Map of Name to Value
-     */
-    public void dashboard(Map<String, String> map) {
-        for(int i = 0; i < 4; i++) {
-            map.put(String.format("Module %d Drive: Velocity", i),
-                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getVelocity()));
-            map.put(String.format("Module %d Angle: Velocity", i),
-                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getVelocity()));
-
-            map.put(String.format("Module %d Drive: Position", i),
-                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getPosition()));
-            map.put(String.format("Module %d Angle: Position", i),
-                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getPosition()));
-        }
-    }
-
     public static class VisionOdomThread extends Thread {
         private SwerveSubsystem swerve;
         private PhotonVision vision;

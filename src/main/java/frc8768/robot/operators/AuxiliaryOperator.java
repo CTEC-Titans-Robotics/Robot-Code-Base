@@ -42,15 +42,15 @@ public class AuxiliaryOperator extends Operator {
     public void run() {
         this.intake.tick();
 
-        // double distance = this.vision.getDistanceToTarget(30, 21, 57.13, false);
+        double distance = this.vision.getDistanceToTarget(35, 21, 57.13, false);
         if(controller.getRightBumper()) {
-            // if(distance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
-            //     this.caNdle.setLEDs(0, 255, 0);
-            //     this.arm.overrideAngle = MathUtil.clamp((-0.0015*distance+0.51*distance+11), 2, 94);
-            // } else {
-            //     this.caNdle.setLEDs(255, 0, 0);
-            //     this.arm.overrideAngle = -1;
-            // }
+            if(distance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
+                this.caNdle.setLEDs(0, 255, 0);
+                this.arm.overrideAngle = MathUtil.clamp((-0.0015*distance+0.51*distance+11), 2, 94);
+            } else {
+                this.caNdle.setLEDs(255, 0, 0);
+                this.arm.overrideAngle = -1;
+            }
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
         }  else {
             this.arm.releaseLock();

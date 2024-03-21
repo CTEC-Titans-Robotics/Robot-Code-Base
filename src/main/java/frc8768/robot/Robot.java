@@ -95,8 +95,8 @@ public class Robot extends TimedRobot
     public void robotInit() {
         // CameraServer.startAutomaticCapture();
 
-        // this.leftVision = new PhotonVision("Camera_Module_v1");
-        //this.rightVision = new PhotonVision("photonvision-right");
+        this.leftVision = new PhotonVision("Left");
+        // this.rightVision = new PhotonVision("Right");
 
         // Subsystem init
         try {
@@ -119,10 +119,7 @@ public class Robot extends TimedRobot
         this.drivebase.init();
         this.auxiliary.init();
 
-        CommandScheduler.getInstance().setPeriod(99);
-
         // Init logging
-        LogUtil.registerDashLogger(this.swerve::dashboard);
         LogUtil.registerDashLogger(this.arm::dashboard);
         LogUtil.registerDashLogger(this.intake::dashboard);
     }

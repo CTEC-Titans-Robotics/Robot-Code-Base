@@ -45,11 +45,11 @@ public class LogUtil {
         HashMap<String, String> map = new HashMap<>();
         for(Consumer<Map<String, String>> supplier : DASHBOARD_LOGGERS) {
             supplier.accept(map);
-            for(Map.Entry<String, String> entry : map.entrySet()) {
-                boolean ret = SmartDashboard.putString(entry.getKey(), entry.getValue());
-                if (!ret) {
-                    LOGGER.log(Level.WARNING, String.format("%s was already added with a different type!", entry.getKey()));
-                }
+        }
+        for(Map.Entry<String, String> entry : map.entrySet()) {
+            boolean ret = SmartDashboard.putString(entry.getKey(), entry.getValue());
+            if (!ret) {
+                LOGGER.log(Level.WARNING, String.format("%s was already added with a different type!", entry.getKey()));
             }
         }
 

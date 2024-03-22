@@ -59,7 +59,7 @@ public class Auto {
         NamedCommands.registerCommand("drop_arm", new DropArmCommand(arm));
         NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
 
-        this.autonChooser = AutoBuilder.buildAutoChooser("Position_1");
+        this.autonChooser = new SendableChooser<>();
         this.autonChooser.addOption("No-Op", new InstantCommand());
 
         // Setup Positions

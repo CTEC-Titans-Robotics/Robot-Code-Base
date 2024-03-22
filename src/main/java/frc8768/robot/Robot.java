@@ -93,7 +93,7 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotInit() {
-        // CameraServer.startAutomaticCapture();
+        CameraServer.startAutomaticCapture(0);
 
         this.leftVision = new PhotonVision("Left");
         // this.rightVision = new PhotonVision("Right");

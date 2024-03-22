@@ -6,10 +6,8 @@ import com.revrobotics.CANSparkLowLevel;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc8768.robot.util.LogUtil;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
 public class IntakeSubsystem implements Subsystem {
@@ -105,7 +103,7 @@ public class IntakeSubsystem implements Subsystem {
                 this.holdMotor.set(0);
                 this.shootMotor.set(this.overrideShootSpeed != -1 ? this.overrideShootSpeed : desiredSpeed);
                 try {
-                    Thread.sleep(750);
+                    Thread.sleep(1100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

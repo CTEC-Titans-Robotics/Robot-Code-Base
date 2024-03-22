@@ -12,12 +12,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "hold_arm_drive"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Shooting Pos 1"

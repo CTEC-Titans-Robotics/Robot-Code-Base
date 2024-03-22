@@ -59,7 +59,7 @@ public class Auto {
         NamedCommands.registerCommand("drop_arm", new DropArmCommand(arm));
         NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
 
-        this.autonChooser = AutoBuilder.buildAutoChooser("Position_1");
+        this.autonChooser = new SendableChooser<>();
         this.autonChooser.addOption("No-Op", new InstantCommand());
 
         // Setup Positions
@@ -72,11 +72,8 @@ public class Auto {
 
         this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position_1"));
         this.autonChooser.addOption("Position 2", AutoBuilder.buildAuto("Position_2"));
-        this.autonChooser.addOption("Position 3 N1", AutoBuilder.buildAuto("Position_3_N1"));
-        this.autonChooser.addOption("Position 3 N2", AutoBuilder.buildAuto("Position_3_N2"));
-        this.autonChooser.addOption("Position 3 N3", AutoBuilder.buildAuto("Position_3_N3"));
-        this.autonChooser.addOption("Position 4 N2", AutoBuilder.buildAuto("Position_4_N2"));
-        this.autonChooser.addOption("Position 4 N3", AutoBuilder.buildAuto("Position_4_N3"));
+        this.autonChooser.addOption("Position 3", AutoBuilder.buildAuto("Position_3_N2"));
+        this.autonChooser.addOption("Position 4", AutoBuilder.buildAuto("Position_4_N3"));
         this.autonChooser.addOption("Position 5", AutoBuilder.buildAuto("Position_5"));
 
         SmartDashboard.putData("Auto", this.autonChooser);

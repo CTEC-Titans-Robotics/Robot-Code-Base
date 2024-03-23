@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET1 = 99.01105447527637;
+    private static final double ANGLE_OFFSET1 = 100.52409851310246;
     private static final double ANGLE_OFFSET2 = 360 + ANGLE_OFFSET1;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
@@ -69,12 +69,12 @@ public class ArmSubsystem implements Subsystem {
                 }
 
                 if(this.overrideAngle != -1) {
-                    if(this.overrideAngle > position && !MathUtil.isNear(position, this.overrideAngle, 2)) {
-                        this.armMotor.set(0.12);
-                    } else if(this.overrideAngle < position && !MathUtil.isNear(position, this.overrideAngle, 2)) {
-                        this.armMotor.set(-0.08);
+                    if(this.overrideAngle > position) {
+                        this.armMotor.set(0.13);
+                    } else if(this.overrideAngle < position) {
+                        this.armMotor.set(-0.13);
                     } else {
-                        this.armMotor.set(0.02);
+                        this.armMotor.set(0);
                     }
                 }
             }
@@ -154,10 +154,10 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public enum ArmState {
-        LOW(12,2, 4,0.16, 0.02),
-        INTAKE(1, 1, 5,0.16, 0.02),
-        IDLE_AMP(97, 2, 5,0.25, 0.02),
-        SPEAKER(30, 2, 5,0.18, 0.025);
+        LOW(12,2, 4,0.12, 0.02),
+        INTAKE(4, 2, 5,0.12, 0.02),
+        IDLE_AMP(97, 2, 5,0.22, 0.02),
+        SPEAKER(32, 2, 5,0.18, 0.025);
 
         private final double fineTolerance;
         private final double position;

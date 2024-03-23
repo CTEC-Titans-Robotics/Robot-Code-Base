@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.5079619390008028,
+        "y": 6.9956624528633675
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.5079619390008028,
+        "y": 6.9956624528633675
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.165608331216664,
+        "y": 5.61429045935015
+      },
+      "prevControl": {
+        "x": 3.1656083312166636,
+        "y": 5.61429045935015
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 17.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 450.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Taxi",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

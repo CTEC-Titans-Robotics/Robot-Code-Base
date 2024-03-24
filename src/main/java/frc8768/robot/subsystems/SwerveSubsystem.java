@@ -23,6 +23,7 @@ import frc8768.visionlib.PhotonVision;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveDrive;
+import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 
@@ -103,7 +104,9 @@ public class SwerveSubsystem implements Subsystem {
      * @param voltageMeasure
      */
     public void voltAngleForward(Measure<Voltage> voltageMeasure) {
-        swerveDrive.getModules()[0].getAngleMotor().setVoltage(voltageMeasure.in(Volts));
+        for(SwerveModule module : swerveDrive.getModules()) {
+            module.getAngleMotor().setVoltage(voltageMeasure.in(Volts));
+        }
     }
 
     /**
@@ -111,7 +114,9 @@ public class SwerveSubsystem implements Subsystem {
      * @param voltageMeasure
      */
     public void voltDriveForward(Measure<Voltage> voltageMeasure) {
-        swerveDrive.getModules()[0].getDriveMotor().setVoltage(voltageMeasure.in(Volts));
+        for(SwerveModule module : swerveDrive.getModules()) {
+            module.getDriveMotor().setVoltage(voltageMeasure.in(Volts));
+        }
     }
 
     /**

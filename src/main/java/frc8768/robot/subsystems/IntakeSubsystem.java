@@ -96,7 +96,7 @@ public class IntakeSubsystem implements Subsystem {
                 this.intakeMotor.set(0);
                 this.holdMotor.set(-0.2);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(175);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -118,7 +118,7 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public void tick() {
-        if(this.intakeLock.get() == null) {
+        if(this.intakeLock.get() == null && this.currStage != IntakeStage.IDLE) {
             this.setStage(IntakeStage.IDLE);
         }
     }

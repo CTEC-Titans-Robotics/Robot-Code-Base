@@ -46,7 +46,7 @@ public class Constants {
         public static final MotorType CURRENT_TYPE = MotorType.TALONFX;
 
         /**
-         * Max drive motor speed ft/s.
+         * Max drive motor speed m/s.
          */
         public static final double MAX_SPEED = 17;
     }

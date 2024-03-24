@@ -34,10 +34,10 @@ public class Auto {
 
         PIDController theta = swerve.getSwerveDrive().swerveController.thetaController;
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-                new PIDConstants(0.1, 0.0, 0.0),
+                new PIDConstants(0.01, 0.0, 0.0),
                 new PIDConstants(theta.getP(), theta.getI(), theta.getD()),
                 Constants.SwerveConfig.MAX_SPEED,
-                0.268438249,
+                0.26035,
                 new ReplanningConfig(
                         true,
                         true

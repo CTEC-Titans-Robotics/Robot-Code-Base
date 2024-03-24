@@ -141,7 +141,11 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
+        try {
+            CommandScheduler.getInstance().run();
+        } catch (Exception ex) {
+            LogUtil.LOGGER.log(Level.SEVERE, ex.getMessage());
+        }
 
         if(this.drivebase != null && !this.drivebase.isAlive()) {
             LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
@@ -206,31 +210,10 @@ public class Robot extends TimedRobot
     private Command currCommand;
     @Override
     public void testInit() {
-        if(true) {
+        if(false) {
             SysIdUtil.createAngleRoutine(swerve);
         } else {
             SysIdUtil.createDriveRoutine(swerve);
-        }
-
-        if(tester.getAButton()) {
-            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kForward);
-        } else if(tester.getBButton()) {
-            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kReverse);
-        } else if(tester.getYButton()) {
-            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kForward);
-        } else if(tester.getXButton()) {
-            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kReverse);
-        } else {
-            if(currCommand != null) {
-                currCommand.end(true);
-                currCommand = null;
-            }
-        }
-
-        if(currCommand != null) {
-            if(!currCommand.isScheduled()) {
-                CommandScheduler.getInstance().schedule(currCommand);
-            }
         }
     }
 
@@ -241,6 +224,27 @@ public class Robot extends TimedRobot
     public void testPeriodic() {
         for(swervelib.SwerveModule module : this.swerve.getSwerveDrive().getModules()) {
             SmartDashboard.putNumber("Module " + module.moduleNumber + " Encoder", module.getAbsolutePosition());
+        }
+
+        if(tester.getAButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kForward);
+            this.currCommand.initialize();
+        } else if(tester.getBButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kReverse);
+            this.currCommand.initialize();
+        } else if(tester.getYButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kForward);
+            this.currCommand.initialize();
+        } else if(tester.getXButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kReverse);
+            this.currCommand.initialize();
+        } else if(currCommand != null && !(tester.getXButton() || tester.getAButton() || tester.getBButton() || tester.getYButton())) {
+            currCommand.end(false);
+            currCommand = null;
+        }
+
+        if(currCommand != null) {
+            currCommand.execute();
         }
     }
 }

@@ -124,7 +124,7 @@ public class SwerveSubsystem implements Subsystem {
      * @param sysIdRoutineLog
      */
     public void logAngle(SysIdRoutineLog sysIdRoutineLog) {
-        sysIdRoutineLog.motor("Front Left Angle position").angularPosition(Degrees.of(swerveDrive.getModules()[0].getPosition().angle.getDegrees()));
+        sysIdRoutineLog.motor("Front Left Angle position").angularPosition(Degrees.of(swerveDrive.getModules()[0].getAbsolutePosition()));
         sysIdRoutineLog.motor("Front Left Angle velocity").angularVelocity(DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
         sysIdRoutineLog.motor("Front Left Angle volts").voltage(Volts.of(swerveDrive.getModules()[0].getAngleMotor().getVoltage()));
     }

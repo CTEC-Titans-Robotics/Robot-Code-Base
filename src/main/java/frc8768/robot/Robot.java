@@ -7,9 +7,11 @@ package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.AuxiliaryOperator;
 import frc8768.robot.operators.DrivebaseOperator;
@@ -200,6 +202,8 @@ public class Robot extends TimedRobot
     /**
      * Runs at the start of Test state
      */
+    private final XboxController tester = new XboxController(2);
+    private Command currCommand;
     @Override
     public void testInit() {
         if(true) {
@@ -208,10 +212,25 @@ public class Robot extends TimedRobot
             SysIdUtil.createDriveRoutine(swerve);
         }
 
-        if(true) {
-            SysIdUtil.runSysIdQuasistatic();
+        if(tester.getAButton()) {
+            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kForward);
+        } else if(tester.getBButton()) {
+            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kReverse);
+        } else if(tester.getYButton()) {
+            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kForward);
+        } else if(tester.getXButton()) {
+            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kReverse);
         } else {
-            SysIdUtil.runSysIdDynamic();
+            if(currCommand != null) {
+                currCommand.end(true);
+                currCommand = null;
+            }
+        }
+
+        if(currCommand != null) {
+            if(!currCommand.isScheduled()) {
+                CommandScheduler.getInstance().schedule(currCommand);
+            }
         }
     }
 

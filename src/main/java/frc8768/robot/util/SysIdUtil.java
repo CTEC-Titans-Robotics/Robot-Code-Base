@@ -19,11 +19,11 @@ public class SysIdUtil {
         routine = new SysIdRoutine(cfg, mechanism);
     }
 
-    public static Command runSysIdQuasistatic() {
-        return routine.quasistatic(SysIdRoutine.Direction.kForward);
+    public static Command runSysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return routine.quasistatic(direction);
     }
 
-    public static Command runSysIdDynamic() {
-        return routine.dynamic(SysIdRoutine.Direction.kForward);
+    public static Command runSysIdDynamic(SysIdRoutine.Direction direction) {
+        return routine.dynamic(direction);
     }
 }

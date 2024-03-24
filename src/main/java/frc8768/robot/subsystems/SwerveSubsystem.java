@@ -121,11 +121,13 @@ public class SwerveSubsystem implements Subsystem {
     public void logAngle(SysIdRoutineLog sysIdRoutineLog) {
         sysIdRoutineLog.motor("Front Left Angle position").angularPosition(Degrees.of(swerveDrive.getModules()[0].getPosition().angle.getDegrees()));
         sysIdRoutineLog.motor("Front Left Angle velocity").angularVelocity(DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
+        sysIdRoutineLog.motor("Front Left Angle volts").voltage(Volts.of(swerveDrive.getModules()[0].getAngleMotor().getVoltage()));
     }
 
     public void logDrive(SysIdRoutineLog sysIdRoutineLog) {
         sysIdRoutineLog.motor("Front Left Drive position").linearPosition(Meters.of(swerveDrive.getModules()[0].getPosition().distanceMeters));
         sysIdRoutineLog.motor("Front Left Drive velocity").linearVelocity(MetersPerSecond.of(swerveDrive.getModules()[0].getDriveMotor().getVelocity()));
+        sysIdRoutineLog.motor("Front Left Drive volts").voltage(Volts.of(swerveDrive.getModules()[0].getDriveMotor().getVoltage()));
     }
 
     public static class VisionOdomThread extends Thread {

@@ -60,7 +60,7 @@ public class Auto {
         NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
 
         this.autonChooser = new SendableChooser<>();
-        this.autonChooser.addOption("No-Op", new InstantCommand());
+        this.autonChooser.setDefaultOption("No-Op", new InstantCommand());
 
         // Setup Positions
         this.autonChooser.addOption("Position 1 Disruptor", AutoBuilder.buildAuto("Position_1_Block"));

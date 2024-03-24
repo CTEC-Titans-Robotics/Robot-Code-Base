@@ -141,11 +141,11 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotPeriodic() {
-        try {
-            CommandScheduler.getInstance().run();
-        } catch (Exception ex) {
-            LogUtil.LOGGER.log(Level.SEVERE, ex.getMessage());
-        }
+        // try {
+        //     CommandScheduler.getInstance().run();
+        // } catch (Exception ex) {
+        //     LogUtil.LOGGER.log(Level.SEVERE, ex.getMessage());
+        // }
 
         if(this.drivebase != null && !this.drivebase.isAlive()) {
             LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
@@ -171,7 +171,7 @@ public class Robot extends TimedRobot
             if(!this.auto.getSelected().getName().contains("Block")) {
                 this.swerve.autonInit();
             }
-            this.auto.getSelected().schedule();
+            this.auto.getSelected().initialize();
         }
     }
 
@@ -181,10 +181,13 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic() {
         if(this.auto != null) {
-            if(!this.auto.getSelected().isScheduled()) {
+            if(this.auto.getSelected() == null) {
                 return;
             }
-            //this.auto.getSelected().execute();
+            if(this.auto.getSelected().isFinished()) {
+                return;
+            }
+            this.auto.getSelected().execute();
         }
     }
 

@@ -18,6 +18,7 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.robot.util.MathUtil;
+import frc8768.robot.util.SysIdUtil;
 import frc8768.visionlib.PhotonVision;
 import frc8768.visionlib.Vision;
 
@@ -200,7 +201,19 @@ public class Robot extends TimedRobot
      * Runs at the start of Test state
      */
     @Override
-    public void testInit() {}
+    public void testInit() {
+        if(true) {
+            SysIdUtil.createAngleRoutine(swerve);
+        } else {
+            SysIdUtil.createDriveRoutine(swerve);
+        }
+
+        if(true) {
+            SysIdUtil.runSysIdQuasistatic();
+        } else {
+            SysIdUtil.runSysIdDynamic();
+        }
+    }
 
     /**
      * Runs every "tick" of Test time
@@ -210,9 +223,5 @@ public class Robot extends TimedRobot
         for(swervelib.SwerveModule module : this.swerve.getSwerveDrive().getModules()) {
             SmartDashboard.putNumber("Module " + module.moduleNumber + " Encoder", module.getAbsolutePosition());
         }
-
-        /* PID Tuning
-                this.swerve.getSwerveDrive().drive(Constants.BOT_CENTER, MathUtil.getRadFromDeg(90), true, false, Constants.BOT_CENTER);
-         */
     }
 }

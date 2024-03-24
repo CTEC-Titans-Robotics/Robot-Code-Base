@@ -2,18 +2,13 @@ package frc8768.robot.operators;
 
 import com.ctre.phoenix.led.CANdle;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
-import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.PhotonVision;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AuxiliaryOperator extends Operator {

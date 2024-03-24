@@ -7,9 +7,11 @@ package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.AuxiliaryOperator;
 import frc8768.robot.operators.DrivebaseOperator;
@@ -19,6 +21,7 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.robot.util.MathUtil;
+import frc8768.robot.util.SysIdUtil;
 import frc8768.visionlib.PhotonVision;
 import frc8768.visionlib.Vision;
 
@@ -138,7 +141,11 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
+        // try {
+        //     CommandScheduler.getInstance().run();
+        // } catch (Exception ex) {
+        //     LogUtil.LOGGER.log(Level.SEVERE, ex.getMessage());
+        // }
 
         if(this.drivebase != null && !this.drivebase.isAlive()) {
             LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
@@ -164,7 +171,7 @@ public class Robot extends TimedRobot
             if(!this.auto.getSelected().getName().contains("Block")) {
                 this.swerve.autonInit();
             }
-            this.auto.getSelected().schedule();
+            this.auto.getSelected().initialize();
         }
     }
 
@@ -174,10 +181,13 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic() {
         if(this.auto != null) {
-            if(!this.auto.getSelected().isScheduled()) {
+            if(this.auto.getSelected() == null) {
                 return;
             }
-            //this.auto.getSelected().execute();
+            if(this.auto.getSelected().isFinished()) {
+                return;
+            }
+            this.auto.getSelected().execute();
         }
     }
 
@@ -199,8 +209,16 @@ public class Robot extends TimedRobot
     /**
      * Runs at the start of Test state
      */
+    private final XboxController tester = new XboxController(2);
+    private Command currCommand;
     @Override
-    public void testInit() {}
+    public void testInit() {
+        if(false) {
+            SysIdUtil.createAngleRoutine(swerve);
+        } else {
+            SysIdUtil.createDriveRoutine(swerve);
+        }
+    }
 
     /**
      * Runs every "tick" of Test time
@@ -211,8 +229,25 @@ public class Robot extends TimedRobot
             SmartDashboard.putNumber("Module " + module.moduleNumber + " Encoder", module.getAbsolutePosition());
         }
 
-        /* PID Tuning
-                this.swerve.getSwerveDrive().drive(Constants.BOT_CENTER, MathUtil.getRadFromDeg(90), true, false, Constants.BOT_CENTER);
-         */
+        if(tester.getAButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kForward);
+            this.currCommand.initialize();
+        } else if(tester.getBButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kReverse);
+            this.currCommand.initialize();
+        } else if(tester.getYButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kForward);
+            this.currCommand.initialize();
+        } else if(tester.getXButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kReverse);
+            this.currCommand.initialize();
+        } else if(currCommand != null && !(tester.getXButton() || tester.getAButton() || tester.getBButton() || tester.getYButton())) {
+            currCommand.end(false);
+            currCommand = null;
+        }
+
+        if(currCommand != null) {
+            currCommand.execute();
+        }
     }
 }

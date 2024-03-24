@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET1 = 96.66133441653336;
+    private static final double ANGLE_OFFSET1 = 96.37805040945128;
     private static final double ANGLE_OFFSET2 = 360 + ANGLE_OFFSET1;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
@@ -170,7 +170,7 @@ public class ArmSubsystem implements Subsystem {
         LOW(12,2, 4,0.16, 0.02),
         INTAKE(1, 1, 5,0.16, 0.02),
         IDLE_AMP(97, 2, 5,0.25, 0.02),
-        SPEAKER(33, 2, 4,0.18, 0.025);
+        SPEAKER(35, 2, 4,0.18, 0.025);
 
         private final double fineTolerance;
         private final double position;

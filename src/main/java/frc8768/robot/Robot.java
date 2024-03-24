@@ -119,7 +119,7 @@ public class Robot extends TimedRobot
         // this.vision = new LimelightVision("limelight");
 
         // Init
-        // this.drivebase.init();
+        this.drivebase.init();
         this.auxiliary.init();
 
         // Init logging

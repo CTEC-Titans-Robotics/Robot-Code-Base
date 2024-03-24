@@ -14,7 +14,7 @@ public class AmpRaiseCommand extends Command {
 
     @Override
     public void execute() {
-        this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
+        this.arm.setDesiredState(ArmSubsystem.ArmState.IDLE_AMP);
     }
 
     @Override

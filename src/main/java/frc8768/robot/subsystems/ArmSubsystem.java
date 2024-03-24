@@ -15,14 +15,15 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET1 = 100.52409851310246;
+    private static final double ANGLE_OFFSET1 = 96.66133441653336;
     private static final double ANGLE_OFFSET2 = 360 + ANGLE_OFFSET1;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
     private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(0);
     private final Thread positionThread;
     private final AtomicReference<Thread> armLock;
-    public ArmState currState = ArmState.IDLE;
+    public ArmState currState = ArmState.IDLE_AMP;
+    private ArmZone zone;
     public double overrideAngle = -1;
 
     public ArmSubsystem() {
@@ -46,48 +47,48 @@ public class ArmSubsystem implements Subsystem {
                 if(this.currState.isAngleWithinCoarseTolerance(position) && this.overrideAngle == -1) {
                     if(this.currState.isAngleWithinFineTolerance(position)) {
                         //if both within fine and coarse tolerance stop the motor (you have reached your destination!!)
-                        if(this.armMotor.get() != this.currState.holdPercent) {
-                            this.armMotor.set(this.currState.holdPercent); //og value 0.13
+                        this.armMotor.set(this.currState.holdPercent); //og value 0.13
+
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
                         }
+
                         continue;
                     }
                     //if within coarse tolerance but not within fine tolerance move at slower speed until it reaches fine
                     if(this.currState.getDesiredPosition() > position) {
-                        if(this.armMotor.get() != 0.02) {
-                            this.armMotor.set(0.02); //og value 0.13
-                        }
+                        this.armMotor.set(0.02); //og value 0.13
                     } else if(this.currState.getDesiredPosition() < position) {
-                        if(this.armMotor.get() != -0.02) {
-                            this.armMotor.set(-0.02); //og value 0.13
-                        }
+                        this.armMotor.set(-0.02); //og value 0.13
                     }
                 }
 
                 //Goes at normal speed if not in Coarse Tolerance
+                double speed = this.zone == ArmZone.GRAVITY_ZONE ? this.currState.speed : this.currState.speed/1.5;
                 if(this.currState.getDesiredPosition() > position && this.overrideAngle == -1) {
-                    if(this.armMotor.get() != this.currState.speed) {
-                        this.armMotor.set(this.currState.speed);
-                    }
+                    this.armMotor.set(speed);
+                } else if(this.currState.getDesiredPosition() < position && this.overrideAngle == -1 && this.zone == ArmZone.GRAVITY_ZONE) {
+                    this.armMotor.set(-speed*0.5);
                 } else if(this.currState.getDesiredPosition() < position && this.overrideAngle == -1) {
-                    if(this.armMotor.get() != -this.currState.speed/1.5) {
-                        this.armMotor.set(-this.currState.speed/1.5);
-                    }
+                    this.armMotor.set(-speed*1.75);
                 }
 
                 if(this.overrideAngle != -1) {
-                    if(this.overrideAngle > position) {
-                        if(this.armMotor.get() != 0.13) {
-                            this.armMotor.set(0.13);
-                        }
-                    } else if(this.overrideAngle < position) {
-                        if(this.armMotor.get() != -0.13) {
-                            this.armMotor.set(-0.13);
-                        }
+                    if(this.overrideAngle > position && !MathUtil.isNear(position, this.overrideAngle, 2)) {
+                        this.armMotor.set(0.12);
+                    } else if(this.overrideAngle < position && !MathUtil.isNear(position, this.overrideAngle, 2)) {
+                        this.armMotor.set(-0.08);
                     } else {
-                        if(this.armMotor.get() != 0) {
-                            this.armMotor.set(0);
-                        }
+                        this.armMotor.set(0.02);
                     }
+                }
+
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
             }
         });
@@ -96,12 +97,12 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public double getPosition() {
-         if((this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()) <= ANGLE_OFFSET1 + 5)
-         {
-             return ANGLE_OFFSET1 - (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation());
-         } else {
-             return ANGLE_OFFSET2 - (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation());
-         }
+        if((this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()) <= ANGLE_OFFSET1 + 5)
+        {
+            return ANGLE_OFFSET1 - (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation());
+        } else {
+            return ANGLE_OFFSET2 - (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation());
+        }
 
 //        return this.armEncoder.getDistance();
     }
@@ -131,30 +132,45 @@ public class ArmSubsystem implements Subsystem {
 
     public void tick() {
         if(this.armLock.get() == null) {
-            this.currState = ArmState.IDLE;
+            this.currState = ArmState.IDLE_AMP;
         }
+        this.zone = ArmZone.GRAVITY_ZONE.isInZone(this.getPosition()) ? ArmZone.GRAVITY_ZONE : ArmZone.UP;
     }
 
     /**
      * Dashboard logging
      *
-     * @return Map of Name to Value
+     * @param map Map of Name to Value
      */
-    public Map<String, String> dashboard() {
-        HashMap<String, String> map = new HashMap<>();
+    public void dashboard(Map<String, String> map) {
         map.put("Current ArmState", currState.name());
         map.put("Arm Position", String.valueOf(+
                 this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()));
         map.put("Adjusted Arm Position", String.valueOf(this.getPosition()));
-        return map;
+    }
+
+    public enum ArmZone {
+        GRAVITY_ZONE(-90, 35),
+        UP(35, 180);
+
+        private final double minAngle;
+        private final double maxAngle;
+
+        ArmZone(double minAngle, double maxAngle) {
+            this.minAngle = minAngle;
+            this.maxAngle = maxAngle;
+        }
+
+        public boolean isInZone(double armPos) {
+            return armPos > this.minAngle && armPos < this.maxAngle;
+        }
     }
 
     public enum ArmState {
-        IDLE(83, 2, 5, 0.12, 0.02),
-        LOW(12,2, 4,0.14, 0.02),
-        INTAKE(2, 2, 5,0.14, 0.02),
-        AMP(94, 2, 5,0.12, 0.02),
-        SPEAKER(30, 2, 5,0.12, 0.02);
+        LOW(12,2, 4,0.16, 0.02),
+        INTAKE(1, 1, 5,0.16, 0.02),
+        IDLE_AMP(97, 2, 5,0.25, 0.02),
+        SPEAKER(33, 2, 4,0.18, 0.025);
 
         private final double fineTolerance;
         private final double position;

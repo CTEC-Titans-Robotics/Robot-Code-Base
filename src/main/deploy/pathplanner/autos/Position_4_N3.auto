@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.5762369299346287,
-      "y": 6.698598504187022
+      "x": 0.7319122330552369,
+      "y": 6.60098474043102
     },
-    "rotation": -33.69006752597977
+    "rotation": 61.808439005995545
   },
   "command": {
     "type": "sequential",
@@ -14,25 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "hold_arm_drive"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Shooting Pos 3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "speaker_shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "hold_arm_drive"
           }
         },
         {
@@ -66,12 +48,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "hold_arm_drive"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Shooting Pos 3"
@@ -84,9 +60,9 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "hold_arm_drive"
+            "pathName": "Taxi 2"
           }
         }
       ]

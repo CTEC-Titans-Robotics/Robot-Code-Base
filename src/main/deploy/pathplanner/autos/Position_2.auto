@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.5645260933888472,
-      "y": 4.403274541213847
+      "x": 0.7516461186768542,
+      "y": 4.509192864539576
     },
-    "rotation": 30.0
+    "rotation": -59.678763557718035
   },
   "command": {
     "type": "sequential",
@@ -15,6 +15,42 @@
           "type": "named",
           "data": {
             "name": "hold_arm_drive"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speaker_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 1 Prep"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "drop_arm"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 1 Pickup"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
@@ -30,9 +66,9 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "hold_arm_drive"
+            "pathName": "Taxi 3"
           }
         }
       ]

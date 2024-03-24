@@ -6,10 +6,8 @@ import com.revrobotics.CANSparkLowLevel;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc8768.robot.util.LogUtil;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
 public class IntakeSubsystem implements Subsystem {
@@ -20,6 +18,7 @@ public class IntakeSubsystem implements Subsystem {
     private final AtomicReference<Thread> intakeLock;
 
     public double overrideShootSpeed = -1;
+    public double overrideHoldSpeed = -1;
 
     public IntakeSubsystem() {
         // Lock Setup
@@ -97,18 +96,18 @@ public class IntakeSubsystem implements Subsystem {
                 this.intakeMotor.set(0);
                 this.holdMotor.set(-0.2);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(175);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 this.holdMotor.set(0);
                 this.shootMotor.set(this.overrideShootSpeed != -1 ? this.overrideShootSpeed : desiredSpeed);
                 try {
-                    Thread.sleep(750);
+                    Thread.sleep(1100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                this.holdMotor.set(0.4);
+                this.holdMotor.set(this.overrideHoldSpeed == -1 ? 0.4 : this.overrideHoldSpeed);
                 try {
                     Thread.sleep(750);
                 } catch (InterruptedException e) {
@@ -119,7 +118,7 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public void tick() {
-        if(this.intakeLock.get() == null) {
+        if(this.intakeLock.get() == null && this.currStage != IntakeStage.IDLE) {
             this.setStage(IntakeStage.IDLE);
         }
     }
@@ -129,13 +128,11 @@ public class IntakeSubsystem implements Subsystem {
      *
      * @return Map of Name to Value
      */
-    public Map<String, String> dashboard() {
-        HashMap<String, String> map = new HashMap<>();
+    public void dashboard(Map<String, String> map) {
         map.put("Current IntakeStage", currStage.name());
         map.put("Hold Amps", String.valueOf(holdMotor.getOutputCurrent()));
         map.put("Shoot Amps", String.valueOf(shootMotor.getOutputCurrent()));
         map.put("Intake Amps", String.valueOf(intakeMotor.getOutputCurrent()));
-        return map;
     }
 
     public enum IntakeStage {

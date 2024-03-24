@@ -18,12 +18,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Note 1 Prep"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "drop_arm"
@@ -38,19 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 Pickup"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "hold_arm_drive"
+            "pathName": "Taxi 4"
           }
         }
       ]

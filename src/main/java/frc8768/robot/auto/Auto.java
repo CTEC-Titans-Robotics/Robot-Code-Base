@@ -34,10 +34,10 @@ public class Auto {
 
         PIDController theta = swerve.getSwerveDrive().swerveController.thetaController;
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-                new PIDConstants(0.1, 0.0, 0.0),
+                new PIDConstants(0.01, 0.0, 0.0),
                 new PIDConstants(theta.getP(), theta.getI(), theta.getD()),
                 Constants.SwerveConfig.MAX_SPEED,
-                0.268438249,
+                0.26035,
                 new ReplanningConfig(
                         true,
                         true
@@ -59,12 +59,11 @@ public class Auto {
         NamedCommands.registerCommand("drop_arm", new DropArmCommand(arm));
         NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
 
-        this.autonChooser = AutoBuilder.buildAutoChooser("Position_1");
+        this.autonChooser = new SendableChooser<>();
         this.autonChooser.addOption("No-Op", new InstantCommand());
 
         // Setup Positions
         this.autonChooser.addOption("Position 1 Disruptor", AutoBuilder.buildAuto("Position_1_Block"));
-        this.autonChooser.addOption("Position 2 Disruptor", AutoBuilder.buildAuto("Position_2_Block"));
         this.autonChooser.addOption("Position 3 Disruptor", AutoBuilder.buildAuto("Position_3_Block"));
         this.autonChooser.addOption("Position 4 Disruptor", AutoBuilder.buildAuto("Position_4_Block"));
         this.autonChooser.addOption("Position 5 Disruptor", AutoBuilder.buildAuto("Position_5_Block"));
@@ -73,11 +72,8 @@ public class Auto {
 
         this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position_1"));
         this.autonChooser.addOption("Position 2", AutoBuilder.buildAuto("Position_2"));
-        this.autonChooser.addOption("Position 3 N1", AutoBuilder.buildAuto("Position_3_N1"));
-        this.autonChooser.addOption("Position 3 N2", AutoBuilder.buildAuto("Position_3_N2"));
-        this.autonChooser.addOption("Position 3 N3", AutoBuilder.buildAuto("Position_3_N3"));
-        this.autonChooser.addOption("Position 4 N2", AutoBuilder.buildAuto("Position_4_N2"));
-        this.autonChooser.addOption("Position 4 N3", AutoBuilder.buildAuto("Position_4_N3"));
+        this.autonChooser.addOption("Position 3", AutoBuilder.buildAuto("Position_3_N2"));
+        this.autonChooser.addOption("Position 4", AutoBuilder.buildAuto("Position_4_N3"));
         this.autonChooser.addOption("Position 5", AutoBuilder.buildAuto("Position_5"));
 
         SmartDashboard.putData("Auto", this.autonChooser);

@@ -12,7 +12,9 @@ import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.PhotonVision;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AuxiliaryOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.coDriverControllerId);
@@ -21,8 +23,9 @@ public class AuxiliaryOperator extends Operator {
     private final CANdle caNdle;
     private final IntakeSubsystem intake;
     private PhotonVision vision;
+    private double readDistance = -1;
 
-    public AuxiliaryOperator(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem) {
+    public AuxiliaryOperator(ArmSubsystem armSubsystem, IntakeSubsystem intakeSubsystem, PhotonVision vision) {
         super("Auxiliary");
 
         this.arm = armSubsystem;
@@ -34,50 +37,48 @@ public class AuxiliaryOperator extends Operator {
         this.caNdle.configV5Enabled(true);
         this.caNdle.setLEDs(0, 0, 255);
 
-        // this.vision = new PhotonVision("limelight-left");
+        this.vision = vision;
 
-        // LogUtil.registerDashLogger(this.arm::dashboard);
-        // LogUtil.registerDashLogger(this.intake::dashboard);
+        LogUtil.registerDashLogger(this::log);
+    }
+
+    public void log(Map<String, String> map) {
+        map.put("Distance", String.valueOf(this.readDistance));
     }
 
     @Override
     public void run() {
         this.intake.tick();
 
-        double distance = -1;
-                /* Units.metersToInches(this.vision.getDistanceToTarget(30, 21, 57.13, false)) */
-
+        double tempDistance = this.vision.getDistanceToTarget(35, 21.5, 57.13, false);
+        this.readDistance = /*controller.getAButton() ?*/ -1 /*: 0.00904539 * Math.pow(tempDistance, 2) + 0.520543*tempDistance+1.52968*/;
         if(controller.getRightBumper()) {
-            if(distance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
-                if(MathUtil.isNear(0,
-                        this.vision.getBestTarget().getBestTarget().getBestCameraToTarget().getY(), Math.pow(2*distance, 2))
-                        && MathUtil.isNear(0,
-                        this.vision.getBestTarget().getBestTarget().getBestCameraToTarget().getX(), Math.pow(2*distance, 2)/3)) {
-                    this.caNdle.setLEDs(0, 255, 0);
-                }
-                this.arm.overrideAngle = MathUtil.clamp(Math.pow(distance, 0.731) + 21.5, 2, 85);
-            } else {
-                this.caNdle.setLEDs(255, 0, 0);
-                this.arm.overrideAngle = -1;
+            if(this.readDistance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
+                this.caNdle.setLEDs(0, 255, 0);
+                this.arm.overrideAngle = MathUtil.clamp((-0.00324675 * Math.pow(this.readDistance, 2) + 0.717532 * this.readDistance + 10.3766), 1, 97);
             }
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
-        } else if(controller.getLeftBumper()) {
-            this.arm.setDesiredState(ArmSubsystem.ArmState.AMP);
-        } else {
+        }  else {
             this.arm.releaseLock();
+            this.caNdle.setLEDs(255, 0, 0);
+            this.arm.overrideAngle = -1;
         }
 
         if(controller.getRightTriggerAxis() > Constants.controllerDeadband) {
-            if(distance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
-                this.intake.overrideShootSpeed = MathUtil.clamp((0.005 * distance) + 0.18, 0, 1);
-            } else {
-                this.intake.overrideShootSpeed = -1;
+            if(this.readDistance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
+                this.intake.overrideShootSpeed = MathUtil.clamp((-0.0000324675 * Math.pow(this.readDistance, 2)
+                        + 0.00967532 * this.readDistance - 0.126234), 0, 1);
+                this.intake.overrideHoldSpeed = MathUtil.clamp((
+                                (-0.0000450938 * Math.pow(this.readDistance, 2) + 0.013438 * this.readDistance) - 0.175325),
+                        0, 1);
             }
 
             this.intake.beginStage(this.arm.currState == ArmSubsystem.ArmState.SPEAKER ?
                     IntakeSubsystem.IntakeStage.SPEAKER : IntakeSubsystem.IntakeStage.AMP);
         } else {
             this.intake.releaseLock();
+            this.intake.overrideShootSpeed = -1;
+            this.intake.overrideHoldSpeed = -1;
         }
 
         // Emergency

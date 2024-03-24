@@ -28,10 +28,6 @@ import swervelib.parser.SwerveParser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -43,6 +39,7 @@ public class SwerveSubsystem implements Subsystem {
      * The underlying YAGSL implementation
      */
     private SwerveDrive swerveDrive;
+
     /**
      * A Thread that updates the swerve odometry based on a apriltag
      */
@@ -75,11 +72,11 @@ public class SwerveSubsystem implements Subsystem {
      * @param pivotPoint 2d Pivot point for rotation
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
-        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(225), fieldRelative, isOpenLoop, pivotPoint);
+        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, pivotPoint);
     }
 
     public void autonInit() {
-        this.visionUpdateThread.start();
+        // this.visionUpdateThread.start();
     }
 
     /**
@@ -98,68 +95,6 @@ public class SwerveSubsystem implements Subsystem {
      */
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
-    }
-
-    /**
-     * Dashboard logging
-     *
-     * @return Map of Name to Value
-     */
-    public Map<String, String> dashboard() {
-        HashMap<String, String> map = new HashMap<>();
-        for(int i = 0; i < 4; i++) {
-            map.put(String.format("Module %d Drive: Velocity", i),
-                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getVelocity()));
-            map.put(String.format("Module %d Angle: Velocity", i),
-                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getVelocity()));
-
-            map.put(String.format("Module %d Drive: Position", i),
-                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getPosition()));
-            map.put(String.format("Module %d Angle: Position", i),
-                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getPosition()));
-        }
-        return map;
-    }
-
-    /**
-     * Log string, (Could use a buffer here to prevent data race)
-     *
-     * @return List of different Strings.
-     */
-    public List<String> log() {
-        ArrayList<String> list = new ArrayList<>();
-        // Insert string buffer, different logic for detecting errors here
-        return list;
-    }
-
-    /**
-     * Shouldn't be used outside of {@link SysIdUtil}
-     * @param voltageMeasure
-     */
-    public void voltAngleForward(Measure<Voltage> voltageMeasure) {
-        swerveDrive.getModules()[0].getAngleMotor().setVoltage(voltageMeasure.in(Volts));
-    }
-
-    /**
-     * Shouldn't be used outside of {@link SysIdUtil}
-     * @param voltageMeasure
-     */
-    public void voltDriveForward(Measure<Voltage> voltageMeasure) {
-        swerveDrive.getModules()[0].getDriveMotor().setVoltage(voltageMeasure.in(Volts));
-    }
-
-    /**
-     *
-     * @param sysIdRoutineLog
-     */
-    public void logAngle(SysIdRoutineLog sysIdRoutineLog) {
-        sysIdRoutineLog.motor("Front Left Angle angle").angularPosition(Degrees.of(swerveDrive.getModules()[0].getPosition().angle.getDegrees()));
-        sysIdRoutineLog.motor("Front Left Angle velocity").angularVelocity(DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
-    }
-
-    public void logDrive(SysIdRoutineLog sysIdRoutineLog) {
-        sysIdRoutineLog.motor("Front Left Drive position").linearPosition(Meters.of(swerveDrive.getModules()[0].getPosition().distanceMeters));
-        sysIdRoutineLog.motor("Front Left Drive velocity").linearVelocity(MetersPerSecond.of(swerveDrive.getModules()[0].getDriveMotor().getVelocity()));
     }
 
     public static class VisionOdomThread extends Thread {

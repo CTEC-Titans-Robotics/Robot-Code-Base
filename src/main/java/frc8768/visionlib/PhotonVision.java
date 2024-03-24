@@ -1,5 +1,6 @@
 package frc8768.visionlib;
 
+import edu.wpi.first.math.util.Units;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -55,8 +56,12 @@ public class PhotonVision extends Vision {
      * @return Best target, null if none
      */
     public PhotonPipelineResult getBestTarget() {
-        if(camera.getLatestResult().hasTargets()) {
-            return camera.getLatestResult();
+        if(!camera.isConnected()) {
+            return null;
+        }
+        PhotonPipelineResult result = camera.getLatestResult();
+        if(result != null && result.hasTargets()) {
+            return result;
         }
         return null;
     }
@@ -71,9 +76,13 @@ public class PhotonVision extends Vision {
      * @return Distance to target, returns -1 on fail.
      */
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
-        PhotonPipelineResult target = getBestTarget();
-        if(target != null) {
-            double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestTarget().getBestCameraToTarget().getY());
+        PhotonPipelineResult result = getBestTarget();
+        if(result != null) {
+            PhotonTrackedTarget target = result.getBestTarget();
+            if(target == null) {
+                return -1;
+            }
+            double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getPitch());
             double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180.0);
 
             double distance = (goalHeight - mountHeight) / Math.tan(angleToGoalRadians);

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3,
-      "y": 5.55
+      "x": 1.4311279977766789,
+      "y": 5.597779868883561
     },
-    "rotation": 1.2275788321345176
+    "rotation": 29.538782259557973
   },
   "command": {
     "type": "sequential",
@@ -20,54 +20,36 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 2 Prep"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "drop_arm"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
+            "pathName": "SERIOUSSIDEHOPSPREPL"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Note 2 Pickup"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "pathName": "SERIOUSSIDEHOPSL"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Shooting Pos 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "speaker_shoot"
+            "pathName": "SERIOUSSIDEHOPSR"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Taxi 1"
+            "pathName": "SERIOUSSIDEHOPSL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSR"
           }
         }
       ]
     }
   },
-  "folder": "Position 3",
+  "folder": "Disruption",
   "choreoAuto": false
 }

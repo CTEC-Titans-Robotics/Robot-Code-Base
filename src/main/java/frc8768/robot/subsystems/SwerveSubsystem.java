@@ -72,7 +72,7 @@ public class SwerveSubsystem implements Subsystem {
      * @param pivotPoint 2d Pivot point for rotation
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
-        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, pivotPoint);
+        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(250), fieldRelative, isOpenLoop, pivotPoint);
     }
 
     public void autonInit() {
@@ -95,6 +95,37 @@ public class SwerveSubsystem implements Subsystem {
      */
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
+    }
+
+
+    /**
+     * Shouldn't be used outside of {@link SysIdUtil}
+     * @param voltageMeasure
+     */
+    public void voltAngleForward(Measure<Voltage> voltageMeasure) {
+        swerveDrive.getModules()[0].getAngleMotor().setVoltage(voltageMeasure.in(Volts));
+    }
+
+    /**
+     * Shouldn't be used outside of {@link SysIdUtil}
+     * @param voltageMeasure
+     */
+    public void voltDriveForward(Measure<Voltage> voltageMeasure) {
+        swerveDrive.getModules()[0].getDriveMotor().setVoltage(voltageMeasure.in(Volts));
+    }
+
+    /**
+     *
+     * @param sysIdRoutineLog
+     */
+    public void logAngle(SysIdRoutineLog sysIdRoutineLog) {
+        sysIdRoutineLog.motor("Front Left Angle position").angularPosition(Degrees.of(swerveDrive.getModules()[0].getPosition().angle.getDegrees()));
+        sysIdRoutineLog.motor("Front Left Angle velocity").angularVelocity(DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
+    }
+
+    public void logDrive(SysIdRoutineLog sysIdRoutineLog) {
+        sysIdRoutineLog.motor("Front Left Drive position").linearPosition(Meters.of(swerveDrive.getModules()[0].getPosition().distanceMeters));
+        sysIdRoutineLog.motor("Front Left Drive velocity").linearVelocity(MetersPerSecond.of(swerveDrive.getModules()[0].getDriveMotor().getVelocity()));
     }
 
     public static class VisionOdomThread extends Thread {

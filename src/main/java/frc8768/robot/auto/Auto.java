@@ -33,6 +33,7 @@ public class Auto {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
         PIDController theta = swerve.getSwerveDrive().swerveController.thetaController;
+
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
                 new PIDConstants(0.01, 0.0, 0.0),
                 new PIDConstants(theta.getP(), theta.getI(), theta.getD()),
@@ -53,16 +54,19 @@ public class Auto {
                 () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red, // Change if needed
                 swerve);
 
+        //setup commands so that they can be used in path planner
+
         NamedCommands.registerCommand("hold_arm_drive", new HoldArmCommand(arm));
         NamedCommands.registerCommand("amp_shoot", new AmpShootCommand(intake));
         NamedCommands.registerCommand("amp_raise", new AmpRaiseCommand(arm));
         NamedCommands.registerCommand("drop_arm", new DropArmCommand(arm));
         NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
 
+        // Setup Positions for Shuffleboard selector
+
         this.autonChooser = new SendableChooser<>();
         this.autonChooser.setDefaultOption("No-Op", new InstantCommand());
 
-        // Setup Positions
         this.autonChooser.addOption("Position 1 Disruptor", AutoBuilder.buildAuto("Position_1_Block"));
         this.autonChooser.addOption("Position 3 Disruptor", AutoBuilder.buildAuto("Position_3_Block"));
         this.autonChooser.addOption("Position 4 Disruptor", AutoBuilder.buildAuto("Position_4_Block"));

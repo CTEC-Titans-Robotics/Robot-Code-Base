@@ -92,7 +92,7 @@ public class IntakeSubsystem implements Subsystem {
                 this.holdMotor.set(-0.2);
                 this.intakeMotor.set(desiredSpeed);
             }
-            case AMP, SPEAKER -> {
+            case SPEAKER -> {
                 this.intakeMotor.set(0);
                 this.holdMotor.set(-0.2);
                 try {
@@ -113,6 +113,10 @@ public class IntakeSubsystem implements Subsystem {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+            }
+            case AMP -> {
+                holdMotor.set(0.4);
+                shootMotor.set(desiredSpeed);
             }
         }
     }
@@ -139,7 +143,7 @@ public class IntakeSubsystem implements Subsystem {
         INTAKE(0.5, -1),
         OUTTAKE(-0.5, -1),
         SPEAKER(0.85, 40),
-        AMP(0.2, 35),
+        AMP(0.4, 35),
         IDLE(0, -1);
 
         private final double desiredSpeed;

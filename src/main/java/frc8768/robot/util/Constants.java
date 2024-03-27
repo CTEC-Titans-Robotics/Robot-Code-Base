@@ -48,7 +48,13 @@ public class Constants {
         /**
          * Max drive motor speed m/s.
          */
-        public static final double MAX_SPEED = 17;
+        public static final double MAX_SPEED = Units.feetToMeters(17); // enter feet per sec
+        //Note: converts f/s to m/s
+        //^^ units used by swerve lib
+
+        public static  final double MAX_ROTATION = Units.degreesToRadians(600); //DEGREES PER SECOND
+        //Note: converts degrees per second to radians per second
+        //^^ units used by swerve lib
     }
 
     /**

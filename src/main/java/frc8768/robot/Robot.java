@@ -57,8 +57,8 @@ public class Robot extends TimedRobot
     /**
      * Vision API instance
      */
-    public LimelightVision leftVision;
-    public LimelightVision rightVision;
+////    public LimelightVision leftVision;
+////    public LimelightVision rightVision;
 
     /**
      * Auton Instance
@@ -84,10 +84,10 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotInit() {
-        CameraServer.startAutomaticCapture();
+////        CameraServer.startAutomaticCapture();
 
-        this.leftVision = new LimelightVision("limelight-left");
-        this.rightVision = new LimelightVision("limelight-right");
+////        this.leftVision = new LimelightVision("limelight-left");
+////        this.rightVision = new LimelightVision("limelight-right");
 
         try {
           this.swerve = new SwerveSubsystem(Constants.SwerveConfig.currentType);
@@ -100,25 +100,8 @@ public class Robot extends TimedRobot
 
         this.drivebase.init();
 
-        HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-                new PIDConstants(0.045849, 0.00, 0.0068069),
-                new PIDConstants(0.0091857, 0.00, 0.00052987),
-                Constants.SwerveConfig.MAX_SPEED,
-                0.267,
-                new ReplanningConfig(
-                        true,
-                        true
-                )
-        );
 
-        AutoBuilder.configureHolonomic(
-                this.swerve.getSwerveDrive()::getPose,
-                this.swerve.getSwerveDrive()::resetOdometry,
-                this.swerve.getSwerveDrive()::getRobotVelocity,
-                this.swerve.getSwerveDrive()::setChassisSpeeds,
-                config,
-                () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red,
-                this.swerve);
+
     }
 
     /* For tank
@@ -130,9 +113,9 @@ public class Robot extends TimedRobot
     }
      */
 
-    public LimelightVision getLimelightVision() {
-        return this.leftVision;
-    }
+////    public LimelightVision getLimelightVision() {
+////        return this.leftVision;
+////    }
 
     /**
      * Runs even if the Robot is disabled.
@@ -147,9 +130,9 @@ public class Robot extends TimedRobot
             this.drivebase.reviveThread();
         }
 
-        if(DriverStation.getAlliance().isPresent()) {
-            LimelightHelpers.setPipelineIndex("limelight-left", DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 1 : 0);
-        }
+////        if(DriverStation.getAlliance().isPresent()) {
+////            LimelightHelpers.setPipelineIndex("limelight-left", DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 1 : 0);
+////        }
     }
 
     /**

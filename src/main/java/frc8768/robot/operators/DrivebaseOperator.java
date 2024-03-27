@@ -37,7 +37,10 @@ public class DrivebaseOperator extends Operator {
     @Override
     public void run() {
         this.swerve.getSwerveDrive().updateOdometry();
-
+        boolean isRobotRelative = false;
+        if(controller.getPOV() != -1){
+            isRobotRelative = true;
+        }
         // intakeSubsystem.tick();
 
         // if(controller.getLeftBumper()) {
@@ -55,6 +58,7 @@ public class DrivebaseOperator extends Operator {
         if(controller.getBButtonPressed()) {
             this.swerve.getSwerveDrive().zeroGyro();
         }
+
 
         if(controller.getXButtonPressed()) {
             this.swerve.getSwerveDrive().lockPose();
@@ -77,8 +81,21 @@ public class DrivebaseOperator extends Operator {
             if(this.currCommand != null && !this.currCommand.isFinished()) {
                 return;
             }
+            //Robot Relative control
+            double speed = 0.25;
+            switch(controller.getPOV()){
+                case 0 -> translation2d = new Translation2d(2*speed, 0);
+                //case 45 -> translation2d = new Translation2d(speed, speed);
+                case 90 -> translation2d = new Translation2d(0,speed);
+                //case 135 -> translation2d = new Translation2d(-speed, speed);
+                case 180 -> translation2d = new Translation2d(2*-speed, 0);
+                //case 225 -> translation2d = new Translation2d(-speed, -speed);
+                case 270 -> translation2d = new Translation2d(0, -speed);
+                //case 315 -> translation2d = new Translation2d(speed, -speed);
+            }
+
             // Swerve Example
-            this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
+            this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), !isRobotRelative, false, Constants.BOT_CENTER);
         }
 
         // Tank Example (Falcons)

@@ -3,6 +3,7 @@ package frc8768.robot.util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class Constants {
@@ -40,7 +41,10 @@ public class Constants {
         /**
          * Max drive motor speed.
          */
-        public static final double MAX_SPEED = 14.5;
+        public static final double MAX_SPEED = Units.feetToMeters(14.5);  //enter feet
+        // | note: all wpi calculations use meters to conversion is done here
+
+        public static final double MAX_ROTATION = 600;  //degrees
     }
 
     public enum FieldWaypoints {

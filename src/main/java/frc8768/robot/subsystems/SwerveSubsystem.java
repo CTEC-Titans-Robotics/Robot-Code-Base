@@ -13,9 +13,9 @@ import frc8768.robot.Robot;
 import frc8768.robot.util.MathUtil;
 import frc8768.robot.util.MotorType;
 import frc8768.robot.util.Constants;
-import frc8768.visionlib.LimelightVision;
-import frc8768.visionlib.Vision;
-import frc8768.visionlib.helpers.LimelightHelpers;
+////import frc8768.visionlib.LimelightVision;
+////import frc8768.visionlib.Vision;
+////import frc8768.visionlib.helpers.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import swervelib.parser.SwerveParser;
@@ -35,7 +35,7 @@ public class SwerveSubsystem implements Subsystem {
      * The underlying YAGSL implementation
      */
     private SwerveDrive swerveDrive;
-    private VisionOdomThread visionUpdateThread;
+////    private VisionOdomThread visionUpdateThread;
 
     /**
      * @param type Neos or Falcons, see {@link MotorType}
@@ -48,8 +48,8 @@ public class SwerveSubsystem implements Subsystem {
             case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
         }
 
-        this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLimelightVision(), "VisionOdom Thread");
-        this.visionUpdateThread.start();
+////        this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLimelightVision(), "VisionOdom Thread");
+////        this.visionUpdateThread.start();
     }
 
     /**
@@ -62,7 +62,7 @@ public class SwerveSubsystem implements Subsystem {
      * @param pivotPoint 2d Pivot point for rotation
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
-        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, pivotPoint);
+        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(Constants.SwerveConfig.MAX_ROTATION), fieldRelative, isOpenLoop, pivotPoint);
     }
 
     /**
@@ -71,6 +71,8 @@ public class SwerveSubsystem implements Subsystem {
      * @return 3d rotation.
      */
     public Rotation3d getGyroRot() {
+
+
         return swerveDrive.getGyroRotation3d();
     }
 
@@ -127,7 +129,7 @@ public class SwerveSubsystem implements Subsystem {
         // Insert string buffer, different logic for detecting errors here
         return list;
     }
-
+/*
     public static class VisionOdomThread extends Thread {
         private SwerveSubsystem swerve;
         private LimelightVision vision;
@@ -157,4 +159,5 @@ public class SwerveSubsystem implements Subsystem {
             }
         }
     }
+    */
 }

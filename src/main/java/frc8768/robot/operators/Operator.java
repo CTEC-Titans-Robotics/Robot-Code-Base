@@ -5,6 +5,7 @@ import frc8768.robot.Robot;
 /**
  * Abstract class designed for Operators.
  * Anything universal to operators goes in here.
+ * Will not run outside Teleop.
  * <p>
  * IMPORTANT: OPERATORS ARE THREADED! For every operator a thread is made.
  * It will process one operator without stalling other operators.
@@ -37,10 +38,22 @@ public abstract class Operator {
      */
     public void runLoop() {
         while(true) {
-            if(!Robot.getInstance().isTeleop()) {
+            if(!Robot.getInstance().isTeleopEnabled()) {
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 continue;
             }
             run();
+
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -53,7 +66,7 @@ public abstract class Operator {
      * Should an essential subsystem's thread die, restart it.
      */
     public void reviveThread() {
-        String origName = opThread.getName();
+        String origName = opThread.getName().replace(" Thread", "");
         opThread = new Thread(this::runLoop);
         opThread.setName(String.format("%s Thread", origName));
 

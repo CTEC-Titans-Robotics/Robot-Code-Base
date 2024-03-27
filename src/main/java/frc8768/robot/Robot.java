@@ -7,12 +7,22 @@ package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.auto.Auto;
+import frc8768.robot.operators.AuxiliaryOperator;
 import frc8768.robot.operators.DrivebaseOperator;
+import frc8768.robot.subsystems.ArmSubsystem;
+import frc8768.robot.subsystems.IntakeSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
+import frc8768.robot.util.MathUtil;
+import frc8768.robot.util.SysIdUtil;
+import frc8768.visionlib.PhotonVision;
 import frc8768.visionlib.Vision;
 
 import java.io.IOException;
@@ -30,6 +40,7 @@ public class Robot extends TimedRobot
      * Robot instance, can't be seen across threads
      */
     public static Robot instance;
+    public static boolean goUp = false;
 
     /**
      * Drivebase Operator
@@ -37,16 +48,21 @@ public class Robot extends TimedRobot
     private DrivebaseOperator drivebase;
 
     /**
+     * Auxiliary Operator, handles all non-drivebase telelop functions.
+     */
+    private AuxiliaryOperator auxiliary;
+
+    private PhotonVision leftVision;
+    private PhotonVision rightVision;
+
+    /**
      * The swerve subsystem, held in here for Auton.
      */
     private SwerveSubsystem swerve;
+    private ArmSubsystem arm;
+    private IntakeSubsystem intake;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
-
-    /**
-     * Vision API instance
-     */
-    public Vision vision;
 
     /**
      * Auton Instance
@@ -66,26 +82,49 @@ public class Robot extends TimedRobot
         return instance;
     }
 
+    public PhotonVision getLeftVision() {
+        return leftVision;
+    }
+
+    public PhotonVision getRightVision() {
+        return rightVision;
+    }
+
     /**
      * This method is run when the robot is first started up and should be used for any
      * initialization code.
      */
     @Override
     public void robotInit() {
-        CameraServer.startAutomaticCapture();
+        CameraServer.startAutomaticCapture(0);
 
+        this.leftVision = new PhotonVision("Left");
+        // this.rightVision = new PhotonVision("Right");
+
+        // Subsystem init
         try {
-          swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
+          this.swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
         } catch (IOException io) {
           throw new RuntimeException("Swerve failed to create!", io);
         }
+        this.arm = new ArmSubsystem();
+        this.intake = new IntakeSubsystem();
 
+        this.auto = new Auto(this.swerve, this.arm, this.intake);
 
-        this.drivebase = new DrivebaseOperator(this.swerve);
-        // this.auto = new Auto(swerve);
+        // Operator creation
+        this.drivebase = new DrivebaseOperator(this.swerve, this.arm, this.intake);
+        this.auxiliary = new AuxiliaryOperator(this.arm, this.intake, this.leftVision);
+
         // this.vision = new LimelightVision("limelight");
 
+        // Init
         this.drivebase.init();
+        this.auxiliary.init();
+
+        // Init logging
+        LogUtil.registerDashLogger(this.arm::dashboard);
+        LogUtil.registerDashLogger(this.intake::dashboard);
     }
 
     /* For tank
@@ -97,21 +136,28 @@ public class Robot extends TimedRobot
     }
      */
 
-    public Vision getVision() {
-        return this.vision;
-    }
-
     /**
      * Runs even if the Robot is disabled.
      */
     @Override
     public void robotPeriodic() {
-        CommandScheduler.getInstance().run();
+        // try {
+        //     CommandScheduler.getInstance().run();
+        // } catch (Exception ex) {
+        //     LogUtil.LOGGER.log(Level.SEVERE, ex.getMessage());
+        // }
 
         if(this.drivebase != null && !this.drivebase.isAlive()) {
             LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
             this.drivebase.reviveThread();
         }
+        if(this.auxiliary != null && !this.auxiliary.isAlive()) {
+            LogUtil.LOGGER.log(Level.WARNING, "Auxiliary thread died! Reviving...");
+            this.auxiliary.reviveThread();
+        }
+
+        this.arm.tick();
+        this.intake.tick();
 
         LogUtil.run();
     }
@@ -122,7 +168,10 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousInit() {
         if (this.auto != null) {
-            this.auto.getSelected().schedule();
+            if(!this.auto.getSelected().getName().contains("Block")) {
+                this.swerve.autonInit();
+            }
+            this.auto.getSelected().initialize();
         }
     }
 
@@ -132,7 +181,10 @@ public class Robot extends TimedRobot
     @Override
     public void autonomousPeriodic() {
         if(this.auto != null) {
-            if(!this.auto.getSelected().isScheduled()) {
+            if(this.auto.getSelected() == null) {
+                return;
+            }
+            if(this.auto.getSelected().isFinished()) {
                 return;
             }
             this.auto.getSelected().execute();
@@ -143,7 +195,9 @@ public class Robot extends TimedRobot
      * Runs at the start of Teleop state
      */
     @Override
-    public void teleopInit() {}
+    public void teleopInit() {
+        this.drivebase.initTeleop();
+    }
 
     /**
      * Runs every "tick" of Teleop time
@@ -155,12 +209,45 @@ public class Robot extends TimedRobot
     /**
      * Runs at the start of Test state
      */
+    private final XboxController tester = new XboxController(2);
+    private Command currCommand;
     @Override
-    public void testInit() {}
+    public void testInit() {
+        if(false) {
+            SysIdUtil.createAngleRoutine(swerve);
+        } else {
+            SysIdUtil.createDriveRoutine(swerve);
+        }
+    }
 
     /**
      * Runs every "tick" of Test time
      */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+        for(swervelib.SwerveModule module : this.swerve.getSwerveDrive().getModules()) {
+            SmartDashboard.putNumber("Module " + module.moduleNumber + " Encoder", module.getAbsolutePosition());
+        }
+
+        if(tester.getAButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kForward);
+            this.currCommand.initialize();
+        } else if(tester.getBButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kReverse);
+            this.currCommand.initialize();
+        } else if(tester.getYButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kForward);
+            this.currCommand.initialize();
+        } else if(tester.getXButton() && currCommand == null) {
+            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kReverse);
+            this.currCommand.initialize();
+        } else if(currCommand != null && !(tester.getXButton() || tester.getAButton() || tester.getBButton() || tester.getYButton())) {
+            currCommand.end(false);
+            currCommand = null;
+        }
+
+        if(currCommand != null) {
+            currCommand.execute();
+        }
+    }
 }

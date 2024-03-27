@@ -1,6 +1,8 @@
 package frc8768.visionlib;
 
+import edu.wpi.first.math.util.Units;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
@@ -15,10 +17,16 @@ public class PhotonVision extends Vision {
 
     /**
      * @param type One of {@link Type}
-     *             NOTE: Limelight 3 is pi for now.
      */
     public PhotonVision(Type type) {
         camera = new PhotonCamera(type.name);
+    }
+
+    /**
+     * @param cameraName The hostname
+     */
+    public PhotonVision(String cameraName) {
+        camera = new PhotonCamera(cameraName);
     }
 
     /**
@@ -47,9 +55,13 @@ public class PhotonVision extends Vision {
      *
      * @return Best target, null if none
      */
-    public PhotonTrackedTarget getBestTarget() {
-        if(camera.getLatestResult().hasTargets()) {
-            return camera.getLatestResult().getBestTarget();
+    public PhotonPipelineResult getBestTarget() {
+        if(!camera.isConnected()) {
+            return null;
+        }
+        PhotonPipelineResult result = camera.getLatestResult();
+        if(result != null && result.hasTargets()) {
+            return result;
         }
         return null;
     }
@@ -64,10 +76,14 @@ public class PhotonVision extends Vision {
      * @return Distance to target, returns -1 on fail.
      */
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
-        PhotonTrackedTarget target = getBestTarget();
-        if(target != null) {
-            double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestCameraToTarget().getY());
-            double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+        PhotonPipelineResult result = getBestTarget();
+        if(result != null) {
+            PhotonTrackedTarget target = result.getBestTarget();
+            if(target == null) {
+                return -1;
+            }
+            double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getPitch());
+            double angleToGoalRadians = angleToGoalDegrees * (Math.PI / 180.0);
 
             double distance = (goalHeight - mountHeight) / Math.tan(angleToGoalRadians);
             if(distance <= 0) {
@@ -85,10 +101,10 @@ public class PhotonVision extends Vision {
      * @return The maximum Y point for all corners, or -1 if none is found
      */
     public double getMaxPointY() {
-        PhotonTrackedTarget target = getBestTarget();
+        PhotonPipelineResult target = getBestTarget();
         if(target != null) {
             double maxY = 0;
-            for(TargetCorner corner : target.getDetectedCorners()) {
+            for(TargetCorner corner : target.getBestTarget().getDetectedCorners()) {
                 if(corner.y > maxY) {
                     maxY = corner.y;
                 }
@@ -99,9 +115,9 @@ public class PhotonVision extends Vision {
 
     @Override
     public int getTargetID() {
-        PhotonTrackedTarget target = getBestTarget();
+        PhotonPipelineResult target = getBestTarget();
         if(target != null) {
-            return target.getFiducialId();
+            return target.getBestTarget().getFiducialId();
         }
         return -1;
     }

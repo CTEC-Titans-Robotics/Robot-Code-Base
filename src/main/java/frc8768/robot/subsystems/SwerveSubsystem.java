@@ -1,29 +1,36 @@
 package frc8768.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc8768.robot.Robot;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.MathUtil;
 import frc8768.robot.util.MotorType;
-import frc8768.robot.util.Constants;
-import frc8768.visionlib.LimelightVision;
-import frc8768.visionlib.Vision;
-import frc8768.visionlib.helpers.LimelightHelpers;
+import frc8768.robot.util.SysIdUtil;
+import frc8768.visionlib.PhotonVision;
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveDrive;
+import swervelib.SwerveModule;
+import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import static edu.wpi.first.units.Units.*;
 
 /**
  * Container class for everything Swerve
@@ -33,24 +40,27 @@ public class SwerveSubsystem implements Subsystem {
      * The underlying YAGSL implementation
      */
     private SwerveDrive swerveDrive;
+
     /**
      * A Thread that updates the swerve odometry based on a apriltag
      */
-    private VisionOdomThread visionUpdateThread;
+    private final VisionOdomThread visionUpdateThread;
 
     /**
-     * @param type Neos or Falcons, see {@link MotorType}
+     * @param type NEOs or Falcons, see {@link MotorType}
      * @throws IOException if it can't find the resources.
      */
     public SwerveSubsystem(MotorType type) throws IOException {
+        double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation((double) 150/7, 1);
+        double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75, 1);
+
         switch(type) {
-            case SPARKMAX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
-            case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
-            case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
+            case SPARKMAX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, angleConversionFactor, driveConversionFactor);
+            case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/talonfx")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, angleConversionFactor, driveConversionFactor);
+            case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, angleConversionFactor, driveConversionFactor);
         }
 
-        // this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLimelightVision(), "VisionOdom Thread");
-        // this.visionUpdateThread.start();
+        this.visionUpdateThread = new VisionOdomThread(this, Robot.getInstance().getLeftVision(), "VisionOdom Thread");
     }
 
     /**
@@ -63,7 +73,11 @@ public class SwerveSubsystem implements Subsystem {
      * @param pivotPoint 2d Pivot point for rotation
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
-        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, pivotPoint);
+        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * Constants.SwerveConfig.MAX_ROTATION, fieldRelative, isOpenLoop, pivotPoint);
+    }
+
+    public void autonInit() {
+        // this.visionUpdateThread.start();
     }
 
     /**
@@ -84,43 +98,48 @@ public class SwerveSubsystem implements Subsystem {
         return swerveDrive;
     }
 
-    /**
-     * Dashboard logging
-     *
-     * @return Map of Name to Value
-     */
-    public Map<String, String> dashboard() {
-        HashMap<String, String> map = new HashMap<>();
-        for(int i = 0; i < 4; i++) {
-            map.put(String.format("Module %d Drive: Velocity", i),
-                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getVelocity()));
-            map.put(String.format("Module %d Angle: Velocity", i),
-                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getVelocity()));
 
-            map.put(String.format("Module %d Drive: Position", i),
-                    String.valueOf(swerveDrive.getModules()[i].getDriveMotor().getPosition()));
-            map.put(String.format("Module %d Angle: Position", i),
-                    String.valueOf(swerveDrive.getModules()[i].getAngleMotor().getPosition()));
+    /**
+     * Shouldn't be used outside of {@link SysIdUtil}
+     * @param voltageMeasure
+     */
+    public void voltAngleForward(Measure<Voltage> voltageMeasure) {
+        for(SwerveModule module : swerveDrive.getModules()) {
+            module.getAngleMotor().setVoltage(voltageMeasure.in(Volts));
         }
-        return map;
     }
 
     /**
-     * Log string, (Could use a buffer here to prevent data race)
-     *
-     * @return List of different Strings.
+     * Shouldn't be used outside of {@link SysIdUtil}
+     * @param voltageMeasure
      */
-    public List<String> log() {
-        ArrayList<String> list = new ArrayList<>();
-        // Insert string buffer, different logic for detecting errors here
-        return list;
+    public void voltDriveForward(Measure<Voltage> voltageMeasure) {
+        for(SwerveModule module : swerveDrive.getModules()) {
+            module.getDriveMotor().setVoltage(voltageMeasure.in(Volts));
+        }
+    }
+
+    /**
+     *
+     * @param sysIdRoutineLog
+     */
+    public void logAngle(SysIdRoutineLog sysIdRoutineLog) {
+        sysIdRoutineLog.motor("Front Left Angle position").angularPosition(Degrees.of(swerveDrive.getModules()[0].getAbsolutePosition()));
+        sysIdRoutineLog.motor("Front Left Angle velocity").angularVelocity(DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
+        sysIdRoutineLog.motor("Front Left Angle volts").voltage(Volts.of(swerveDrive.getModules()[0].getAngleMotor().getVoltage()));
+    }
+
+    public void logDrive(SysIdRoutineLog sysIdRoutineLog) {
+        sysIdRoutineLog.motor("Front Left Drive position").linearPosition(Meters.of(swerveDrive.getModules()[0].getPosition().distanceMeters));
+        sysIdRoutineLog.motor("Front Left Drive velocity").linearVelocity(MetersPerSecond.of(swerveDrive.getModules()[0].getDriveMotor().getVelocity()));
+        sysIdRoutineLog.motor("Front Left Drive volts").voltage(Volts.of(swerveDrive.getModules()[0].getDriveMotor().getVoltage()));
     }
 
     public static class VisionOdomThread extends Thread {
         private SwerveSubsystem swerve;
-        private LimelightVision vision;
+        private PhotonVision vision;
 
-        public VisionOdomThread(SwerveSubsystem swerve, LimelightVision vision, String name) {
+        public VisionOdomThread(SwerveSubsystem swerve, PhotonVision vision, String name) {
             super(name);
             this.swerve = swerve;
             this.vision = vision;
@@ -128,20 +147,22 @@ public class SwerveSubsystem implements Subsystem {
 
         @Override
         public void run() {
-            int i = 0;
             while(true) {
-                i++;
-                if(i < 500000) {
+                if(Robot.getInstance().isTeleopEnabled()) {
                     continue;
-                } else if(i > 500000) {
-                    i = 0;
                 }
-                LimelightHelpers.Results target = (LimelightHelpers.Results) vision.getBestTarget();
-                if(target.targets_Fiducials.length == 0)
+                PhotonPipelineResult target = this.vision.getBestTarget();
+                if(target == null)
+                    continue;
+                if(!target.hasTargets())
                     continue;
 
-                Pose2d pose = new Pose2d(target.getBotPose2d_wpiBlue().getTranslation(), Rotation2d.fromDegrees(target.targets_Fiducials[0].getRobotPose_FieldSpace().getRotation().getZ() + 90));
-                this.swerve.getSwerveDrive().addVisionMeasurement(pose, Timer.getFPGATimestamp());
+                Pose3d pose = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestTarget().getBestCameraToTarget(),
+                        AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo)
+                                .getTagPose(target.getBestTarget().getFiducialId()).get(),
+                        new Transform3d(Units.inchesToMeters(5.25), Units.inchesToMeters(10.75), -Units.inchesToMeters(19.25),
+                                new Rotation3d(Units.degreesToRadians(-30), Units.degreesToRadians(0), Units.degreesToRadians(0))));
+                this.swerve.getSwerveDrive().addVisionMeasurement(pose.toPose2d(), target.getTimestampSeconds());
             }
         }
     }

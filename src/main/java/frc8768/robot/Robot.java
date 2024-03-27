@@ -63,7 +63,7 @@ public class Robot extends TimedRobot
     /**
      * Auton Instance
      */
-    private Auto auto;
+    private Auto auto = new Auto(swerve);
 
     public Robot() {
         instance = this;

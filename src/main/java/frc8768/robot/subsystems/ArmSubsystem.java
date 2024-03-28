@@ -168,10 +168,10 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public enum ArmState {
-        LOW(12,2, 4,0.16, 0.02), // 12
+        LOW(12,2, 4,0.16, 0.025), // 12
         INTAKE(1, 1, 5,0.16, 0.02), //1
         IDLE_AMP(97, 2, 5,0.25, 0.02), //97
-        SPEAKER(35, 2, 6,0.16, 0.025); //35
+        SPEAKER(22, 2, 6,0.16, 0.025); //35
 
         private final double fineTolerance;
         private final double position;

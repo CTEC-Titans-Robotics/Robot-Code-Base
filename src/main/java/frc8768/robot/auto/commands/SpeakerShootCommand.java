@@ -33,7 +33,7 @@ public class SpeakerShootCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        this.arm.releaseLock();
+        this.arm.setDesiredState(ArmSubsystem.ArmState.INTAKE);
         this.intake.releaseLock();
         super.end(interrupted);
     }

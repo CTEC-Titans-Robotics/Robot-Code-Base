@@ -163,6 +163,28 @@ public class Robot extends TimedRobot
     }
 
     /**
+     * PathPlanner Paths for some reason only fully calculate after first run, causing jitter. Load them during disabled to
+     * mitigate it.
+     */
+    private Command currCommand;
+    @Override
+    public void disabledPeriodic() {
+        if (this.auto != null) {
+            if(this.auto.getSelected() == null) {
+                return;
+            }
+            if(this.auto.getSelected().isFinished()) {
+                return;
+            }
+            if(currCommand != this.auto.getSelected()) {
+                currCommand = this.auto.getSelected();
+                currCommand.initialize();
+            }
+            currCommand.execute();
+        }
+    }
+
+    /**
      * Runs when first entering Autonomous mode
      */
     @Override
@@ -170,6 +192,9 @@ public class Robot extends TimedRobot
         if (this.auto != null) {
             if(!this.auto.getSelected().getName().contains("Block")) {
                 this.swerve.autonInit();
+            }
+            if(currCommand != null) {
+                currCommand.cancel();
             }
             this.auto.getSelected().initialize();
         }
@@ -210,7 +235,7 @@ public class Robot extends TimedRobot
      * Runs at the start of Test state
      */
     private final XboxController tester = new XboxController(2);
-    private Command currCommand;
+    private Command sysidCommand;
     @Override
     public void testInit() {
         if(false) {
@@ -229,25 +254,25 @@ public class Robot extends TimedRobot
             SmartDashboard.putNumber("Module " + module.moduleNumber + " Encoder", module.getAbsolutePosition());
         }
 
-        if(tester.getAButton() && currCommand == null) {
-            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kForward);
-            this.currCommand.initialize();
-        } else if(tester.getBButton() && currCommand == null) {
-            currCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kReverse);
-            this.currCommand.initialize();
-        } else if(tester.getYButton() && currCommand == null) {
-            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kForward);
-            this.currCommand.initialize();
-        } else if(tester.getXButton() && currCommand == null) {
-            currCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kReverse);
-            this.currCommand.initialize();
-        } else if(currCommand != null && !(tester.getXButton() || tester.getAButton() || tester.getBButton() || tester.getYButton())) {
-            currCommand.end(false);
-            currCommand = null;
+        if(tester.getAButton() && sysidCommand == null) {
+            sysidCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kForward);
+            this.sysidCommand.initialize();
+        } else if(tester.getBButton() && sysidCommand == null) {
+            sysidCommand = SysIdUtil.runSysIdQuasistatic(SysIdRoutine.Direction.kReverse);
+            this.sysidCommand.initialize();
+        } else if(tester.getYButton() && sysidCommand == null) {
+            sysidCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kForward);
+            this.sysidCommand.initialize();
+        } else if(tester.getXButton() && sysidCommand == null) {
+            sysidCommand = SysIdUtil.runSysIdDynamic(SysIdRoutine.Direction.kReverse);
+            this.sysidCommand.initialize();
+        } else if(sysidCommand != null && !(tester.getXButton() || tester.getAButton() || tester.getBButton() || tester.getYButton())) {
+            sysidCommand.end(false);
+            sysidCommand = null;
         }
 
-        if(currCommand != null) {
-            currCommand.execute();
+        if(sysidCommand != null) {
+            sysidCommand.execute();
         }
     }
 }

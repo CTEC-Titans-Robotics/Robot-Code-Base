@@ -24,27 +24,15 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "drop_arm"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Note 2 Pickup"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "drop_arm"
           }
         },
         {
@@ -57,12 +45,6 @@
           "type": "named",
           "data": {
             "name": "speaker_shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Taxi 1"
           }
         }
       ]

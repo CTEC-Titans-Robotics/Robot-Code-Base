@@ -93,10 +93,17 @@ public class IntakeSubsystem implements Subsystem {
                 this.intakeMotor.set(desiredSpeed);
             }
             case SPEAKER -> {
+                this.shootMotor.set(-0.2);
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 this.intakeMotor.set(0);
                 this.holdMotor.set(-0.2);
                 try {
-                    Thread.sleep(175);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

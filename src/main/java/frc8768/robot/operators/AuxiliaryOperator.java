@@ -45,7 +45,7 @@ public class AuxiliaryOperator extends Operator {
     public void run() {
         this.intake.tick();
 
-        double tempDistance = this.vision.getDistanceToTarget(35, 21.5, 57.13, false);
+        double tempDistance = calcDist(this.vision.getDistanceToTarget(35, 21.5, 57.13, false));
         this.readDistance = /*controller.getAButton() ?*/ -1 /*: 0.00904539 * Math.pow(tempDistance, 2) + 0.520543*tempDistance+1.52968*/;
         if(controller.getRightBumper()) {
             if(this.readDistance != -1 && Constants.SPEAKER_IDS.contains(this.vision.getTargetID())) {
@@ -83,5 +83,9 @@ public class AuxiliaryOperator extends Operator {
             this.arm.stop();
             this.intake.stop();
         }
+    }
+
+    private double calcDist(double input) {
+        return -0.00325*Math.pow(input, 2)+0.717*input+10.4;
     }
 }

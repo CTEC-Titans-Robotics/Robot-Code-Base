@@ -37,7 +37,7 @@ public class Auto {
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
                 new PIDConstants(0.01, 0.0, 0.0),
                 new PIDConstants(theta.getP(), theta.getI(), theta.getD()),
-                Constants.SwerveConfig.MAX_SPEED,
+                Constants.SwerveConfig.MAX_SPEED - 2,
                 0.26035,
                 new ReplanningConfig(
                         true,

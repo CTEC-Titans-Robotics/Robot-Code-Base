@@ -238,7 +238,7 @@ public class Robot extends TimedRobot
     private Command sysidCommand;
     @Override
     public void testInit() {
-        if(false) {
+        if(true) {
             SysIdUtil.createAngleRoutine(swerve);
         } else {
             SysIdUtil.createDriveRoutine(swerve);

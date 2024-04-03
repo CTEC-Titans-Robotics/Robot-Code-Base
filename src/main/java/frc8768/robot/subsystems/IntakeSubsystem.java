@@ -114,7 +114,7 @@ public class IntakeSubsystem implements Subsystem {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                this.holdMotor.set(this.overrideHoldSpeed == -1 ? 0.4 : this.overrideHoldSpeed);
+                this.holdMotor.set(this.overrideHoldSpeed == -1 ? 0.8 : this.overrideHoldSpeed);
                 try {
                     Thread.sleep(750);
                 } catch (InterruptedException e) {
@@ -149,7 +149,7 @@ public class IntakeSubsystem implements Subsystem {
     public enum IntakeStage {
         INTAKE(0.5, -1),
         OUTTAKE(-0.5, -1),
-        SPEAKER(0.85, 40),
+        SPEAKER(0.05, 40),
         AMP(0.4, 35),
         IDLE(0, -1);
 

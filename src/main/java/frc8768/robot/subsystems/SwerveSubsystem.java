@@ -160,9 +160,14 @@ public class SwerveSubsystem implements Subsystem {
                 Pose3d pose = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestTarget().getBestCameraToTarget(),
                         AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo)
                                 .getTagPose(target.getBestTarget().getFiducialId()).get(),
-                        new Transform3d(Units.inchesToMeters(5.25), Units.inchesToMeters(10.75), -Units.inchesToMeters(19.25),
-                                new Rotation3d(Units.degreesToRadians(-30), Units.degreesToRadians(0), Units.degreesToRadians(0))));
+                        new Transform3d(10.75, 5.25, -19.25,
+                                new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(35), Units.degreesToRadians(0))));
                 this.swerve.getSwerveDrive().addVisionMeasurement(pose.toPose2d(), target.getTimestampSeconds());
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

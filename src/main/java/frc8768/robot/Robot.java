@@ -221,6 +221,10 @@ public class Robot extends TimedRobot
      */
     @Override
     public void teleopInit() {
+        // Auton will hold lock if A-Stopped, prevent that
+        this.intake.releaseLock();
+        this.arm.releaseLock();
+
         this.drivebase.initTeleop();
     }
 

@@ -149,7 +149,7 @@ public class IntakeSubsystem implements Subsystem {
     public enum IntakeStage {
         INTAKE(0.5, -1),
         OUTTAKE(-0.5, -1),
-        SPEAKER(0.05, 40),
+        SPEAKER(0.85, 40),
         AMP(0.4, 35),
         IDLE(0, -1);
 

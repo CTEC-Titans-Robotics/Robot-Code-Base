@@ -80,8 +80,6 @@ public class Auto {
         this.autonChooser.addOption("Position 4", AutoBuilder.buildAuto("Position_4_N3").andThen(arm::releaseLock));
         this.autonChooser.addOption("Position 5", AutoBuilder.buildAuto("Position_5").andThen(arm::releaseLock));
 
-        this.autonChooser.addOption("Test", AutoBuilder.buildAuto("Test").andThen(arm::releaseLock));
-
         SmartDashboard.putData("Auto", this.autonChooser);
     }
 

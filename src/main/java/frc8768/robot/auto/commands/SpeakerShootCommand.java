@@ -12,7 +12,6 @@ public class SpeakerShootCommand extends Command {
     public SpeakerShootCommand(ArmSubsystem arm, IntakeSubsystem intake) {
         this.arm = arm;
         this.intake = intake;
-        Robot.goUp = true;
     }
 
     @Override

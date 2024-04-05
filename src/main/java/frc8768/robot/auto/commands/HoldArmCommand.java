@@ -11,7 +11,6 @@ public class HoldArmCommand extends Command {
 
     public HoldArmCommand(ArmSubsystem arm) {
         this.arm = arm;
-        Robot.goUp = true;
     }
 
     @Override

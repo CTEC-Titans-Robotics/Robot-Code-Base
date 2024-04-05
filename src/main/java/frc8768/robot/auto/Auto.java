@@ -60,6 +60,7 @@ public class Auto {
         NamedCommands.registerCommand("amp_shoot", new AmpShootCommand(intake));
         NamedCommands.registerCommand("amp_raise", new AmpRaiseCommand(arm));
         NamedCommands.registerCommand("drop_arm", new DropArmCommand(arm, intake));
+        NamedCommands.registerCommand("stop_intake", new IntakeStopCommand(intake));
         NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
 
         // Setup Positions for Shuffleboard selector
@@ -67,18 +68,25 @@ public class Auto {
         this.autonChooser = new SendableChooser<>();
         this.autonChooser.setDefaultOption("No-Op", new InstantCommand().andThen(arm::releaseLock));
 
-        this.autonChooser.addOption("Position 1 Disruptor", AutoBuilder.buildAuto("Position_1_Block").andThen(arm::releaseLock));
-        this.autonChooser.addOption("Position 3 Disruptor", AutoBuilder.buildAuto("Position_3_Block").andThen(arm::releaseLock));
-        this.autonChooser.addOption("Position 4 Disruptor", AutoBuilder.buildAuto("Position_4_Block").andThen(arm::releaseLock));
-        this.autonChooser.addOption("Position 5 Disruptor", AutoBuilder.buildAuto("Position_5_Block").andThen(arm::releaseLock));
+        this.autonChooser.addOption("Position 1 Disruptor", AutoBuilder.buildAuto("Position_1_Block"));
+        this.autonChooser.addOption("Position 5 Disruptor", AutoBuilder.buildAuto("Position_5_Block"));
 
-        this.autonChooser.addOption("Omega", AutoBuilder.buildAuto("Omega"));
+        // this.autonChooser.addOption("Omega", AutoBuilder.buildAuto("Omega"));
 
-        this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position_1").andThen(arm::releaseLock));
-        this.autonChooser.addOption("Position 2", AutoBuilder.buildAuto("Position_2").andThen(arm::releaseLock));
-        this.autonChooser.addOption("Position 3", AutoBuilder.buildAuto("Position_3_N2").andThen(arm::releaseLock));
-        this.autonChooser.addOption("Position 4", AutoBuilder.buildAuto("Position_4_N3").andThen(arm::releaseLock));
-        this.autonChooser.addOption("Position 5", AutoBuilder.buildAuto("Position_5").andThen(arm::releaseLock));
+        this.autonChooser.addOption("Position 1", AutoBuilder.buildAuto("Position_1"));
+        this.autonChooser.addOption("Position 5", AutoBuilder.buildAuto("Position_5"));
+
+        this.autonChooser.addOption("Position 2 Shoot and Move", AutoBuilder.buildAuto("Position_2"));
+        this.autonChooser.addOption("Position 3 Shoot and Move", AutoBuilder.buildAuto("Position_3"));
+        this.autonChooser.addOption("Position 4 Shoot and Move", AutoBuilder.buildAuto("Position_4"));
+
+        this.autonChooser.addOption("Position 2 Shoot Only", AutoBuilder.buildAuto("Position_2_Shoot"));
+        this.autonChooser.addOption("Position 3 Shoot Only", AutoBuilder.buildAuto("Position_3_Shoot"));
+        this.autonChooser.addOption("Position 4 Shoot Only", AutoBuilder.buildAuto("Position_4_Shoot"));
+
+        this.autonChooser.addOption("Position 2 MultiNote", AutoBuilder.buildAuto("Position_2_MNote"));
+        this.autonChooser.addOption("Position 3 MultiNote", AutoBuilder.buildAuto("Position_3_MNote"));
+        this.autonChooser.addOption("Position 4 MultiNote", AutoBuilder.buildAuto("Position_4_MNote"));
 
         SmartDashboard.putData("Auto", this.autonChooser);
     }

@@ -14,7 +14,6 @@ public class DropArmCommand extends Command {
     public DropArmCommand(ArmSubsystem arm, IntakeSubsystem intake) {
         this.arm = arm;
         this.intake = intake;
-        Robot.goUp = false;
     }
 
     @Override
@@ -34,12 +33,5 @@ public class DropArmCommand extends Command {
     @Override
     public boolean isFinished() {
         return timer.hasElapsed(1.5);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        this.arm.releaseLock();
-        this.intake.releaseLock();
-        super.end(interrupted);
     }
 }

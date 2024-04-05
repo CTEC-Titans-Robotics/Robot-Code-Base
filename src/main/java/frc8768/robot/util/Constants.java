@@ -52,7 +52,7 @@ public class Constants {
         //Note: converts f/s to m/s
         //^^ units used by swerve lib
 
-        public static  final double MAX_ROTATION = Units.degreesToRadians(580); //DEGREES PER SECOND
+        public static  final double MAX_ROTATION = Units.degreesToRadians(460); //DEGREES PER SECOND
         //Note: converts degrees per second to radians per second
         //^^ units used by swerve lib
     }

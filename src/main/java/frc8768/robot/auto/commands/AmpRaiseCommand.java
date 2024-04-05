@@ -9,7 +9,6 @@ public class AmpRaiseCommand extends Command {
 
     public AmpRaiseCommand(ArmSubsystem arm) {
         this.arm = arm;
-        Robot.goUp = true;
     }
 
     @Override
@@ -19,7 +18,7 @@ public class AmpRaiseCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return this.arm.currState.isAngleWithinCoarseTolerance(this.arm.getPosition());
+        return this.arm.currState.isAngleWithinFineTolerance(this.arm.getPosition());
     }
 
     @Override

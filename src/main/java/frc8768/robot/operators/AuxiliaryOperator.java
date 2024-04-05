@@ -54,7 +54,7 @@ public class AuxiliaryOperator extends Operator {
             // }
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
         } else if(controller.getLeftBumper()) {
-            this.arm.overrideAngle = 42;
+            this.arm.overrideAngle = 41;
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
         } else {
             this.arm.releaseLock();

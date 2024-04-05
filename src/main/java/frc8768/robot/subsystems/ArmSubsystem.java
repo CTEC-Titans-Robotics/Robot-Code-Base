@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class ArmSubsystem implements Subsystem {
-    private static final double ANGLE_OFFSET1 = 279.1;
+    private static final double ANGLE_OFFSET1 = 280.26588303164704;
     private static final double ANGLE_OFFSET2 = 360 - ANGLE_OFFSET1;
 
     private final CANSparkFlex armMotor = new CANSparkFlex(15, CANSparkLowLevel.MotorType.kBrushless);
@@ -98,12 +98,9 @@ public class ArmSubsystem implements Subsystem {
 
     public double getPosition() {
         if((this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation()) >= ANGLE_OFFSET1 - 5) {
-
-            return (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation() - ANGLE_OFFSET1);
-
+            return Math.abs(this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation() - ANGLE_OFFSET1);
         } else if (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation() <= ANGLE_OFFSET2) {
-
-            return (this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation() + ANGLE_OFFSET2);
+            return Math.abs(this.armEncoder.getAbsolutePosition() * this.armEncoder.getDistancePerRotation() + ANGLE_OFFSET2);
         }
         return 0;
     }

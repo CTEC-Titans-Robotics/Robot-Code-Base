@@ -23,50 +23,32 @@ public class DrivebaseOperator extends Operator {
     // private final TankSubsystemSpark sparkTank;
     private TankSubsystemFalcon falconTank;
     private static final XboxController controller = new XboxController(Constants.driverControllerId);
-    private boolean isRelocating = false;
     private Command currCommand;
-    
-    /**
-     * @param swerve The required subsystem for this operator.
-     */
-    public DrivebaseOperator() {
+
+    public DrivebaseOperator(TankSubsystemFalcon falconTank) {
         super("Drivebase");
         
         // sparkTank = Robot.getInstance().getSpark();
-        // falconTank = Robot.getInstance().getFalcon();
-
-        // Init logging
-        LogUtil.registerLogger(swerve::log);
-        LogUtil.registerDashLogger(swerve::dashboard);
+        this.falconTank = falconTank;
     }
 
     @Override
     public void run() {
-        if(falconTank == null) {
+        if (falconTank == null) {
             falconTank = Robot.getInstance().getFalcon();
         }
         if (!Robot.isRobotTeleop()) {
             return;
-
+        }
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
                 MathUtil.applyDeadband(controller.getLeftX() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
                 MathUtil.applyDeadband(controller.getLeftY() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
-        if((MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
+        if ((MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
                 MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0) && currCommand != null) {
             this.currCommand.cancel();
             this.currCommand = null;
-        }
-
-        if(controller.getAButtonPressed()) {
-            relocate(Constants.FieldWaypoints.AMP.getPose2d());
-        } else {
-            if(this.currCommand != null && !this.currCommand.isFinished()) {
-                return;
-            }
-            // Swerve Example
-            this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
         }
 
         // Tank Example (Falcons)

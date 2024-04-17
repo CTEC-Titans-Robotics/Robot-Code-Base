@@ -7,19 +7,15 @@ package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.operators.PeripheralOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.subsystems.TankSubsystemFalcon;
-import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.Vision;
 
-import java.io.IOException;
 import java.util.Set;
-
 import java.util.logging.Level;
 
 /**
@@ -40,11 +36,14 @@ public class Robot extends TimedRobot
      */
     private DrivebaseOperator drivebase;
 
+    private PeripheralOperator peripheralOperator;
+
+    private TankSubsystemFalcon falcon;
+
     /**
      * The swerve subsystem, held in here for Auton.
      */
-    private SwerveSubsystem swerve;
-    // private TankSubsystemFalcon falcon;
+    // private SwerveSubsystem swerve;
     // private TankSubsystemSpark spark;
 
     /**
@@ -56,11 +55,6 @@ public class Robot extends TimedRobot
      * Auton Instance
      */
     private Auto auto;
-    private DrivebaseOperator drivebase;
-    private PeripheralOperator peripheralOperator;
-    // private SwerveSubsystem swerve;
-    private TankSubsystemFalcon falcon;
-    // private TankSubsystemSpark spark;
 
     public Robot() {
         instance = this;
@@ -83,7 +77,9 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
-        drivebase = new DrivebaseOperator();
+        falcon = new TankSubsystemFalcon(Set.of(4, 2), Set.of(15, 16), new boolean[]{true, true}, new boolean[]{false, false});
+
+        drivebase = new DrivebaseOperator(falcon);
         peripheralOperator = new PeripheralOperator();
 
         /* Swerve Example
@@ -93,7 +89,6 @@ public class Robot extends TimedRobot
           throw new RuntimeException("Swerve failed to create!", io);
         }
          */
-        falcon = new TankSubsystemFalcon(Set.of(4, 2), Set.of(15, 16), new boolean[]{true, true}, new boolean[]{false, false});
 
         // TODO: Do Auto for Tank
         // this.auto = new Auto(swerve);
@@ -126,13 +121,6 @@ public class Robot extends TimedRobot
 
     public static boolean isRobotTeleop() {
         return getInstance().isTeleop();
-
-        if(this.drivebase != null && !this.drivebase.isAlive()) {
-            LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
-            this.drivebase.reviveThread();
-        }
-
-        LogUtil.run();
     }
 
     /**
@@ -169,6 +157,12 @@ public class Robot extends TimedRobot
      */
     @Override
     public void teleopPeriodic() {
+        if(this.drivebase != null && !this.drivebase.isAlive()) {
+            LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
+            this.drivebase.reviveThread();
+        }
+
+        LogUtil.run();
     }
 
     /**

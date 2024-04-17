@@ -117,6 +117,17 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotPeriodic() {
+        if(this.drivebase != null && !this.drivebase.isAlive()) {
+            LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
+            this.drivebase.reviveThread();
+        }
+
+        if(this.peripheralOperator != null && !this.peripheralOperator.isAlive()) {
+            LogUtil.LOGGER.log(Level.WARNING, "Peripheral thread died! Reviving...");
+            this.peripheralOperator.reviveThread();
+        }
+
+        LogUtil.run();
     }
 
     public static boolean isRobotTeleop() {
@@ -157,12 +168,6 @@ public class Robot extends TimedRobot
      */
     @Override
     public void teleopPeriodic() {
-        if(this.drivebase != null && !this.drivebase.isAlive()) {
-            LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
-            this.drivebase.reviveThread();
-        }
-
-        LogUtil.run();
     }
 
     /**

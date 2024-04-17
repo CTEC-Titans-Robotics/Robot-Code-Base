@@ -1,7 +1,7 @@
 package frc8768.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import java.util.Set;
@@ -13,12 +13,12 @@ public class TankSubsystemFalcon implements Subsystem {
     /**
      * Left motors
      */
-    private final Talon[] motorsLeft;
+    private final TalonFX[] motorsLeft;
 
     /**
      * Right motors
      */
-    private final Talon[] motorsRight;
+    private final TalonFX[] motorsRight;
 
     /**
      * Tank subsystem constructor.
@@ -38,11 +38,11 @@ public class TankSubsystemFalcon implements Subsystem {
      * @param inverted A list of inverted motors, index 0 of {@param ids} corresponds to index 0 of {@param inverted}
      * @return An array of Talon Motors.
      */
-    private Talon[] createTalon(Set<Integer> ids, boolean[] inverted) {
-        Talon[] motors = new Talon[ids.size()];
+    private TalonFX[] createTalon(Set<Integer> ids, boolean[] inverted) {
+        TalonFX[] motors = new TalonFX[ids.size()];
         int i = 0;
         for(int id : ids) {
-            motors[i] = new Talon(id);
+            motors[i] = new TalonFX(id);
             motors[i].setInverted(inverted[i]);
             i++;
         }
@@ -55,10 +55,10 @@ public class TankSubsystemFalcon implements Subsystem {
      * @param translation2d X = Left, Y = Right.
      */
     public void drive(Translation2d translation2d) {
-        for(Talon motor : motorsLeft) {
+        for(TalonFX motor : motorsLeft) {
             motor.set(translation2d.getX());
         }
-        for(Talon motor : motorsRight) {
+        for(TalonFX motor : motorsRight) {
             motor.set(translation2d.getY());
         }
     }

@@ -1,10 +1,9 @@
 package frc8768.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -24,8 +23,8 @@ public class ArmSubsystem implements Subsystem {
         this.intake = new TalonSRX(intake);
 
         // Conf
-        this.leftExtend.setNeutralMode(NeutralMode.Brake);
-        this.rightExtend.setNeutralMode(NeutralMode.Brake);
+        this.leftExtend.setNeutralMode(NeutralModeValue.Brake);
+        this.rightExtend.setNeutralMode(NeutralModeValue.Brake);
         this.leftExtend.setInverted(invertArray[0]);
         this.rightExtend.setInverted(invertArray[1]);
         this.intake.setInverted(invertArray[2]);
@@ -54,28 +53,28 @@ public class ArmSubsystem implements Subsystem {
         while (true) {
             if(controller.getXButton() && controller.getYButton() && controller.getBButton() && controller.getAButton()) {
                 emergencyStop();
-                this.leftExtend.set(TalonFXControlMode.PercentOutput, 0);
-                this.rightExtend.set(TalonFXControlMode.PercentOutput, 0);
+                this.leftExtend.set(0);
+                this.rightExtend.set(0);
             }
 
             if(!isEmergencyStopped) {
                 if (controller.getLeftBumperPressed() || controller.getAButtonPressed()) {
-                    while (this.rightExtend.getSelectedSensorPosition() * 0.17578152 < 150) {
-                        this.leftExtend.set(TalonFXControlMode.PercentOutput, -0.35);
-                        this.rightExtend.set(TalonFXControlMode.PercentOutput, 0.35);
+                    while (this.rightExtend.getPosition().getValue() * 0.17578152 < 150) {
+                        this.leftExtend.set(-0.35);
+                        this.rightExtend.set(0.35);
                     }
-                } else if(this.rightExtend.getSelectedSensorPosition()*0.17578152 > 145) {
-                    this.leftExtend.set(TalonFXControlMode.PercentOutput, 0.0);
-                    this.rightExtend.set(TalonFXControlMode.PercentOutput, 0.0);
+                } else if(this.rightExtend.getPosition().getValue() * 0.17578152 > 145) {
+                    this.leftExtend.set(0.0);
+                    this.rightExtend.set(0.0);
                 }
-                if (!controller.getLeftBumper() && !controller.getAButton() && (this.rightExtend.getSelectedSensorPosition() * 0.17578152 > 25 || Math.abs(this.leftExtend.getSelectedSensorPosition()) * 0.17578152 > 25)) {
-                    while (this.rightExtend.getSelectedSensorPosition() * 0.17578152 > 10) {
-                        this.leftExtend.set(TalonFXControlMode.PercentOutput, 0.35);
-                        this.rightExtend.set(TalonFXControlMode.PercentOutput, -0.35);
+                if (!controller.getLeftBumper() && !controller.getAButton() && (this.rightExtend.getPosition().getValue() * 0.17578152 > 25 || Math.abs(this.leftExtend.getPosition().getValue()) * 0.17578152 > 25)) {
+                    while (this.rightExtend.getPosition().getValue() * 0.17578152 > 10) {
+                        this.leftExtend.set(0.35);
+                        this.rightExtend.set(-0.35);
                     }
-                } else if(this.rightExtend.getSelectedSensorPosition()*0.17578152 < 0) {
-                    this.leftExtend.set(TalonFXControlMode.PercentOutput, 0.01);
-                    this.rightExtend.set(TalonFXControlMode.PercentOutput, -0.01);
+                } else if(this.rightExtend.getPosition().getValue() * 0.17578152 < 0) {
+                    this.leftExtend.set(0.01);
+                    this.rightExtend.set(-0.01);
                 }
             }
         }

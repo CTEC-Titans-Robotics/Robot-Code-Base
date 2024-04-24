@@ -15,7 +15,7 @@ public class Constants {
     /**
      * The Co-Driver controller ID
      */
-    public static final int coDriverControllerId = 1;
+    public static final int coDriverControllerId = 0;
 
     /**
      * Controller deadband, prevents accidental input

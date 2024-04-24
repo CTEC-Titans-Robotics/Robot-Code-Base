@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -12,7 +13,7 @@ public class ArmSubsystem implements Subsystem {
     private XboxController controller;
     private final TalonFX leftExtend;
     private final TalonFX rightExtend;
-    private final TalonSRX intake;
+    private final TalonFX intake;
     private boolean isEmergencyStopped;
 
     public ArmSubsystem(int leftExtend, int rightExtend, int intake, boolean[] invertArray, XboxController controller) {
@@ -20,7 +21,7 @@ public class ArmSubsystem implements Subsystem {
         this.controller = controller;
         this.leftExtend = new TalonFX(leftExtend);
         this.rightExtend = new TalonFX(rightExtend);
-        this.intake = new TalonSRX(intake);
+        this.intake = new TalonFX(intake);
 
         // Conf
         this.leftExtend.setNeutralMode(NeutralModeValue.Brake);
@@ -28,6 +29,10 @@ public class ArmSubsystem implements Subsystem {
         this.leftExtend.setInverted(invertArray[0]);
         this.rightExtend.setInverted(invertArray[1]);
         this.intake.setInverted(invertArray[2]);
+
+        this.leftExtend.setPosition(0);
+        this.rightExtend.setPosition(0);
+        this.intake.setPosition(0);
 
         this.armThread.start();
     }
@@ -41,11 +46,11 @@ public class ArmSubsystem implements Subsystem {
     }
 
     public void spinIntake(double value) {
-        intake.set(TalonSRXControlMode.PercentOutput, value);
+        intake.set(value);
     }
 
     public void stopIntake() {
-        intake.set(TalonSRXControlMode.PercentOutput, 0);
+        intake.set(0);
     }
 
     // Copy-Pasted from Apollo Codebase, will clean later
@@ -59,22 +64,22 @@ public class ArmSubsystem implements Subsystem {
 
             if(!isEmergencyStopped) {
                 if (controller.getLeftBumperPressed() || controller.getAButtonPressed()) {
-                    while (this.rightExtend.getPosition().getValue() * 0.17578152 < 150) {
+                    while (Units.rotationsToDegrees(this.rightExtend.getPosition().getValue()) < 150) {
                         this.leftExtend.set(-0.35);
                         this.rightExtend.set(0.35);
                     }
-                } else if(this.rightExtend.getPosition().getValue() * 0.17578152 > 145) {
+                } else if(Units.rotationsToDegrees(this.rightExtend.getPosition().getValue()) > 145) {
                     this.leftExtend.set(0.0);
                     this.rightExtend.set(0.0);
                 }
-                if (!controller.getLeftBumper() && !controller.getAButton() && (this.rightExtend.getPosition().getValue() * 0.17578152 > 25 || Math.abs(this.leftExtend.getPosition().getValue()) * 0.17578152 > 25)) {
-                    while (this.rightExtend.getPosition().getValue() * 0.17578152 > 10) {
+                if (!controller.getLeftBumper() && !controller.getAButton() && (Units.rotationsToDegrees(this.rightExtend.getPosition().getValue()) * 0.17578152 > 25 || Math.abs(Units.rotationsToDegrees(this.leftExtend.getPosition().getValue())) * 0.17578152 > 25)) {
+                    while (Units.rotationsToDegrees(this.rightExtend.getPosition().getValue()) > 10) {
                         this.leftExtend.set(0.35);
                         this.rightExtend.set(-0.35);
                     }
-                } else if(this.rightExtend.getPosition().getValue() * 0.17578152 < 0) {
-                    this.leftExtend.set(0.01);
-                    this.rightExtend.set(-0.01);
+                } else if(Units.rotationsToDegrees(this.rightExtend.getPosition().getValue()) < 10) {
+                    this.leftExtend.set(0.02);
+                    this.rightExtend.set(-0.02);
                 }
             }
         }

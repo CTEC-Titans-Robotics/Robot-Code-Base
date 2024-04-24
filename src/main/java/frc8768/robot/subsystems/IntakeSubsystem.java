@@ -2,10 +2,9 @@ package frc8768.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import java.util.Set;
@@ -24,8 +23,7 @@ public class IntakeSubsystem implements Subsystem {
         int i = 0;
         for(int id : ids) {
             motors[i] = new TalonFX(id);
-            motors[i].configFactoryDefault();
-            motors[i].setNeutralMode(NeutralMode.Coast);
+            motors[i].setNeutralMode(NeutralModeValue.Coast);
             motors[i].setInverted(inverted[i]);
             i++;
         }
@@ -51,12 +49,12 @@ public class IntakeSubsystem implements Subsystem {
     }
 
     public void spinTip(double front, double back) {
-        tip[0].set(ControlMode.PercentOutput, front);
-        tip[1].set(TalonFXControlMode.PercentOutput, back);
+        tip[0].set(front);
+        tip[1].set(back);
     }
 
     public void stopTip() {
-        tip[0].set(ControlMode.PercentOutput, 0);
-        tip[1].set(TalonFXControlMode.PercentOutput, 0);
+        tip[0].set(0);
+        tip[1].set(0);
     }
 }

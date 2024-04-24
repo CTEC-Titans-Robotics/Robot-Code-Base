@@ -34,22 +34,13 @@ public class DrivebaseOperator extends Operator {
 
     @Override
     public void run() {
-        if (falconTank == null) {
-            falconTank = Robot.getInstance().getFalcon();
-        }
         if (!Robot.isRobotTeleop()) {
             return;
         }
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
-                MathUtil.applyDeadband(controller.getLeftX() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
-                MathUtil.applyDeadband(controller.getLeftY() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
-
-        if ((MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
-                MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0) && currCommand != null) {
-            this.currCommand.cancel();
-            this.currCommand = null;
-        }
+                MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
+                MathUtil.applyDeadband(-controller.getRightY() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
 
         // Tank Example (Falcons)
         falconTank.drive(translation2d);

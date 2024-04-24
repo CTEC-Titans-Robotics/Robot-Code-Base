@@ -18,7 +18,7 @@ public class PeripheralOperator extends Operator{
     private final Timer shootTimer = new Timer();
     private final boolean isLimelightEnabled = false;
 
-    private ShotMode currMode = ShotMode.LR_TOP;
+    private ShotMode currMode = ShotMode.CR_TOP;
     private static final XboxController controller = new XboxController(Constants.coDriverControllerId);
 
     public PeripheralOperator() {
@@ -29,7 +29,7 @@ public class PeripheralOperator extends Operator{
             limelight.init();
         }
         arm = new ArmSubsystem(13, 3, 8, new boolean[] { false, false, false }, controller);
-        intake = new IntakeSubsystem(Set.of(7, 6), Set.of(9, 10), new boolean[] { false, false }, new boolean[] { false, false });
+        intake = new IntakeSubsystem(Set.of(6, 7), Set.of(10, 9), new boolean[] { false, true }, new boolean[] { false, true });
     }
 
     @Override
@@ -44,13 +44,13 @@ public class PeripheralOperator extends Operator{
         }
 
         if(controller.getRightBumper()) {
-            intake.spinMain(0.5, -0.5);
+            intake.spinMain(0.5, 0.5);
         } else if(controller.getLeftBumper()) {
             intake.spinMain(0.5, -0.5);
             intake.spinTip(0.2, -0.2);
             arm.spinIntake(0.35);
         } else if(controller.getAButton()) {
-            intake.spinMain(-0.5, 0.5);
+            intake.spinMain(-0.5, -0.5);
             arm.spinIntake(-0.35);
         } else {
             intake.spinMain(0, 0);

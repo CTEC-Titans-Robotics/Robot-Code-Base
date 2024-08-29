@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.42,
+      "y": 2.86
+    },
+    "rotation": 0.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "forward"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "lock"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

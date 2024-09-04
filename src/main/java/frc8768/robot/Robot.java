@@ -63,7 +63,7 @@ public class Robot extends TimedRobot
     /**
      * Auton Instance
      */
-    private Auto auto = new Auto(swerve);
+    private Auto auto;
 
     public Robot() {
         instance = this;
@@ -100,7 +100,7 @@ public class Robot extends TimedRobot
 
         this.drivebase.init();
 
-
+        auto = new Auto(swerve);
 
     }
 

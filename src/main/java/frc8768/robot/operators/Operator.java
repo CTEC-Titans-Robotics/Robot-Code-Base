@@ -41,6 +41,12 @@ public abstract class Operator {
                 continue;
             }
             run();
+
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

@@ -28,15 +28,12 @@ public class DrivebaseOperator extends Operator {
         // Init logging
         LogUtil.registerLogger(swerve::log);
         LogUtil.registerDashLogger(swerve::dashboard);
-
-        this.swerve.getSwerveDrive().stopOdometryThread();
     }
 
 
     //RUN TIME
     @Override
     public void run() {
-        this.swerve.getSwerveDrive().updateOdometry();
         boolean isRobotRelative = false;
         if(controller.getPOV() != -1){
             isRobotRelative = true;

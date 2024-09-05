@@ -37,6 +37,24 @@ public class DrivebaseOperator extends Operator {
 
     @Override
     public void run() {
+        boolean isRobotRelative = false;
+        if(controller.getPOV() != -1){
+            isRobotRelative = true;
+        }
+        // intakeSubsystem.tick();
+
+        // if(controller.getLeftBumper()) {
+        //     armSubsystem.up();
+        // } else if(controller.getLeftTriggerAxis() > 0.1) {
+        //     armSubsystem.down();
+        // } else {
+        //     armSubsystem.stop();
+        // }
+
+        // if(controller.getRightBumperPressed()) {
+        //     intakeSubsystem.run();
+        // }
+
         if(controller.getBButtonPressed()) {
             this.swerve.getSwerveDrive().zeroGyro();
         }

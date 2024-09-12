@@ -5,8 +5,12 @@
 
 package frc8768.robot;
 
+import com.ctre.phoenix.led.CANdle;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
@@ -32,14 +36,8 @@ public class Robot extends TimedRobot
     public static Robot instance;
 
     /**
-     * Drivebase Operator
-     */
-    private DrivebaseOperator drivebase;
-
-    /**
      * The swerve subsystem, held in here for Auton.
      */
-    private SwerveSubsystem swerve;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
 
@@ -73,19 +71,6 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit() {
         CameraServer.startAutomaticCapture();
-
-        try {
-          swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
-        } catch (IOException io) {
-          throw new RuntimeException("Swerve failed to create!", io);
-        }
-
-
-        this.drivebase = new DrivebaseOperator(this.swerve);
-        // this.auto = new Auto(swerve);
-        // this.vision = new LimelightVision("limelight");
-
-        this.drivebase.init();
     }
 
     /* For tank
@@ -107,12 +92,6 @@ public class Robot extends TimedRobot
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-
-        if(this.drivebase != null && !this.drivebase.isAlive()) {
-            LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
-            this.drivebase.reviveThread();
-        }
-
         LogUtil.run();
     }
 
@@ -152,15 +131,33 @@ public class Robot extends TimedRobot
     public void teleopPeriodic() {
     }
 
+    CANSparkFlex sparkFlex = new CANSparkFlex(2, CANSparkLowLevel.MotorType.kBrushless);
+    CANdle candle = new CANdle(3);
+    XboxController controller = new XboxController(0);
     /**
      * Runs at the start of Test state
      */
     @Override
-    public void testInit() {}
+    public void testInit() {
+        candle.configV5Enabled(true);
+    }
 
     /**
      * Runs every "tick" of Test time
      */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+        if(controller.getAButton()) {
+            sparkFlex.set(0.5);
+        } else {
+            sparkFlex.set(0);
+        }
+
+        if(controller.getBButton()) {
+            candle.configBrightnessScalar(1);
+            candle.setLEDs(0, 0, 255);
+        } else {
+            candle.configBrightnessScalar(0);
+        }
+    }
 }

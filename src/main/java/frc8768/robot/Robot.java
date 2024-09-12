@@ -151,38 +151,9 @@ public class Robot extends TimedRobot
     }
 
     // Target distance in meters (1 foot = 0.3048 meters)
-    double targetDistance = 0.3048;
     @Override
     public void autonomousPeriodic() {
-        /*
-        if(auto != null) {
-            if(!auto.getSelected().isScheduled()) {
-                return;
-            }
-            auto.getSelected().execute();
-        }
-        */
-
-        // Get the current pose from the odometry
-        Pose2d currentPose = swerve.getSwerveDrive().getPose();
-        double currentX = currentPose.getX();
-        double currentY = currentPose.getY();
-
-        // Drive forward if the current distance is less than the target distance
-        if (currentX < targetDistance) {
-            swerve.getSwerveDrive().drive(
-                    new ChassisSpeeds(1.0, 0.0, 0.0) // 1.0 m/s forward, no strafing, no rotation
-            );
-        } else if (currentY < targetDistance) {
-            swerve.getSwerveDrive().drive(
-                    new ChassisSpeeds(0.0, 1.0, 0.0) // 1.0 m/s forward, no strafing, no rotation
-            );
-        } else {
-            // Stop the robot once the target distance is reached
-            swerve.getSwerveDrive().drive(
-                    new ChassisSpeeds(0.0, 0.0, 0.0)
-            );
-        }
+        auto.Translation(0.3048,0.3048/2);
     }
 
     /**

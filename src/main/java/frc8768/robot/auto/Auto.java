@@ -6,6 +6,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -70,12 +72,46 @@ public class Auto {
 
         //END OF CONTRUCTOR
     }
+    
+
 
     /**
      * Get the current Auton mode
      *
      * @return Current Auton Mode
      */
+    public void Translation(double x , double y ) {
+        /*
+        if(auto != null) {
+            if(!auto.getSelected().isScheduled()) {
+                return;
+            }
+            auto.getSelected().execute();
+        }
+        */
+
+            // Get the current pose from the odometry
+        Pose2d currentPose = swerve.getSwerveDrive().getPose();
+        double currentX = currentPose.getX();
+        double currentY = currentPose.getY();
+
+        // Drive forward if the current distance is less than the target distance
+        if (currentX < x) {
+            swerve.getSwerveDrive().drive(
+                    new ChassisSpeeds(1.0, 0.0, 0.0)); // 1.0 m/s forward, no strafing, no rotation
+        }
+
+        if (currentY < y) {
+            swerve.getSwerveDrive().drive(
+                    new ChassisSpeeds(0.0, 1.0, 0.0)); // 1.0 m/s forward, no strafing, no rotation
+        } else {
+            // Stop the robot once the target distance is reached
+            swerve.getSwerveDrive().drive(
+                    new ChassisSpeeds(0.0, 0.0, 0.0));
+        }
+    }
+
+
     public Command getSelected() {
         return null;
     }

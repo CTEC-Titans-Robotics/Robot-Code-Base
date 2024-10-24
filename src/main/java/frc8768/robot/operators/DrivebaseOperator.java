@@ -123,7 +123,7 @@ public class DrivebaseOperator extends Operator {
             //case 315 -> translation2d = new Translation2d(speed, -speed);
         }
         // Swerve Example
-        this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), !isRobotRelative, false, Constants.BOT_CENTER);
+        this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), !isRobotRelative, true, Constants.BOT_CENTER);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

@@ -54,7 +54,10 @@ public class AuxiliaryOperator extends Operator {
             // }
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
         } else if(controller.getLeftBumper()) {
-            this.arm.overrideAngle = 41;
+            this.arm.overrideAngle = 46;
+            this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
+        } else if(controller.getLeftTriggerAxis() > 0.01) {
+            this.arm.overrideAngle = 53;
             this.arm.setDesiredState(ArmSubsystem.ArmState.SPEAKER);
         } else {
             this.arm.releaseLock();
@@ -70,6 +73,14 @@ public class AuxiliaryOperator extends Operator {
             //                     (-0.0000450938 * Math.pow(this.readDistance, 2) + 0.013438 * this.readDistance) - 0.175325),
             //             0, 1);
             // }
+
+            if(controller.getLeftTriggerAxis() > 0.01) {
+                this.intake.overrideShootSpeed = 0.95;
+                this.intake.overrideHoldSpeed = 0.90;
+            } else {
+                this.intake.overrideHoldSpeed = -1;
+                this.intake.overrideShootSpeed = -1;
+            }
 
             this.intake.beginStage(this.arm.currState == ArmSubsystem.ArmState.SPEAKER ?
                     IntakeSubsystem.IntakeStage.SPEAKER : IntakeSubsystem.IntakeStage.AMP);

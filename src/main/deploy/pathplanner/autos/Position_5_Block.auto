@@ -3,9 +3,9 @@
   "startingPose": {
     "position": {
       "x": 0.4474177279310322,
-      "y": 7.3544053507507865
+      "y": 2.049396395511764
     },
-    "rotation": 0.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SERIOUSSIDEHOPSPREPL"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SERIOUSSIDEHOPSL"
+            "pathName": "SERIOUSSIDEHOPSPREPR"
           }
         },
         {
@@ -39,6 +33,12 @@
           "type": "path",
           "data": {
             "pathName": "SERIOUSSIDEHOPSR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSL"
           }
         }
       ]

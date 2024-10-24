@@ -37,7 +37,7 @@ public class Auto {
         HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
                 new PIDConstants(0.01, 0.0, 0.0),
                 new PIDConstants(theta.getP(), theta.getI(), theta.getD()),
-                Constants.SwerveConfig.MAX_SPEED - 2,
+                5.18,
                 0.26035,
                 new ReplanningConfig(
                         true,
@@ -62,6 +62,8 @@ public class Auto {
         NamedCommands.registerCommand("drop_arm", new DropArmCommand(arm, intake));
         NamedCommands.registerCommand("stop_intake", new IntakeStopCommand(intake));
         NamedCommands.registerCommand("speaker_shoot", new SpeakerShootCommand(arm, intake));
+        //TODO: What is trying to call this?
+        NamedCommands.registerCommand("speaker_far_shoot", new SpeakerShootCommand(arm, intake));
 
         // Setup Positions for Shuffleboard selector
 
@@ -87,6 +89,7 @@ public class Auto {
         this.autonChooser.addOption("Position 2 MultiNote", AutoBuilder.buildAuto("Position_2_MNote"));
         this.autonChooser.addOption("Position 3 MultiNote", AutoBuilder.buildAuto("Position_3_MNote"));
         this.autonChooser.addOption("Position 4 MultiNote", AutoBuilder.buildAuto("Position_4_MNote"));
+        this.autonChooser.addOption("Test Open Loop", AutoBuilder.buildAuto("Testing_Open_Loop"));
 
         SmartDashboard.putData("Auto", this.autonChooser);
     }

@@ -114,7 +114,7 @@ public class IntakeSubsystem implements Subsystem {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                this.holdMotor.set(this.overrideHoldSpeed == -1 ? 0.8 : this.overrideHoldSpeed);
+                this.holdMotor.set(this.overrideHoldSpeed == -1 ? 0.85 : this.overrideHoldSpeed);
                 try {
                     Thread.sleep(750);
                 } catch (InterruptedException e) {

@@ -42,7 +42,7 @@ public abstract class Operator {
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    // Welp
                 }
 
                 continue;
@@ -52,7 +52,7 @@ public abstract class Operator {
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                // Welp
             }
         }
     }

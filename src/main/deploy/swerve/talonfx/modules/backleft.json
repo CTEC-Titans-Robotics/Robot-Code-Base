@@ -3,8 +3,8 @@
     "front": -10.5,
     "left": 10.5
   },
-  "absoluteEncoderOffset": 110.214843758,
-  "drive": {
+  "absoluteEncoderOffset": 111.005859375,
+  "drive":{
     "type": "talonfx",
     "id": 12,
     "canbus": "swerve"

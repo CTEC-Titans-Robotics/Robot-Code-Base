@@ -82,13 +82,8 @@ public class Auto {
         this.autonChooser.addOption("Position 3 Shoot and Move", AutoBuilder.buildAuto("Position_3"));
         this.autonChooser.addOption("Position 4 Shoot and Move", AutoBuilder.buildAuto("Position_4"));
 
-        this.autonChooser.addOption("Position 2 Shoot Only", AutoBuilder.buildAuto("Position_2_Shoot"));
         this.autonChooser.addOption("Position 3 Shoot Only", AutoBuilder.buildAuto("Position_3_Shoot"));
         this.autonChooser.addOption("Position 4 Shoot Only", AutoBuilder.buildAuto("Position_4_Shoot"));
-
-        this.autonChooser.addOption("Position 2 MultiNote", AutoBuilder.buildAuto("Position_2_MNote"));
-        this.autonChooser.addOption("Position 3 MultiNote", AutoBuilder.buildAuto("Position_3_MNote"));
-        this.autonChooser.addOption("Position 4 MultiNote", AutoBuilder.buildAuto("Position_4_MNote"));
         this.autonChooser.addOption("Test Open Loop", AutoBuilder.buildAuto("Testing_Open_Loop"));
 
         SmartDashboard.putData("Auto", this.autonChooser);

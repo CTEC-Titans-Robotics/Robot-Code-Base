@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.4544442298585015,
-      "y": 2.0
+      "x": 2.0,
+      "y": 4.16
     },
     "rotation": 0
   },
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Taxi 4"
+            "pathName": "Testing_Open_Loop"
           }
         }
       ]

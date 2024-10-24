@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 2.26,
+      "y": 5.545221859674489
+    },
+    "rotation": 0.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "speaker_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 2 Prep"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 2 Pickup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "drop_arm"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shooting Pos 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speaker_shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Position 3",
+  "choreoAuto": false
+}

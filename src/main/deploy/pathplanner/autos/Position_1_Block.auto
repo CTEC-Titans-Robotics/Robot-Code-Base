@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.4474177279310322,
+      "y": 7.3544053507507865
+    },
+    "rotation": 0.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSPREPL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SERIOUSSIDEHOPSR"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Disruption",
+  "choreoAuto": false
+}

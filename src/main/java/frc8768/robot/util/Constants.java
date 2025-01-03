@@ -38,7 +38,7 @@ public class Constants {
     public static final double WEIGHT = 120;
 
     /**
-     * Intertia of Momentum in KG Sq Meters
+     * Inertia of Momentum in KG Sq Meters
      */
     public static final double INERTIA = 4;
 

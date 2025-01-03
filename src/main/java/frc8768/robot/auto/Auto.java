@@ -1,15 +1,19 @@
 package frc8768.robot.auto;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
+
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Kilograms;
 
 /**
  * Auton example for swerve using PathPlanner
@@ -25,25 +29,31 @@ public class Auto {
     public Auto(SwerveSubsystem swerve) {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
-        HolonomicPathFollowerConfig config = new HolonomicPathFollowerConfig(
-                new PIDConstants(0.00, 0.00, 0.01),
-                new PIDConstants(0.00, 0.00, 0.01),
-                // TODO: Put max module speed here, m/s
-                14.2,
-                // TODO: Put your robot chassis radius here, from center of bot to furthest module output shaft
-                5,
-                new ReplanningConfig(
-                        true,
-                        true
+        RobotConfig config = new RobotConfig(
+                Kilograms.of(Constants.WEIGHT),
+                KilogramSquareMeters.of(Constants.INERTIA),
+                new ModuleConfig(
+                        swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
+                        Constants.SwerveConfig.MAX_SPEED,
+                        1.0,
+                        swerveDrive.swerveDriveConfiguration.getDriveMotorSim(),
+                        30,
+                        1
                 )
-
         );
 
-        AutoBuilder.configureHolonomic(
+        PPHolonomicDriveController driveController = new PPHolonomicDriveController(
+                new PIDConstants(0.01, 0, 0),
+                new PIDConstants(0.01, 0, 0),
+                0.02
+        );
+
+        AutoBuilder.configure(
                 swerveDrive::getPose,
                 swerveDrive::resetOdometry,
                 swerveDrive::getRobotVelocity,
                 swerveDrive::setChassisSpeeds,
+                driveController,
                 config,
                 () -> false, // Change if needed
                 swerve);

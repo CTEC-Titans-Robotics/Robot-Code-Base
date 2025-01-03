@@ -15,7 +15,7 @@ public abstract class Vision {
      *
      * @return All targets in view.
      */
-    public abstract List<Object> getTargets();
+    public abstract List<?> getTargets();
 
     /**
      * Change the current pipeline.
@@ -23,13 +23,6 @@ public abstract class Vision {
      * @param index Pipeline index, depends on your configuration.
      */
     public abstract void changePipeline(int index);
-
-    /**
-     * Get the best target.
-     *
-     * @return Best target, null if none
-     */
-    public abstract Object getBestTarget();
 
     /**
      * Get the Distance to target via trigonometry.

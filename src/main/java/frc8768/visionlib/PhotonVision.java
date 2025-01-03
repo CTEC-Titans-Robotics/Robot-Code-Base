@@ -1,6 +1,7 @@
 package frc8768.visionlib;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
@@ -26,11 +27,11 @@ public class PhotonVision extends Vision {
      *
      * @return All targets in view.
      */
-    public List<Object> getTargets() {
-        if(camera.getLatestResult().hasTargets()) {
-            return Collections.singletonList(camera.getLatestResult().targets);
+    public List<PhotonPipelineResult> getTargets() {
+        if(!camera.getAllUnreadResults().isEmpty()) {
+            return camera.getAllUnreadResults();
         }
-        return null;
+        return List.of();
     }
 
     /**
@@ -43,18 +44,6 @@ public class PhotonVision extends Vision {
     }
 
     /**
-     * Get the best target.
-     *
-     * @return Best target, null if none
-     */
-    public PhotonTrackedTarget getBestTarget() {
-        if(camera.getLatestResult().hasTargets()) {
-            return camera.getLatestResult().getBestTarget();
-        }
-        return null;
-    }
-
-    /**
      * Get the Distance to target via trigonometry.
      *
      * @param mountAngle The amount of degrees back the limelight is.
@@ -64,7 +53,13 @@ public class PhotonVision extends Vision {
      * @return Distance to target, returns -1 on fail.
      */
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
-        PhotonTrackedTarget target = getBestTarget();
+        PhotonTrackedTarget target;
+
+        if(getTargets().isEmpty()) {
+            return -1;
+        }
+        target = getTargets().get(0).getBestTarget();
+
         if(target != null) {
             double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestCameraToTarget().getY());
             double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
@@ -85,7 +80,13 @@ public class PhotonVision extends Vision {
      * @return The maximum Y point for all corners, or -1 if none is found
      */
     public double getMaxPointY() {
-        PhotonTrackedTarget target = getBestTarget();
+        PhotonTrackedTarget target;
+
+        if(getTargets().isEmpty()) {
+            return -1;
+        }
+        target = getTargets().get(0).getBestTarget();
+
         if(target != null) {
             double maxY = 0;
             for(TargetCorner corner : target.getDetectedCorners()) {
@@ -99,7 +100,13 @@ public class PhotonVision extends Vision {
 
     @Override
     public int getTargetID() {
-        PhotonTrackedTarget target = getBestTarget();
+        PhotonTrackedTarget target;
+
+        if(getTargets().isEmpty()) {
+            return -1;
+        }
+        target = getTargets().get(0).getBestTarget();
+
         if(target != null) {
             return target.getFiducialId();
         }

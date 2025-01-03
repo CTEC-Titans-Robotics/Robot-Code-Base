@@ -28,9 +28,19 @@ public class Constants {
     public static final Translation2d BOT_CENTER = new Translation2d(0, 0);
 
     /**
-     * Field size in meters
+     * Field size in meters, relative to 0,0
      */
     public static final Translation2d FIELD_SIZE = new Translation2d(16.54175, 8.21055);
+
+    /**
+     * Weight of Robot in Kilograms
+     */
+    public static final double WEIGHT = 120;
+
+    /**
+     * Intertia of Momentum in KG Sq Meters
+     */
+    public static final double INERTIA = 4;
 
     /**
      * Swerve-specific configuration.

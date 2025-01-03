@@ -1,5 +1,6 @@
 package frc8768.robot.util;
 
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
@@ -19,13 +20,13 @@ public class LogUtil {
      */
     public static final Logger LOGGER = Logger.getLogger("Robot-Code-Base");
 
-    private static final List<Supplier<Map<String, String>>> DASHBOARD_LOGGERS = new ArrayList<>();
+    private static final List<Supplier<Map<String, Object>>> DASHBOARD_LOGGERS = new ArrayList<>();
     private static final List<Supplier<List<String>>> LOGGERS = new ArrayList<>();
 
     /**
      * @param logger Adds a logger to be printed to SmartDashboard, should return Map with String types.
      */
-    public static void registerDashLogger(Supplier<Map<String, String>> logger) {
+    public static void registerDashLogger(Supplier<Map<String, Object>> logger) {
         DASHBOARD_LOGGERS.add(logger);
     }
 
@@ -40,11 +41,22 @@ public class LogUtil {
      * Runs each log function to print the supplied state
      */
     public static void run() {
-        for(Supplier<Map<String, String>> supplier : DASHBOARD_LOGGERS) {
-            for(Map.Entry<String, String> entry : supplier.get().entrySet()) {
-                boolean ret = SmartDashboard.putString(entry.getKey(), entry.getValue());
-                if(!ret) {
-                    LOGGER.log(Level.WARNING, String.format("%s was already added with a different type!", entry.getKey()));
+        for(Supplier<Map<String, Object>> supplier : DASHBOARD_LOGGERS) {
+            for(Map.Entry<String, Object> entry : supplier.get().entrySet()) {
+                if (entry.getValue() instanceof String str) {
+                    boolean ret = SmartDashboard.putString(entry.getKey(), str);
+                    if (!ret) {
+                        LOGGER.log(Level.WARNING, String.format("%s was already added with a different type!", entry.getKey()));
+                    }
+                } else if(entry.getValue() instanceof Sendable sendable) {
+                    SmartDashboard.putData(entry.getKey(), sendable);
+                } else if(entry.getValue() instanceof Boolean) {
+                    SmartDashboard.putBoolean(entry.getKey(), (Boolean) entry.getValue());
+                } else if(entry.getValue() instanceof Number) {
+                    SmartDashboard.putNumber(entry.getKey(), ((Number) entry.getValue()).doubleValue());
+                } else {
+
+                    LOGGER.log(Level.WARNING, String.format("%s could not be registered as the type was not configured.", entry.getKey()));
                 }
             }
         }

@@ -1,6 +1,9 @@
 package frc8768.robot.operators;
 
 import frc8768.robot.Robot;
+import frc8768.robot.util.LogUtil;
+
+import java.util.logging.Level;
 
 /**
  * Abstract class designed for Operators.
@@ -41,6 +44,12 @@ public abstract class Operator {
                 continue;
             }
             run();
+
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                LogUtil.LOGGER.log(Level.SEVERE, "An operator got interrupted during sleep!");
+            }
         }
     }
 

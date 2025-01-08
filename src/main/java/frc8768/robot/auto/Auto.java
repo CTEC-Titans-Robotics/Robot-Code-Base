@@ -1,10 +1,9 @@
 package frc8768.robot.auto;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -30,7 +29,9 @@ public class Auto {
      *
      * @param swerve The Robots swerve subsystem
      */
+    SwerveSubsystem swerve;
     public Auto(SwerveSubsystem swerve) {
+        this.swerve = swerve;
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
 
         RobotConfig config = new RobotConfig(

@@ -136,7 +136,7 @@ public class Robot extends TimedRobot
     // Target distance in meters (1 foot = 0.3048 meters)
     @Override
     public void autonomousPeriodic() {
-        auto.Translation(0.3048,0.3048/2);
+//        auto.Translation(0.3048,0.3048/2);
     }
 
     /**

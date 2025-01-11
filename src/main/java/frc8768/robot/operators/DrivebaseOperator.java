@@ -8,6 +8,7 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 
+
 /**
  * Operator for driving the bot
  */
@@ -56,7 +57,7 @@ public class DrivebaseOperator extends Operator {
         // }
 
         if(controller.getBButtonPressed()) {
-            this.swerve.getSwerveDrive().zeroGyro();
+            //this.swerve.getSwerveDrive().zeroGyro();
         }
 
         // Apply controller deadband
@@ -74,7 +75,7 @@ public class DrivebaseOperator extends Operator {
             return;
         }
         // Swerve Example
-        this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
+        this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, true, Constants.BOT_CENTER);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

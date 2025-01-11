@@ -2,14 +2,13 @@ package frc8768.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc8768.robot.util.Constants;
-import frc8768.robot.util.MathUtil;
 import frc8768.robot.util.MotorType;
 import swervelib.SwerveDrive;
+import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
 
 import java.io.File;
@@ -33,10 +32,13 @@ public class SwerveSubsystem implements Subsystem {
      * @throws IOException if it can't find the resources.
      */
     public SwerveSubsystem(MotorType type) throws IOException {
+        double metersPerRotation = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
+        double metersPerDeg = SwerveMath.calculateDegreesPerSteeringRotation((double) 150/7);
+
         switch(type) {
-            case SPARKMAX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
-            case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
-            case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED);
+            case SPARKMAX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, metersPerDeg, metersPerRotation);
+            case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, metersPerDeg, metersPerRotation);
+            case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, metersPerDeg, metersPerRotation);
         }
     }
 
@@ -50,7 +52,7 @@ public class SwerveSubsystem implements Subsystem {
      * @param pivotPoint 2d Pivot point for rotation
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
-        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * MathUtil.getRadFromDeg(450), fieldRelative, isOpenLoop, pivotPoint);
+        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * Math.toRadians(450), fieldRelative, isOpenLoop, pivotPoint);
     }
 
     /**

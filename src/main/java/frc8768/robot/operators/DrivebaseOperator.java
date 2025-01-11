@@ -56,7 +56,7 @@ public class DrivebaseOperator extends Operator {
             return;
         }
         // Swerve Example
-        this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, false, Constants.BOT_CENTER);
+        this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, true, Constants.BOT_CENTER);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

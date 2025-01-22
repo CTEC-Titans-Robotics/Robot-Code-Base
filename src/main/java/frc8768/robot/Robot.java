@@ -25,6 +25,7 @@ import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
+import frc8768.visionlib.PhotonVision;
 import frc8768.visionlib.Vision;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -106,7 +107,7 @@ public class Robot extends TimedRobot
 
         this.drivebase = new DrivebaseOperator(this.swerve);
         //this.auto = new Auto(swerve);
-        //this.vision = new LimelightVision("limelight");
+        this.vision = new PhotonVision(PhotonVision.Type.LIMELIGHT);
 
         this.drivebase.init();
     }
@@ -168,13 +169,19 @@ public class Robot extends TimedRobot
     public void testInit() {
         swerve.getSwerveDrive().resetOdometry(new Pose2d());
         relocate = false;
+        reangle = false;
+        reposition = false;
     }
 
-    private void move(double xSpeed, double ySpeed) {
-        swerve.drive(new Translation2d(xSpeed, ySpeed), 0, false, true, Constants.BOT_CENTER);
+    private void move(double xSpeed, double ySpeed, double rot) {
+        swerve.drive(new Translation2d(xSpeed, ySpeed), rot, false, true, Constants.BOT_CENTER);
     }
 
-    boolean relocate = false;
+
+    boolean relocate = false; //move forward 1 ft
+    boolean reangle = false; //rotate towards april tag
+
+    boolean reposition = false; //move towards april tag
     /**
      * Runs every "tick" of Test time
      */
@@ -203,13 +210,29 @@ public class Robot extends TimedRobot
         if(relocate) {
             Pose2d pose = swerve.getSwerveDrive().getPose(); // Odometry
             if(!MathUtil.isNear(targetX, pose.getX(), 0.001)) {
-                move(MathUtil.clamp((targetX-pose.getX())*2, -0.1, 0.1), 0);
+                move(MathUtil.clamp((targetX-pose.getX())*2, -0.1, 0.1), 0,0);
             } else {
                 relocate = false;
-                move(0, 0);
+                move(0, 0,0);
             }
         } else {
-            move(0, 0);
+            move(0, 0,0);
+        }
+
+        if(controller.getBButton() && !reposition) {
+            reposition = true;
+        }
+            vision.getDistanceToTarget(0,15.75,0,false);
+        if(reposition) {
+            Pose2d pose = swerve.getSwerveDrive().getPose(); // Odometry
+            if(!MathUtil.isNear(targetX, pose.getX(), 0.001)) {
+                move(MathUtil.clamp((targetX-pose.getX())*2, -0.1, 0.1), 0,0);
+            } else {
+                reposition = false;
+                move(0, 0,0);
+            }
+        } else {
+            move(0, 0,0);
         }
 /*
         class relocate {
@@ -255,12 +278,13 @@ public class Robot extends TimedRobot
             //swerve.getSwerveDrive().resetOdometry(new Pose2d());
         }
 
+*/
 
         if (controller.getAButton()) {
             swerve.drive(new Translation2d(0, 0), 0, false, false,new Translation2d(0,0));
             swerve.getSwerveDrive().resetOdometry(new Pose2d());
             if (hasTarget && yaw > 5) {
-                sparkMax.set(0.1);
+                swerve.drive(new Translation2d(0, 0), 0.1, false, true, Constants.BOT_CENTER);
             } else if (hasTarget && yaw < -5) {
                 sparkMax.set(-0.1);
             } else if (hasTarget) {
@@ -269,6 +293,49 @@ public class Robot extends TimedRobot
                 sparkMax.set(0);
             }
         }
+
+        if(controller.getYButton() && !reangle) {
+            reangle = true;
+        }
+
+        if(reangle) {
+            if(!MathUtil.isNear(0, yaw, 2)) {
+                move(0,0, (MathUtil.clamp(-Math.toRadians(yaw), -0.1, 0.1)));
+            } else {
+                reangle = false;
+                move(0,0,0);
+            }
+        } else {
+            move(0,0,0);
+        }
+
+
+      /*  if (controller.getAButton()) {
+            swerve.drive(new Translation2d(0, 0), 0, false, false,new Translation2d(0,0));
+            swerve.getSwerveDrive().resetOdometry(new Pose2d());
+            if (hasTarget && yaw > 5) {
+                sparkMax.set(0.1);
+                swerve.drive(Rotation2d(yaw));
+            } else if (hasTarget && yaw < -5) {
+                sparkMax.set(-0.1);
+            } else if (hasTarget) {
+                sparkMax.set(0);
+            } else {
+                sparkMax.set(0);
+            }
+        }
+        */
+
+
+/*if (controller.getYButton()) {
+    swerve.drive(new Translation2d(0 ,0), 0.25, false, true, Constants.BOT_CENTER);
+
+} else if (controller.getLeftTriggerAxis() > 0.1){
+    swerve.drive(new Translation2d(0 ,0), -0.25, false, true, Constants.BOT_CENTER);
+} else {
+    swerve.drive(new Translation2d(0 ,0), 0.0, false, true, Constants.BOT_CENTER);
+}
+*/
 /*
         Translation2d translation2d = new Translation2d(
                 MathUtil.applyDeadband(-controller.getLeftY(), Constants.controllerDeadband),

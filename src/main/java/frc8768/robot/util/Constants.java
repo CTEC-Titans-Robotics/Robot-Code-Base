@@ -54,7 +54,7 @@ public class Constants {
         /**
          * Max drive motor speed. m/s
          */
-        public static final double MAX_SPEED = Units.feetToMeters(15.1);
+        public static final double MAX_SPEED = Units.feetToMeters(5.1); //15.1
     }
 
     /**

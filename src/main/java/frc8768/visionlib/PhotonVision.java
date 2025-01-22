@@ -62,7 +62,7 @@ public class PhotonVision extends Vision {
 
         if(target != null) {
             double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestCameraToTarget().getY());
-            double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+            double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
 
             double distance = (goalHeight - mountHeight) / Math.tan(angleToGoalRadians);
             if(distance <= 0) {

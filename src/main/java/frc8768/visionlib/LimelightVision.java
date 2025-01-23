@@ -1,6 +1,7 @@
 package frc8768.visionlib;
 
 import frc8768.visionlib.helpers.LimelightHelpers;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import java.util.List;
 
@@ -21,6 +22,9 @@ public class LimelightVision extends Vision {
         LimelightHelpers.setPipelineIndex(this.limelightName, index);
     }
 
+    public  double getTargetYaw() { //not supported in limelightVision
+        return -1;
+    }
     @Override
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
         LimelightHelpers.LimelightTarget_Fiducial classifier = getTargets().get(0);

@@ -9,6 +9,12 @@ import java.util.List;
  * Note: Limelight exposure needs to be tweaked per-comp
  */
 public abstract class Vision {
+    /**
+     * Gets yaw of current target.
+     *
+     * @return Gets yaw of current target.
+     */
+    public abstract double getTargetYaw();
 
     /**
      * Get all targets.

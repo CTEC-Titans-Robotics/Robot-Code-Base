@@ -29,6 +29,7 @@ import frc8768.visionlib.PhotonVision;
 import frc8768.visionlib.Vision;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import org.opencv.core.Mat;
 import swervelib.SwerveDrive;
 
 //PhotonVision
@@ -196,6 +197,7 @@ public class Robot extends TimedRobot
         var table = NetworkTableInstance.getDefault().getTable("photonvision").getSubTable("Left");
         boolean hasTarget = table.getEntry("hasTarget").getBoolean(false);
         double yaw = table.getEntry("targetYaw").getDouble(0.0);
+        //double yaw = vision.getTargetYaw();
 
         SmartDashboard.putBoolean("Has Target", hasTarget);
         SmartDashboard.putNumber("Target Yaw", yaw);
@@ -286,7 +288,8 @@ public class Robot extends TimedRobot
             if (hasTarget && yaw > 5) {
                 swerve.drive(new Translation2d(0, 0), 0.1, false, true, Constants.BOT_CENTER);
             } else if (hasTarget && yaw < -5) {
-                sparkMax.set(-0.1);
+                swerve.drive(new Translation2d(0, 0), -0.1, false, true, Constants.BOT_CENTER);
+                //sparkMax.set(-0.1);
             } else if (hasTarget) {
                 sparkMax.set(0);
             } else {
@@ -309,6 +312,20 @@ public class Robot extends TimedRobot
             move(0,0,0);
         }
 
+        // linear follow attempt;
+        if(controller.getXButton() && !reangle) {
+            reangle = true;
+        }
+        if(reangle) {
+            if(!MathUtil.isNear(0, yaw, 1.5)) {
+                move(1.4,0., (MathUtil.clamp(-Math.toRadians(yaw), -0.1, 0.1)));
+            } else {
+                reangle = false;
+                move(0,0,0);
+            }
+        } else {
+            move(0,0,0);
+        }
 
       /*  if (controller.getAButton()) {
             swerve.drive(new Translation2d(0, 0), 0, false, false,new Translation2d(0,0));

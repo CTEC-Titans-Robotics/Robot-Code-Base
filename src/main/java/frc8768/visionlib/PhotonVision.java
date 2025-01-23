@@ -72,6 +72,20 @@ public class PhotonVision extends Vision {
         }
         return -1;
     }
+    public  double getTargetYaw() {
+        PhotonTrackedTarget target;
+
+        if(getTargets().isEmpty()) {
+            return -1;
+        }
+        target = getTargets().get(0).getBestTarget();
+
+        if(target != null) {
+            double yaw = target.getYaw();
+            return  yaw;
+        }
+        return -1;
+    }
 
     /**
      * Sometimes, you may want to find the maximum Y for corners for the

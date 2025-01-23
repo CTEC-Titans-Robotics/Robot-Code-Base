@@ -318,7 +318,7 @@ public class Robot extends TimedRobot
         }
         if(reangle) {
             if(!MathUtil.isNear(0, yaw, 1.5)) {
-                move(1.4,0., (MathUtil.clamp(-Math.toRadians(yaw), -0.1, 0.1)));
+                move(1.3,0., (MathUtil.clamp(-Math.toRadians(yaw), -0.1, 0.1)));
             } else {
                 reangle = false;
                 move(0,0,0);

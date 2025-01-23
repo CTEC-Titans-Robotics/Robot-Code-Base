@@ -40,16 +40,16 @@ public abstract class Operator {
      */
     public void runLoop() {
         while(true) {
-            if(!Robot.getInstance().isTeleop()) {
-                continue;
-            }
-            run();
-
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
                 LogUtil.LOGGER.log(Level.SEVERE, "An operator got interrupted during sleep!");
             }
+
+            if(!Robot.getInstance().isTeleop()) {
+                continue;
+            }
+            run();
         }
     }
 

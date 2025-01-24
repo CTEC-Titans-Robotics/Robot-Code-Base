@@ -183,6 +183,7 @@ public class Robot extends TimedRobot
     boolean reangle = false; //rotate towards april tag
 
     boolean reposition = false; //move towards april tag
+    boolean strafe = false; // Move left or right to center april tag
     /**
      * Runs every "tick" of Test time
      */
@@ -198,6 +199,7 @@ public class Robot extends TimedRobot
         boolean hasTarget = table.getEntry("hasTarget").getBoolean(false);
         double yaw = table.getEntry("targetYaw").getDouble(0.0);
         //double yaw = vision.getTargetYaw();
+        double distY = table.getEntry("targetPixelsY").getDouble(0.0);
 
         SmartDashboard.putBoolean("Has Target", hasTarget);
         SmartDashboard.putNumber("Target Yaw", yaw);
@@ -206,7 +208,15 @@ public class Robot extends TimedRobot
         if(controller.getXButton() && !relocate) {
             relocate = true;
         }
+        int YawPosNeg = 0;
+        if(yaw > 0) {
+            YawPosNeg = -1;
+        } else if(yaw < 1) {
+            YawPosNeg =1;
+            } else {
+            YawPosNeg =0;
 
+        }
         double targetX = -0.304;
 
         if(relocate) {
@@ -221,14 +231,30 @@ public class Robot extends TimedRobot
             move(0, 0,0);
         }
 
+        if(controller.getAButton()) {
+            strafe = true;
+        }
+        if(strafe) {
+            if(!MathUtil.isNear(0,distY, 0.001)) {
+                move(MathUtil.clamp(distY*2, -0.1, 0.1), 0,0 );
+            } else {
+                reposition = false;
+                move(0,0,0);
+            }
+        } else {
+            move(0,0,0);
+        }
+
+
+
+
         if(controller.getBButton() && !reposition) {
             reposition = true;
         }
-            vision.getDistanceToTarget(0,15.75,0,false);
-        if(reposition) {
-            Pose2d pose = swerve.getSwerveDrive().getPose(); // Odometry
-            if(!MathUtil.isNear(targetX, pose.getX(), 0.001)) {
-                move(MathUtil.clamp((targetX-pose.getX())*2, -0.1, 0.1), 0,0);
+        double distX = vision.getDistanceToTarget(0,15.75,24.5,false);
+        if(reposition && distX != -1) {
+            if(!MathUtil.isNear(12, distX, 0.001)) {
+                move(MathUtil.clamp(12-distX*2, -0.1, 0.1), 0,0);
             } else {
                 reposition = false;
                 move(0, 0,0);
@@ -282,7 +308,7 @@ public class Robot extends TimedRobot
 
 */
 
-        if (controller.getAButton()) {
+        /*f (controller.getAButton()) {
             swerve.drive(new Translation2d(0, 0), 0, false, false,new Translation2d(0,0));
             swerve.getSwerveDrive().resetOdometry(new Pose2d());
             if (hasTarget && yaw > 5) {
@@ -296,7 +322,7 @@ public class Robot extends TimedRobot
                 sparkMax.set(0);
             }
         }
-
+*/
         if(controller.getYButton() && !reangle) {
             reangle = true;
         }
@@ -318,7 +344,7 @@ public class Robot extends TimedRobot
         }
         if(reangle) {
             if(!MathUtil.isNear(0, yaw, 1.5)) {
-                move(1.3,0., (MathUtil.clamp(-Math.toRadians(yaw), -0.1, 0.1)));
+                move(0,0.5*YawPosNeg, (MathUtil.clamp(-Math.toRadians(0), -0.1, 0.1)));
             } else {
                 reangle = false;
                 move(0,0,0);

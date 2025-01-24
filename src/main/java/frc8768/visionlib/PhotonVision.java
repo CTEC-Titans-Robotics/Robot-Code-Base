@@ -138,7 +138,7 @@ public class PhotonVision extends Vision {
         /**
          * Limelight 1 and 2
          */
-        LIMELIGHT("limelight"),
+        LIMELIGHT("Left"),
         /**
          * Glowworm
          */

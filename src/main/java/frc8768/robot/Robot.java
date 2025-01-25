@@ -11,9 +11,11 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -30,6 +32,7 @@ import frc8768.visionlib.Vision;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import org.opencv.core.Mat;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import swervelib.SwerveDrive;
 
 //PhotonVision
@@ -39,7 +42,11 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
+
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Inches;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -172,6 +179,7 @@ public class Robot extends TimedRobot
         relocate = false;
         reangle = false;
         reposition = false;
+        strafe = false;
     }
 
     private void move(double xSpeed, double ySpeed, double rot) {
@@ -208,15 +216,6 @@ public class Robot extends TimedRobot
         if(controller.getXButton() && !relocate) {
             relocate = true;
         }
-        int YawPosNeg = 0;
-        if(yaw > 0) {
-            YawPosNeg = -1;
-        } else if(yaw < 1) {
-            YawPosNeg =1;
-            } else {
-            YawPosNeg =0;
-
-        }
         double targetX = -0.304;
 
         if(relocate) {
@@ -227,26 +226,7 @@ public class Robot extends TimedRobot
                 relocate = false;
                 move(0, 0,0);
             }
-        } else {
-            move(0, 0,0);
         }
-
-        if(controller.getAButton()) {
-            strafe = true;
-        }
-        if(strafe) {
-            if(!MathUtil.isNear(0,distY, 0.001)) {
-                move(MathUtil.clamp(distY*2, -0.1, 0.1), 0,0 );
-            } else {
-                reposition = false;
-                move(0,0,0);
-            }
-        } else {
-            move(0,0,0);
-        }
-
-
-
 
         if(controller.getBButton() && !reposition) {
             reposition = true;
@@ -259,8 +239,6 @@ public class Robot extends TimedRobot
                 reposition = false;
                 move(0, 0,0);
             }
-        } else {
-            move(0, 0,0);
         }
 /*
         class relocate {
@@ -328,29 +306,47 @@ public class Robot extends TimedRobot
         }
 
         if(reangle) {
-            if(!MathUtil.isNear(0, yaw, 2)) {
-                move(0,0, (MathUtil.clamp(-Math.toRadians(yaw), -0.1, 0.1)));
+            if (!MathUtil.isNear(0, yaw, 2)) {
+                move(0, 0, MathUtil.clamp(-Math.toRadians(yaw) / 1.5, -0.5, 0.5));
             } else {
                 reangle = false;
-                move(0,0,0);
+                move(0, 0, 0);
             }
-        } else {
-            move(0,0,0);
         }
 
         // linear follow attempt;
-        if(controller.getXButton() && !reangle) {
-            reangle = true;
+        if(controller.getXButton() && !strafe) {
+            strafe = true;
         }
-        if(reangle) {
-            if(!MathUtil.isNear(0, yaw, 1.5)) {
-                move(0,0.5*YawPosNeg, (MathUtil.clamp(-Math.toRadians(0), -0.1, 0.1)));
-            } else {
-                reangle = false;
-                move(0,0,0);
+
+        List<?> targets = vision.getTargets();
+        if(strafe && !targets.isEmpty()) {
+            PhotonTrackedTarget target = (PhotonTrackedTarget) targets.get(0);
+            Transform3d transform = target.getBestCameraToTarget();
+            double xMov = 0;
+            double yMov = 0;
+            double rotMov = 0;
+
+            // X: Forward
+            if(!MathUtil.isNear(32, transform.getMeasureX().in(Inches), 2)) {
+                xMov = -MathUtil.clamp((32-transform.getMeasureX().in(Inches))*4, -0.2, 0.2);
             }
-        } else {
-            move(0,0,0);
+
+            // Y: Left
+            double yTranslation = transform.getMeasureY().in(Inches);
+            if(!MathUtil.isNear(0, yTranslation, 1)) {
+                yMov = MathUtil.clamp(yTranslation, -0.2, 0.2);
+            }
+
+            if(!MathUtil.isNear(-180, transform.getRotation().getMeasureZ().in(Degree), 3)) {
+                rotMov = MathUtil.clamp(-transform.getRotation().getMeasureZ().in(Degree), -0.1, 0.1);
+            }
+
+            if(xMov == 0.0 && yMov == 0.0 && rotMov == 0.0) {
+                move(0, 0, 0);
+            } else {
+                move(xMov, yMov, rotMov);
+            }
         }
 
       /*  if (controller.getAButton()) {

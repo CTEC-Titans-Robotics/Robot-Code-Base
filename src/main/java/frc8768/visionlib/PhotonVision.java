@@ -27,11 +27,8 @@ public class PhotonVision extends Vision {
      *
      * @return All targets in view.
      */
-    public List<PhotonPipelineResult> getTargets() {
-        if(!camera.getAllUnreadResults().isEmpty()) {
-            return camera.getAllUnreadResults();
-        }
-        return List.of();
+    public List<PhotonTrackedTarget> getTargets() {
+        return camera.getLatestResult().getTargets();
     }
 
     /**
@@ -54,14 +51,15 @@ public class PhotonVision extends Vision {
      */
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
         PhotonTrackedTarget target;
+        List<PhotonTrackedTarget> res = getTargets();
 
-        if(getTargets().isEmpty()) {
+        if(res.isEmpty()) {
             return -1;
         }
-        target = getTargets().get(0).getBestTarget();
+        target = res.get(0);
 
         if(target != null) {
-            double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestCameraToTarget().getY());
+            double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getPitch());
             double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
 
             double distance = (goalHeight - mountHeight) / Math.tan(angleToGoalRadians);
@@ -78,11 +76,10 @@ public class PhotonVision extends Vision {
         if(getTargets().isEmpty()) {
             return -1;
         }
-        target = getTargets().get(0).getBestTarget();
+        target = getTargets().get(0);
 
         if(target != null) {
-            double yaw = target.getYaw();
-            return  yaw;
+            return target.getYaw();
         }
         return -1;
     }
@@ -99,7 +96,7 @@ public class PhotonVision extends Vision {
         if(getTargets().isEmpty()) {
             return -1;
         }
-        target = getTargets().get(0).getBestTarget();
+        target = getTargets().get(0);
 
         if(target != null) {
             double maxY = 0;
@@ -119,7 +116,7 @@ public class PhotonVision extends Vision {
         if(getTargets().isEmpty()) {
             return -1;
         }
-        target = getTargets().get(0).getBestTarget();
+        target = getTargets().get(0);
 
         if(target != null) {
             return target.getFiducialId();

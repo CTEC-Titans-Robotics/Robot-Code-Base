@@ -213,21 +213,6 @@ public class Robot extends TimedRobot
         SmartDashboard.putNumber("Target Yaw", yaw);
         //Motor movement
 
-        if(controller.getXButton() && !relocate) {
-            relocate = true;
-        }
-        double targetX = -0.304;
-
-        if(relocate) {
-            Pose2d pose = swerve.getSwerveDrive().getPose(); // Odometry
-            if(!MathUtil.isNear(targetX, pose.getX(), 0.001)) {
-                move(MathUtil.clamp((targetX-pose.getX())*2, -0.1, 0.1), 0,0);
-            } else {
-                relocate = false;
-                move(0, 0,0);
-            }
-        }
-
         if(controller.getBButton() && !reposition) {
             reposition = true;
         }
@@ -328,22 +313,23 @@ public class Robot extends TimedRobot
             double rotMov = 0;
 
             // X: Forward
-            if(!MathUtil.isNear(32, transform.getMeasureX().in(Inches), 2)) {
-                xMov = -MathUtil.clamp((32-transform.getMeasureX().in(Inches))*4, -0.2, 0.2);
+            if(!MathUtil.isNear(32, transform.getMeasureX().in(Inches), 3)) {
+                xMov = -MathUtil.clamp((32-transform.getMeasureX().in(Inches))/60, -0.5, 0.5);
             }
 
             // Y: Left
             double yTranslation = transform.getMeasureY().in(Inches);
-            if(!MathUtil.isNear(0, yTranslation, 1)) {
-                yMov = MathUtil.clamp(yTranslation, -0.2, 0.2);
+            if(!MathUtil.isNear(0, yTranslation, 3)) {
+                yMov = MathUtil.clamp(yTranslation/50, -0.5, 0.5);
             }
 
-            if(!MathUtil.isNear(-180, transform.getRotation().getMeasureZ().in(Degree), 3)) {
-                rotMov = MathUtil.clamp(-transform.getRotation().getMeasureZ().in(Degree), -0.1, 0.1);
+            if(!MathUtil.isNear(-180, transform.getRotation().getMeasureZ().in(Degree), 12)) {
+                rotMov = MathUtil.clamp(-transform.getRotation().getMeasureZ().in(Degree)/75, -0.1, 0.1);
             }
 
             if(xMov == 0.0 && yMov == 0.0 && rotMov == 0.0) {
                 move(0, 0, 0);
+                strafe = false;
             } else {
                 move(xMov, yMov, rotMov);
             }

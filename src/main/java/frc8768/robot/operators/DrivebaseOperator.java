@@ -21,6 +21,8 @@ public class DrivebaseOperator extends Operator {
     // private final TankSubsystemFalcon falconTank;
 
     /**
+     * Make an instance of the operator
+     *
      * @param swerve The required subsystem for this operator.
      */
     public DrivebaseOperator(SwerveSubsystem swerve) {

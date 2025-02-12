@@ -6,6 +6,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
+/**
+ * Anything that stays the same throughout the runtime of the program should be in here.
+ */
 public class Constants {
     /**
      * The Main Driver controller ID
@@ -65,35 +68,5 @@ public class Constants {
          * Turn gear ratio from motor to output shaft
          */
         public static final double TURN_GEAR_RATIO = 150/7D;
-    }
-
-    /**
-     * Offsets in a 2D environment from an AprilTag based on ID
-     */
-    public enum FieldWaypoints {
-        AMP(new Pose2d(new Translation2d(1.75, 7.35),
-                Rotation2d.fromDegrees(90))),
-        SPEAKER(new Pose2d(new Translation2d(1.25, 5.52),
-                Rotation2d.fromDegrees(0)));
-
-        private Pose2d redPose;
-        private Pose2d bluePose;
-
-        FieldWaypoints(Pose2d bluePose) {
-            this.bluePose = bluePose;
-            this.redPose = new Pose2d(new Translation2d(FIELD_SIZE.getX() - bluePose.getX(), bluePose.getY()),
-                    bluePose.getRotation().times(-1));
-        }
-
-        /**
-         * Get the Desired Field pose near a field element
-         * @return The desired Pose2d
-         */
-        public Pose2d getPose2d() {
-            if(DriverStation.getAlliance().isPresent()) {
-                return DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? bluePose : redPose;
-            }
-            return this.bluePose;
-        }
     }
 }

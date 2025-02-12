@@ -12,7 +12,7 @@ import frc8768.robot.util.LogUtil;
  * Operator for driving the bot
  */
 public class DrivebaseOperator extends Operator {
-    private static final XboxController controller = new XboxController(Constants.driverControllerId);
+    private static final XboxController controller = new XboxController(Constants.DRIVER_CONTROLLER_ID);
     private final SwerveSubsystem swerve;
     private Command currCommand;
 
@@ -43,11 +43,11 @@ public class DrivebaseOperator extends Operator {
 
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
-                MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.controllerDeadband),
-                MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.controllerDeadband));
+                MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.CONTROLLER_DEADBAND),
+                MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.CONTROLLER_DEADBAND));
 
-        if((MathUtil.applyDeadband(controller.getLeftX(), Constants.controllerDeadband) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.controllerDeadband) != 0 ||
-                MathUtil.applyDeadband(controller.getRightX(), Constants.controllerDeadband) != 0) && currCommand != null) {
+        if((MathUtil.applyDeadband(controller.getLeftX(), Constants.CONTROLLER_DEADBAND) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.CONTROLLER_DEADBAND) != 0 ||
+                MathUtil.applyDeadband(controller.getRightX(), Constants.CONTROLLER_DEADBAND) != 0) && currCommand != null) {
             this.currCommand.cancel();
             this.currCommand = null;
         }
@@ -56,7 +56,7 @@ public class DrivebaseOperator extends Operator {
             return;
         }
         // Swerve Example
-        this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.controllerDeadband), true, true, Constants.BOT_CENTER);
+        this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND), true, true, Constants.BOT_CENTER);
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

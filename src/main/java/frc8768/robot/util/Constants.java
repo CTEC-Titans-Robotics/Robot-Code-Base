@@ -10,17 +10,12 @@ public class Constants {
     /**
      * The Main Driver controller ID
      */
-    public static final int driverControllerId = 0;
-
-    /**
-     * The Co-Driver controller ID
-     */
-    public static final int coDriverControllerId = 1;
+    public static final int DRIVER_CONTROLLER_ID = 0;
 
     /**
      * Controller deadband, prevents accidental input
      */
-    public static final double controllerDeadband = 0.1;
+    public static final double CONTROLLER_DEADBAND = 0.1;
 
     /**
      * Center of bot
@@ -47,14 +42,29 @@ public class Constants {
      */
     public static class SwerveConfig {
         /**
-         * Current motor type of swerve motors.
+         * Current motor type of swerve motors
          */
         public static final MotorType CURRENT_TYPE = MotorType.TALONFX;
 
         /**
-         * Max drive motor speed. m/s
+         * Max drive motor speed, m/s
          */
         public static final double MAX_SPEED = Units.feetToMeters(15.1);
+
+        /**
+         * Output wheel diameter in meters
+         */
+        public static final double WHEEL_DIAMETER = Units.inchesToMeters(4);
+
+        /**
+         * Drive gear ratio from motor to output shaft
+         */
+        public static final double DRIVE_GEAR_RATIO = 6.75;
+
+        /**
+         * Turn gear ratio from motor to output shaft
+         */
+        public static final double TURN_GEAR_RATIO = 150/7D;
     }
 
     /**

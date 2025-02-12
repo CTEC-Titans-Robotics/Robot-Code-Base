@@ -55,8 +55,8 @@ public class Auto {
                 swerveDrive::setChassisSpeeds,
                 driveController,
                 config,
-                () -> false, // Change if needed
-                swerve);
+                () -> false
+        );
 
         autonChooser = new SendableChooser<>();
         autonChooser.setDefaultOption("No-op", new InstantCommand());

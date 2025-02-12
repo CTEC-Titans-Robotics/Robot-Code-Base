@@ -55,7 +55,6 @@ public class LogUtil {
                 } else if(entry.getValue() instanceof Number) {
                     SmartDashboard.putNumber(entry.getKey(), ((Number) entry.getValue()).doubleValue());
                 } else {
-
                     LOGGER.log(Level.WARNING, String.format("%s could not be registered as the type was not configured.", entry.getKey()));
                 }
             }

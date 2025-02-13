@@ -62,7 +62,8 @@ public abstract class Operator {
 
             lastPollElapsedTime = System.currentTimeMillis() - currentTime;
             if(lastPollElapsedTime > 20)
-                LogUtil.LOGGER.log(Level.SEVERE, "Loop overrun from Thread " + Thread.currentThread().getName());
+                LogUtil.LOGGER.log(Level.SEVERE, "Loop overrun from Thread " + Thread.currentThread().getName() +
+                        " with time " + lastPollElapsedTime);
         }
     }
 

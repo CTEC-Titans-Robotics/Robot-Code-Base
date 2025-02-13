@@ -43,7 +43,7 @@ public class PhotonMultiCam implements MultiCamVision {
     public Transform3d getTargetPose(String camName) {
         PhotonCameraStorage storage = cameras.get(camName);
 
-        PhotonTrackedTarget target = storage.camera.getTargets().getFirst();
+        PhotonTrackedTarget target = storage.camera.getTargets().get(0);
         if(target == null) {
             return null;
         }

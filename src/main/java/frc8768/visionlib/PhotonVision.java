@@ -58,7 +58,7 @@ public class PhotonVision implements Vision {
         if(getTargets().isEmpty()) {
             return -1;
         }
-        target = getTargets().getFirst();
+        target = getTargets().get(0);
 
         if(target != null) {
             double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestCameraToTarget().getY());
@@ -85,7 +85,7 @@ public class PhotonVision implements Vision {
         if(getTargets().isEmpty()) {
             return -1;
         }
-        target = getTargets().getFirst();
+        target = getTargets().get(0);
 
         if(target != null) {
             double maxY = 0;

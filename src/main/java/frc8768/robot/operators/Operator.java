@@ -1,6 +1,7 @@
 package frc8768.robot.operators;
 
 import frc8768.robot.Robot;
+import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 
 import java.util.logging.Level;
@@ -46,22 +47,22 @@ public abstract class Operator {
      */
     public void runLoop() {
         while(true) {
-            long currentTime = System.currentTimeMillis();
             try {
-                long waitTime = 20 - lastPollElapsedTime;
-                Thread.sleep(lastPollElapsedTime == 0 || waitTime < 0 ? 20 : waitTime);
+                long waitTime = Constants.POLL_RATE - lastPollElapsedTime;
+                Thread.sleep(lastPollElapsedTime == 0 || waitTime < 0 ? Constants.POLL_RATE : waitTime);
             } catch (InterruptedException e) {
                 LogUtil.LOGGER.log(Level.SEVERE, "An operator got interrupted during sleep!");
                 break;
             }
 
+            long currentTime = System.currentTimeMillis();
             if(!Robot.getInstance().isTeleop()) {
                 continue;
             }
             run();
 
             lastPollElapsedTime = System.currentTimeMillis() - currentTime;
-            if(lastPollElapsedTime > 20)
+            if(lastPollElapsedTime > Constants.POLL_RATE)
                 LogUtil.LOGGER.log(Level.SEVERE, "Loop overrun from Thread " + Thread.currentThread().getName() +
                         " with time " + lastPollElapsedTime);
         }

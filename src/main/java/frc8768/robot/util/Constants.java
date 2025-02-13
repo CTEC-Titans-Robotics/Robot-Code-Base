@@ -41,6 +41,11 @@ public class Constants {
     public static final double INERTIA = 4;
 
     /**
+     * How often to poll operators, ms
+     */
+    public static final int POLL_RATE = 20;
+
+    /**
      * Swerve-specific configuration.
      */
     public static class SwerveConfig {

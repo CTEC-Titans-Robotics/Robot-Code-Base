@@ -13,6 +13,7 @@ import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
+import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class Robot extends TimedRobot
     /**
      * Vision API instance
      */
-    public Vision vision;
+    public LimelightVision vision;
 
     /**
      * Auton Instance
@@ -107,12 +108,6 @@ public class Robot extends TimedRobot
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-
-        if(this.drivebase != null && !this.drivebase.isAlive()) {
-            LogUtil.LOGGER.log(Level.WARNING, "Drivebase thread died! Reviving...");
-            this.drivebase.reviveThread();
-        }
-
         LogUtil.run();
     }
 
@@ -127,16 +122,10 @@ public class Robot extends TimedRobot
     }
 
     /**
-     * Runs every "tick" of Autonomous time
+     * Runs every 20ms during Autonomous
      */
     @Override
     public void autonomousPeriodic() {
-        if(this.auto != null) {
-            if(!this.auto.getSelected().isScheduled()) {
-                return;
-            }
-            this.auto.getSelected().execute();
-        }
     }
 
     /**
@@ -146,7 +135,7 @@ public class Robot extends TimedRobot
     public void teleopInit() {}
 
     /**
-     * Runs every "tick" of Teleop time
+     * Runs every 20ms of Teleop
      */
     @Override
     public void teleopPeriodic() {
@@ -159,7 +148,7 @@ public class Robot extends TimedRobot
     public void testInit() {}
 
     /**
-     * Runs every "tick" of Test time
+     * Runs every 20ms of Test
      */
     @Override
     public void testPeriodic() {}

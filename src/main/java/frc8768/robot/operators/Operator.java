@@ -19,6 +19,11 @@ public abstract class Operator {
     private Thread opThread;
 
     /**
+     * INTERNAL USE ONLY
+     */
+    private long lastPollElapsedTime = 0;
+
+    /**
      * Operator constructor.
      *
      * @param name The name of the operator.
@@ -26,6 +31,7 @@ public abstract class Operator {
     public Operator(String name) {
         opThread = new Thread(this::runLoop);
         opThread.setName(String.format("%s Thread", name));
+        opThread.setUncaughtExceptionHandler((t, e) -> reviveThread());
     }
 
     /**
@@ -40,16 +46,23 @@ public abstract class Operator {
      */
     public void runLoop() {
         while(true) {
+            long currentTime = System.currentTimeMillis();
             try {
-                Thread.sleep(20);
+                long waitTime = 20 - lastPollElapsedTime;
+                Thread.sleep(lastPollElapsedTime == 0 || waitTime < 0 ? 20 : waitTime);
             } catch (InterruptedException e) {
                 LogUtil.LOGGER.log(Level.SEVERE, "An operator got interrupted during sleep!");
+                break;
             }
 
             if(!Robot.getInstance().isTeleop()) {
                 continue;
             }
             run();
+
+            lastPollElapsedTime = System.currentTimeMillis() - currentTime;
+            if(lastPollElapsedTime > 20)
+                LogUtil.LOGGER.log(Level.SEVERE, "Loop overrun from Thread " + Thread.currentThread().getName());
         }
     }
 

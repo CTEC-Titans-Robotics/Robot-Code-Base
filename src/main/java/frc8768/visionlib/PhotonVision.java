@@ -11,15 +11,14 @@ import java.util.List;
 /**
  * Impl for photonvision for Vision-related things.
  */
-public class PhotonVision extends Vision {
+public class PhotonVision implements Vision {
     private final PhotonCamera camera;
 
     /**
-     * @param type One of {@link Type}
-     *             NOTE: Limelight 3 is pi for now.
+     * @param name Camera hostname
      */
-    public PhotonVision(Type type) {
-        camera = new PhotonCamera(type.name);
+    public PhotonVision(String name) {
+        camera = new PhotonCamera(name);
     }
 
     /**
@@ -27,9 +26,10 @@ public class PhotonVision extends Vision {
      *
      * @return All targets in view.
      */
-    public List<PhotonPipelineResult> getTargets() {
-        if(!camera.getAllUnreadResults().isEmpty()) {
-            return camera.getAllUnreadResults();
+    public List<PhotonTrackedTarget> getTargets() {
+        List<PhotonPipelineResult> res = camera.getAllUnreadResults();
+        if(!res.isEmpty()) {
+            return res.get(0).getTargets();
         }
         return List.of();
     }
@@ -58,7 +58,7 @@ public class PhotonVision extends Vision {
         if(getTargets().isEmpty()) {
             return -1;
         }
-        target = getTargets().get(0).getBestTarget();
+        target = getTargets().getFirst();
 
         if(target != null) {
             double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : target.getBestCameraToTarget().getY());
@@ -85,7 +85,7 @@ public class PhotonVision extends Vision {
         if(getTargets().isEmpty()) {
             return -1;
         }
-        target = getTargets().get(0).getBestTarget();
+        target = getTargets().getFirst();
 
         if(target != null) {
             double maxY = 0;
@@ -96,43 +96,5 @@ public class PhotonVision extends Vision {
             }
         }
         return -1;
-    }
-
-    @Override
-    public int getTargetID() {
-        PhotonTrackedTarget target;
-
-        if(getTargets().isEmpty()) {
-            return -1;
-        }
-        target = getTargets().get(0).getBestTarget();
-
-        if(target != null) {
-            return target.getFiducialId();
-        }
-        return -1;
-    }
-
-    /**
-     * Type of {@link PhotonCamera}
-     */
-    public enum Type {
-        /**
-         * Raspberry Pi
-         */
-        PI("pi"),
-        /**
-         * Limelight 1 and 2
-         */
-        LIMELIGHT("limelight"),
-        /**
-         * Glowworm
-         */
-        GLOWWORM("glowworm");
-
-        private String name;
-        Type(String name) {
-            this.name = name;
-        }
     }
 }

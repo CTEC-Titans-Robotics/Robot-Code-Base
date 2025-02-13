@@ -4,7 +4,7 @@ import frc8768.visionlib.helpers.LimelightHelpers;
 
 import java.util.List;
 
-public class LimelightVision extends Vision {
+public class LimelightVision implements Vision {
     private final String limelightName;
 
     public LimelightVision(String name) {
@@ -44,14 +44,5 @@ public class LimelightVision extends Vision {
             return newClassifier.ty + 0.25;
         }
         return -1;
-    }
-
-    @Override
-    public int getTargetID() {
-        LimelightHelpers.LimelightTarget_Fiducial newClassifier = getTargets().get(0);
-        if(newClassifier == null) {
-            return -1;
-        }
-        return (int) newClassifier.fiducialID;
     }
 }

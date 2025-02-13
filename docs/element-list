@@ -5,3 +5,4 @@ frc8768.robot.subsystems
 frc8768.robot.util
 frc8768.visionlib
 frc8768.visionlib.helpers
+frc8768.visionlib.multicam

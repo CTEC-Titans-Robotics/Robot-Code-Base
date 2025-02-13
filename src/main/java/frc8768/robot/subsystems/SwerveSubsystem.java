@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Container class for everything Swerve
  */
-public class SwerveSubsystem implements Subsystem {
+public class SwerveSubsystem {
     /**
      * The underlying YAGSL implementation
      */
@@ -32,8 +32,8 @@ public class SwerveSubsystem implements Subsystem {
      * @throws IOException if it can't find the resources.
      */
     public SwerveSubsystem(MotorType type) throws IOException {
-        double metersPerRotation = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.75);
-        double metersPerDeg = SwerveMath.calculateDegreesPerSteeringRotation((double) 150/7);
+        double metersPerRotation = SwerveMath.calculateMetersPerRotation(Constants.SwerveConfig.WHEEL_DIAMETER, Constants.SwerveConfig.DRIVE_GEAR_RATIO);
+        double metersPerDeg = SwerveMath.calculateDegreesPerSteeringRotation(Constants.SwerveConfig.TURN_GEAR_RATIO);
 
         switch(type) {
             case SPARKMAX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/neo")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, metersPerDeg, metersPerRotation);
@@ -88,7 +88,7 @@ public class SwerveSubsystem implements Subsystem {
      * @return List of different Strings.
      */
     public List<String> log() {
-        // Insert string buffer/different logic for detecting errors here
+        // Insert string buffer/different logic for detecting faults here
         return new ArrayList<>();
     }
 }

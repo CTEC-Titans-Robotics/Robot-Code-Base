@@ -1,28 +1,21 @@
 package frc8768.visionlib;
 
-import org.photonvision.targeting.PhotonTrackedTarget;
-import org.photonvision.targeting.TargetCorner;
-
 import java.util.List;
 
-/**
- * Note: Limelight exposure needs to be tweaked per-comp
- */
-public abstract class Vision {
-
+public interface Vision {
     /**
      * Get all targets.
      *
      * @return All targets in view.
      */
-    public abstract List<?> getTargets();
+    List<?> getTargets();
 
     /**
      * Change the current pipeline.
      *
      * @param index Pipeline index, depends on your configuration.
      */
-    public abstract void changePipeline(int index);
+    void changePipeline(int index);
 
     /**
      * Get the Distance to target via trigonometry.
@@ -33,7 +26,7 @@ public abstract class Vision {
      * @param topY Get the top most location from the camera. See {@link #getMaxPointY() this method.}
      * @return Distance to target, returns -1 on fail.
      */
-    public abstract double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY);
+    double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY);
 
     /**
      * Sometimes, you may want to find the maximum Y for corners for the
@@ -41,10 +34,5 @@ public abstract class Vision {
      *
      * @return The maximum Y point for all corners, or -1 if none is found
      */
-    public abstract double getMaxPointY();
-
-    /**
-     * @return ID of the AprilTag if it exists
-     */
-    public abstract int getTargetID();
+    double getMaxPointY();
 }

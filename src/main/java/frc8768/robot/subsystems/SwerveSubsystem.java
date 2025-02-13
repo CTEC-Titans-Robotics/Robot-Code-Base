@@ -60,7 +60,7 @@ public class SwerveSubsystem {
                         volt -> swerveDrive.getModules()[0].getDriveMotor().setVoltage(volt.in(Units.Volts)),
                         log -> {
                             // Record a frame for the shooter motor.
-                            log.motor("drive-wheel")
+                            log.motor("drive-motor")
                                     .voltage(Units.Volts.of(swerveDrive.getModules()[0].getDriveMotor().getVoltage()))
                                     .linearPosition(Units.Meter.of(swerveDrive.getModules()[0].getDriveMotor().getPosition()))
                                     .linearVelocity(
@@ -76,9 +76,9 @@ public class SwerveSubsystem {
                         volt -> swerveDrive.getModules()[0].getAngleMotor().setVoltage(volt.in(Units.Volts)),
                         log -> {
                             // Record a frame for the shooter motor.
-                            log.motor("angle-wheel")
+                            log.motor("angle-motor")
                                     .voltage(Units.Volts.of(swerveDrive.getModules()[0].getAngleMotor().getVoltage()))
-                                    .angularPosition(Units.Degree.of(swerveDrive.getModules()[0].getAngleMotor().getPosition()))
+                                    .angularPosition(Units.Degree.of(swerveDrive.getModules()[0].getAbsolutePosition()))
                                     .angularVelocity(
                                             Units.DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
                         },

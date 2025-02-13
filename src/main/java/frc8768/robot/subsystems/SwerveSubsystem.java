@@ -2,9 +2,12 @@ package frc8768.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.MotorType;
 import swervelib.SwerveDrive;
@@ -23,6 +26,16 @@ import java.util.Map;
  */
 public class SwerveSubsystem {
     /**
+     * SysID routine for the Drive motor of module 0
+     */
+    private final SysIdRoutine driveSysIdRoutine;
+
+    /**
+     * SysID routine for the Angle motor of module 0
+     */
+    private final SysIdRoutine angleSysIdRoutine;
+
+    /**
      * The underlying YAGSL implementation
      */
     private SwerveDrive swerveDrive;
@@ -40,6 +53,38 @@ public class SwerveSubsystem {
             case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, metersPerDeg, metersPerRotation);
             case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, metersPerDeg, metersPerRotation);
         }
+
+        driveSysIdRoutine = new SysIdRoutine(
+                new SysIdRoutine.Config(),
+                new SysIdRoutine.Mechanism(
+                        volt -> swerveDrive.getModules()[0].getDriveMotor().setVoltage(volt.in(Units.Volts)),
+                        log -> {
+                            // Record a frame for the shooter motor.
+                            log.motor("drive-wheel")
+                                    .voltage(Units.Volts.of(swerveDrive.getModules()[0].getDriveMotor().getVoltage()))
+                                    .linearPosition(Units.Meter.of(swerveDrive.getModules()[0].getDriveMotor().getPosition()))
+                                    .linearVelocity(
+                                            Units.MetersPerSecond.of(swerveDrive.getModules()[0].getDriveMotor().getVelocity()));
+                        },
+                        null
+                )
+        );
+
+        angleSysIdRoutine = new SysIdRoutine(
+                new SysIdRoutine.Config(),
+                new SysIdRoutine.Mechanism(
+                        volt -> swerveDrive.getModules()[0].getAngleMotor().setVoltage(volt.in(Units.Volts)),
+                        log -> {
+                            // Record a frame for the shooter motor.
+                            log.motor("angle-wheel")
+                                    .voltage(Units.Volts.of(swerveDrive.getModules()[0].getAngleMotor().getVoltage()))
+                                    .angularPosition(Units.Degree.of(swerveDrive.getModules()[0].getAngleMotor().getPosition()))
+                                    .angularVelocity(
+                                            Units.DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
+                        },
+                        null
+                )
+        );
     }
 
     /**
@@ -80,6 +125,42 @@ public class SwerveSubsystem {
      */
     public Map<String, Object> dashboard() {
         return new HashMap<>();
+    }
+
+    /**
+     * Get the command for SysID Drive
+     *
+     * @return The associated command
+     */
+    public Command sysIdQuasistaticDrive(SysIdRoutine.Direction direction) {
+        return driveSysIdRoutine.quasistatic(direction);
+    }
+
+    /**
+     * Get the command for SysID Angle
+     *
+     * @return The associated command
+     */
+    public Command sysIdQuasistaticAngle(SysIdRoutine.Direction direction) {
+        return angleSysIdRoutine.quasistatic(direction);
+    }
+
+    /**
+     * Get the command for SysID Drive
+     *
+     * @return The associated command
+     */
+    public Command sysIdDynamicDrive(SysIdRoutine.Direction direction) {
+        return driveSysIdRoutine.dynamic(direction);
+    }
+
+    /**
+     * Get the command for SysID Angle
+     *
+     * @return The associated command
+     */
+    public Command sysIdDynamicAngle(SysIdRoutine.Direction direction) {
+        return angleSysIdRoutine.dynamic(direction);
     }
 
     /**

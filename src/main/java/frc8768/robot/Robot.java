@@ -125,8 +125,7 @@ public class Robot extends TimedRobot
      * Runs every 20ms during Autonomous
      */
     @Override
-    public void autonomousPeriodic() {
-    }
+    public void autonomousPeriodic() {}
 
     /**
      * Runs at the start of Teleop state
@@ -138,8 +137,7 @@ public class Robot extends TimedRobot
      * Runs every 20ms of Teleop
      */
     @Override
-    public void teleopPeriodic() {
-    }
+    public void teleopPeriodic() {}
 
     /**
      * Runs at the start of Test state

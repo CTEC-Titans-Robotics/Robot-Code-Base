@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc8768.robot.subsystems.GroundIndefector;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
@@ -12,10 +13,10 @@ import frc8768.robot.util.LogUtil;
  * Operator for driving the bot
  */
 public class DrivebaseOperator extends Operator {
-    private static final XboxController controller = new XboxController(Constants.DRIVER_CONTROLLER_ID);
+    private final XboxController controller;
     private final SwerveSubsystem swerve;
     private Command currCommand;
-
+    private GroundIndefector indefector;
 
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
@@ -25,12 +26,15 @@ public class DrivebaseOperator extends Operator {
      *
      * @param swerve The required subsystem for this operator.
      */
-    public DrivebaseOperator(SwerveSubsystem swerve) {
+    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector) {
         super("Drivebase");
 
         this.swerve = swerve;
+        this.controller = controller;
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
+
+        this.indefector = indefector;
 
         // Init logging
         LogUtil.registerLogger(swerve::log);
@@ -57,6 +61,23 @@ public class DrivebaseOperator extends Operator {
         if(this.currCommand != null && !this.currCommand.isFinished()) {
             return;
         }
+
+        if(controller.getLeftBumperButton()) {
+            indefector.move(false);
+        } else if(controller.getLeftTriggerAxis() >= Constants.CONTROLLER_DEADBAND) {
+            indefector.move(true);
+        } else {
+            indefector.stop();
+        }
+
+        if(controller.getRightBumperButton()) {
+            indefector.intake(false);
+        } else if(controller.getRightTriggerAxis() >= Constants.CONTROLLER_DEADBAND) {
+            indefector.intake(true);
+        } else {
+            indefector.stopIntake();
+        }
+
         // Swerve Example
         this.swerve.drive(translation2d, MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND), true, true, Constants.BOT_CENTER);
 

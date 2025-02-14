@@ -6,19 +6,24 @@ import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-public class Elevator implements Subsystem {
-
+public class Elevator {
     private  final SparkBaseConfig ELEVATOR_BASE_CONFIG = new SparkFlexConfig()
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
-    private final SparkFlex  elevatorMotor2, elevatorMotor1;
+    private final SparkFlex elevatorMotor2, elevatorMotor1;
 
-    public  Elevator () {
-        elevatorMotor2 = new SparkFlex(0 /* FIXME */,SparkLowLevel.MotorType.kBrushless);
-        elevatorMotor1 = new SparkFlex(0 /* FIXME */, SparkLowLevel.MotorType.kBrushless);
+    public Elevator () {
+        elevatorMotor1 = new SparkFlex(17,SparkLowLevel.MotorType.kBrushless);
+        elevatorMotor2 = new SparkFlex(18, SparkLowLevel.MotorType.kBrushless);
 
-        elevatorMotor2.configure(new SparkFlexConfig().apply(ELEVATOR_BASE_CONFIG), SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
-        elevatorMotor1.configure(new SparkFlexConfig().apply(ELEVATOR_BASE_CONFIG).follow(elevatorMotor2),
+        elevatorMotor1.configure(new SparkFlexConfig().apply(ELEVATOR_BASE_CONFIG), SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
+        elevatorMotor2.configure(new SparkFlexConfig().apply(ELEVATOR_BASE_CONFIG).follow(elevatorMotor1),
                 SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
     }
 
+    /**
+     * Up is positive, down is negative
+     */
+    public void move(boolean down) {
+        elevatorMotor1.set(down ? 0.05 : -0.05);
+    }
 }

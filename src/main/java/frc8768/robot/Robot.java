@@ -7,9 +7,12 @@ package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
+import frc8768.robot.subsystems.GroundIndefector;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
@@ -17,7 +20,6 @@ import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -27,6 +29,8 @@ import java.util.logging.Level;
  */
 public class Robot extends TimedRobot
 {
+    private static final XboxController driveController = new XboxController(Constants.DRIVER_CONTROLLER_ID);
+
     /**
      * Robot instance, can't be seen across threads
      */
@@ -41,6 +45,7 @@ public class Robot extends TimedRobot
      * The swerve subsystem, held in here for Auton.
      */
     private SwerveSubsystem swerve;
+    private GroundIndefector groundIndefector;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
 
@@ -76,13 +81,14 @@ public class Robot extends TimedRobot
         CameraServer.startAutomaticCapture();
 
         try {
-          swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
+          this.swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
         } catch (IOException io) {
           throw new RuntimeException("Swerve failed to create!", io);
         }
 
+        this.groundIndefector = new GroundIndefector();
 
-        this.drivebase = new DrivebaseOperator(this.swerve);
+        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector);
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
@@ -149,5 +155,25 @@ public class Robot extends TimedRobot
      * Runs every 20ms of Test
      */
     @Override
-    public void testPeriodic() {}
+    public void testPeriodic() {
+        if(driveController.getAButtonPressed()) {
+            swerve.sysIdQuasistaticDrive(SysIdRoutine.Direction.kForward).schedule();
+        } else if(driveController.getBButtonPressed()) {
+            swerve.sysIdQuasistaticAngle(SysIdRoutine.Direction.kForward).schedule();
+        } else if(driveController.getXButtonPressed()) {
+            swerve.sysIdDynamicDrive(SysIdRoutine.Direction.kForward).schedule();
+        } else if(driveController.getYButtonPressed()) {
+            swerve.sysIdDynamicAngle(SysIdRoutine.Direction.kForward).schedule();
+        }
+
+        if(driveController.getPOV() == 0) {
+            swerve.sysIdQuasistaticDrive(SysIdRoutine.Direction.kReverse).schedule();
+        } else if(driveController.getPOV() == 90) {
+            swerve.sysIdQuasistaticAngle(SysIdRoutine.Direction.kReverse).schedule();
+        } else if(driveController.getPOV() == 180) {
+            swerve.sysIdDynamicDrive(SysIdRoutine.Direction.kReverse).schedule();
+        } else if(driveController.getPOV() == 270) {
+            swerve.sysIdDynamicAngle(SysIdRoutine.Direction.kReverse).schedule();
+        }
+    }
 }

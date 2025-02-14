@@ -18,7 +18,7 @@ public class Constants {
     /**
      * Controller deadband, prevents accidental input
      */
-    public static final double CONTROLLER_DEADBAND = 0.1;
+    public static final double CONTROLLER_DEADBAND = 0.05;
 
     /**
      * Center of bot
@@ -57,7 +57,7 @@ public class Constants {
         /**
          * Max drive motor speed, m/s
          */
-        public static final double MAX_SPEED = Units.feetToMeters(15.1);
+        public static final double MAX_SPEED = Units.feetToMeters(19.5);
 
         /**
          * Output wheel diameter in meters
@@ -67,11 +67,16 @@ public class Constants {
         /**
          * Drive gear ratio from motor to output shaft
          */
-        public static final double DRIVE_GEAR_RATIO = 6.75;
+        public static final double DRIVE_GEAR_RATIO = 5.36;
 
         /**
          * Turn gear ratio from motor to output shaft
          */
         public static final double TURN_GEAR_RATIO = 150/7D;
+
+        /**
+         * Max rotation speed
+         */
+        public static final double MAX_ROTATION_SPEED = Math.toRadians(450);
     }
 }

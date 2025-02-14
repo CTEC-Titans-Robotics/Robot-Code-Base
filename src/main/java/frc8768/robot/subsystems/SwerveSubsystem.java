@@ -66,7 +66,7 @@ public class SwerveSubsystem {
                                     .linearVelocity(
                                             Units.MetersPerSecond.of(swerveDrive.getModules()[0].getDriveMotor().getVelocity()));
                         },
-                        null
+                        new Subsystem() {}
                 )
         );
 
@@ -82,7 +82,7 @@ public class SwerveSubsystem {
                                     .angularVelocity(
                                             Units.DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
                         },
-                        null
+                        new Subsystem() {}
                 )
         );
     }
@@ -97,7 +97,7 @@ public class SwerveSubsystem {
      * @param pivotPoint 2d Pivot point for rotation
      */
     public void drive(Translation2d translation2d, double rotation, boolean fieldRelative, boolean isOpenLoop, Translation2d pivotPoint) {
-        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * Math.toRadians(450), fieldRelative, isOpenLoop, pivotPoint);
+        swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * Constants.SwerveConfig.MAX_ROTATION_SPEED, fieldRelative, isOpenLoop, pivotPoint);
     }
 
     /**
@@ -124,7 +124,14 @@ public class SwerveSubsystem {
      * @return Map of Name to Value
      */
     public Map<String, Object> dashboard() {
-        return new HashMap<>();
+        HashMap<String, Object> encoder = new HashMap<>();
+
+        encoder.put("frontleft", swerveDrive.getModules()[0].getAbsolutePosition());
+        encoder.put("frontright", swerveDrive.getModules()[1].getAbsolutePosition());
+        encoder.put("backleft", swerveDrive.getModules()[2].getAbsolutePosition());
+        encoder.put("backright", swerveDrive.getModules()[3].getAbsolutePosition());
+
+        return encoder;
     }
 
     /**

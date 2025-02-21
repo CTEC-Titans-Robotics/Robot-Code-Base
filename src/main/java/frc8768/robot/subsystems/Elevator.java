@@ -7,12 +7,13 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 public class Elevator {
-    private  final SparkBaseConfig ELEVATOR_BASE_CONFIG = new SparkFlexConfig()
+    private static final SparkBaseConfig ELEVATOR_BASE_CONFIG = new SparkFlexConfig()
+            .inverted(true)
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
     private final SparkFlex elevatorMotor2, elevatorMotor1;
 
-    public Elevator () {
-        elevatorMotor1 = new SparkFlex(17,SparkLowLevel.MotorType.kBrushless);
+    public Elevator() {
+        elevatorMotor1 = new SparkFlex(17, SparkLowLevel.MotorType.kBrushless);
         elevatorMotor2 = new SparkFlex(18, SparkLowLevel.MotorType.kBrushless);
 
         elevatorMotor1.configure(new SparkFlexConfig().apply(ELEVATOR_BASE_CONFIG), SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
@@ -23,7 +24,11 @@ public class Elevator {
     /**
      * Up is positive, down is negative
      */
-    public void move(boolean down) {
-        elevatorMotor1.set(down ? 0.05 : -0.05);
+    public void up() {
+        elevatorMotor1.set(0.05);
+    }
+
+    public void down() {
+        elevatorMotor1.set(-0.05);
     }
 }

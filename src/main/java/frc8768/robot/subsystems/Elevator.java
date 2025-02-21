@@ -17,7 +17,7 @@ public class Elevator {
         elevatorMotor2 = new SparkFlex(18, SparkLowLevel.MotorType.kBrushless);
 
         elevatorMotor1.configure(new SparkFlexConfig().apply(ELEVATOR_BASE_CONFIG), SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
-        elevatorMotor2.configure(new SparkFlexConfig().apply(ELEVATOR_BASE_CONFIG).follow(elevatorMotor1),
+        elevatorMotor2.configure(new SparkFlexConfig().apply(ELEVATOR_BASE_CONFIG).follow(elevatorMotor1, true),
                 SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
     }
 
@@ -25,10 +25,14 @@ public class Elevator {
      * Up is positive, down is negative
      */
     public void up() {
-        elevatorMotor1.set(0.05);
+        elevatorMotor1.set(0.1);
     }
 
     public void down() {
         elevatorMotor1.set(-0.05);
+    }
+
+    public void stop() {
+        elevatorMotor1.set(0);
     }
 }

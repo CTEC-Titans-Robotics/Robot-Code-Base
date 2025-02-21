@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
+import frc8768.robot.subsystems.Elevator;
 import frc8768.robot.subsystems.GroundIndefector;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot
      */
     private SwerveSubsystem swerve;
     private GroundIndefector groundIndefector;
+    private Elevator elevator;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
 
@@ -87,6 +89,7 @@ public class Robot extends TimedRobot
         }
 
         this.groundIndefector = new GroundIndefector();
+        this.elevator = new Elevator();
 
         this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector);
         // this.auto = new Auto(swerve);
@@ -156,7 +159,7 @@ public class Robot extends TimedRobot
      */
     @Override
     public void testPeriodic() {
-        if(driveController.getAButtonPressed()) {
+      /*  if(driveController.getAButtonPressed()) {
             swerve.sysIdQuasistaticDrive(SysIdRoutine.Direction.kForward).schedule();
         } else if(driveController.getBButtonPressed()) {
             swerve.sysIdQuasistaticAngle(SysIdRoutine.Direction.kForward).schedule();
@@ -175,5 +178,16 @@ public class Robot extends TimedRobot
         } else if(driveController.getPOV() == 270) {
             swerve.sysIdDynamicAngle(SysIdRoutine.Direction.kReverse).schedule();
         }
+
+       */
+        if(driveController.getYButton()) {
+            elevator.up();
+        } else if (driveController.getAButton()) {
+            elevator.down();
+
+        } else {
+            elevator.stop();
+        }
+
     }
 }

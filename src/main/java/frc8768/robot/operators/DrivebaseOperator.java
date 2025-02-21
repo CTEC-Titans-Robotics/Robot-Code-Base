@@ -15,8 +15,8 @@ import frc8768.robot.util.LogUtil;
 public class DrivebaseOperator extends Operator {
     private final XboxController controller;
     private final SwerveSubsystem swerve;
+    private final GroundIndefector indefector;
     private Command currCommand;
-    private GroundIndefector indefector;
 
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
@@ -63,17 +63,17 @@ public class DrivebaseOperator extends Operator {
         }
 
         if(controller.getLeftBumperButton()) {
-            indefector.move(false);
+            indefector.backwards();
         } else if(controller.getLeftTriggerAxis() >= Constants.CONTROLLER_DEADBAND) {
-            indefector.move(true);
+            indefector.forward();
         } else {
             indefector.stop();
         }
 
         if(controller.getRightBumperButton()) {
-            indefector.intake(false);
+            indefector.spinIntake(false);
         } else if(controller.getRightTriggerAxis() >= Constants.CONTROLLER_DEADBAND) {
-            indefector.intake(true);
+            indefector.spinIntake(true);
         } else {
             indefector.stopIntake();
         }

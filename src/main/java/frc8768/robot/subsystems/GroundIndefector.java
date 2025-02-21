@@ -47,21 +47,27 @@ public class GroundIndefector implements Subsystem {
     /**
      * Up is positive, down is negative
      */
-    public void move(boolean down) {
-        if(lowerBound < getPosition() && down) {
-            stop();
-        } else if(upperBound > getPosition() && !down) {
+    public void forward() {
+        if(lowerBound < getPosition()) {
             stop();
         } else {
             zRotMotor.set(
-                    down ? MathUtil.clamp(-Math.abs(lowerBound/getPosition()), -0.04, 0)
-                            :
-                            MathUtil.clamp(Math.abs(getPosition()/upperBound), 0, 0.30)
+                    MathUtil.clamp(-Math.abs(lowerBound/getPosition()), -0.04, 0)
             );
         }
     }
 
-    public void intake(boolean outTake) {
+    public void backwards() {
+        if(upperBound > getPosition()) {
+            stop();
+        } else {
+            zRotMotor.set(
+                    MathUtil.clamp(Math.abs(getPosition()/upperBound), 0, 0.30)
+            );
+        }
+    }
+
+    public void spinIntake(boolean outTake) {
         intakeMotor.set(outTake ? 0.5 : -0.30);
     }
 

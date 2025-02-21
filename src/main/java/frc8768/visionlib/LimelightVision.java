@@ -26,7 +26,7 @@ public class LimelightVision implements Vision {
         LimelightHelpers.LimelightTarget_Fiducial classifier = getTargets().get(0);
         if(classifier != null) {
             double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : classifier.ty);
-            double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+            double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
 
             double distance = (goalHeight - mountHeight) / Math.tan(angleToGoalRadians);
             if(distance <= 0) {

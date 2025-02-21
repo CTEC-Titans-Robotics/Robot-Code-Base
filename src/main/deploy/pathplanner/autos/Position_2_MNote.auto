@@ -1,0 +1,61 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.5740411480822979,
+      "y": 4.410523436431489
+    },
+    "rotation": -59.678763557718035
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "speaker_shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 1 Prep"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "drop_arm"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note 1 Pickup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop_intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shooting Pos 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "speaker_shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "MNote",
+  "choreoAuto": false
+}

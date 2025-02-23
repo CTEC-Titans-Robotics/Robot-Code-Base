@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc8768.robot.subsystems.Elevator;
 import frc8768.robot.subsystems.GroundIndefector;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
@@ -16,6 +17,7 @@ public class DrivebaseOperator extends Operator {
     private final XboxController controller;
     private final SwerveSubsystem swerve;
     private final GroundIndefector indefector;
+    private final Elevator elevator;
     private Command currCommand;
 
     // private final TankSubsystemSpark sparkTank;
@@ -26,7 +28,7 @@ public class DrivebaseOperator extends Operator {
      *
      * @param swerve The required subsystem for this operator.
      */
-    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector) {
+    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
         super("Drivebase");
 
         this.swerve = swerve;
@@ -35,6 +37,7 @@ public class DrivebaseOperator extends Operator {
         // falconTank = Robot.getInstance().getFalcon();
 
         this.indefector = indefector;
+        this.elevator = elevator;
 
         // Init logging
         LogUtil.registerLogger(swerve::log);

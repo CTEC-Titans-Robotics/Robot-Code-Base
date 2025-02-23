@@ -91,7 +91,7 @@ public class Robot extends TimedRobot
         this.groundIndefector = new GroundIndefector();
         this.elevator = new Elevator();
 
-        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector);
+        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector, this.elevator);
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
@@ -184,10 +184,8 @@ public class Robot extends TimedRobot
             elevator.up();
         } else if (driveController.getAButton()) {
             elevator.down();
-
         } else {
             elevator.stop();
         }
-
     }
 }

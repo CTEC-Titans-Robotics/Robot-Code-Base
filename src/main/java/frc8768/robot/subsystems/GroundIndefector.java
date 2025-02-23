@@ -15,9 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GroundIndefector implements Subsystem {
-    private static final double angleOffset = 39.28710937499999;
+    private static final double angleOffset = -192.3046875;
     private static final double upperBound = 5;
-    private static final double lowerBound = 160;
+    private static final double lowerBound = 168;
 
     private static final SparkBaseConfig INTAKE_BASE_CONFIG = new SparkFlexConfig()
                 .idleMode(SparkBaseConfig.IdleMode.kBrake);
@@ -62,13 +62,13 @@ public class GroundIndefector implements Subsystem {
             stop();
         } else {
             zRotMotor.set(
-                    MathUtil.clamp(Math.abs(getPosition()/upperBound), 0, 0.30)
+                    MathUtil.clamp(Math.abs(getPosition()/upperBound), 0, 0.15)
             );
         }
     }
 
     public void spinIntake(boolean outTake) {
-        intakeMotor.set(outTake ? 0.5 : -0.30);
+        intakeMotor.set(outTake ? 0.5 : -0.40);
     }
 
     public void stopIntake() {

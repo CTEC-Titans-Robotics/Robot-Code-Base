@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.auto.Auto;
+import frc8768.robot.operators.AuxiliaryOperator;
 import frc8768.robot.operators.DrivebaseOperator;
+import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.Elevator;
 import frc8768.robot.subsystems.GroundIndefector;
 import frc8768.robot.subsystems.SwerveSubsystem;
@@ -31,6 +33,7 @@ import java.io.IOException;
 public class Robot extends TimedRobot
 {
     private static final XboxController driveController = new XboxController(Constants.DRIVER_CONTROLLER_ID);
+    private static final XboxController auxController = new XboxController(1);
 
     /**
      * Robot instance, can't be seen across threads
@@ -41,6 +44,7 @@ public class Robot extends TimedRobot
      * Drivebase Operator
      */
     private DrivebaseOperator drivebase;
+    private AuxiliaryOperator auxiliary;
 
     /**
      * The swerve subsystem, held in here for Auton.
@@ -48,6 +52,7 @@ public class Robot extends TimedRobot
     private SwerveSubsystem swerve;
     private GroundIndefector groundIndefector;
     private Elevator elevator;
+    private Arm arm;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
 
@@ -90,11 +95,14 @@ public class Robot extends TimedRobot
 
         this.groundIndefector = new GroundIndefector();
         this.elevator = new Elevator();
+        this.arm = new Arm();
 
         this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector, this.elevator);
+        this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
+        this.auxiliary.init();
         this.drivebase.init();
     }
 

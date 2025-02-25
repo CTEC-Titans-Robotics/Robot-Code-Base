@@ -31,7 +31,7 @@ public class GroundIndefector implements Subsystem {
     public GroundIndefector() {
         intakeMotor = new SparkFlex(16, SparkLowLevel.MotorType.kBrushless);
         zRotMotor = new SparkFlex(15, SparkLowLevel.MotorType.kBrushless);
-        absEncoder = new CANcoder(21);
+        absEncoder = new CANcoder(21, "auxiliary");
 
         intakeMotor.configure(new SparkFlexConfig().apply(INTAKE_BASE_CONFIG), SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
         zRotMotor.configure(Z_ROT_CONFIG,

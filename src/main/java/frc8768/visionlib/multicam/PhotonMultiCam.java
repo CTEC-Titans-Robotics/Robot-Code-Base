@@ -1,6 +1,5 @@
 package frc8768.visionlib.multicam;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.PhotonVision;
@@ -47,14 +46,14 @@ public class PhotonMultiCam implements MultiCamVision {
         if(target == null) {
             return null;
         }
-        return target.getBestCameraToTarget().plus(storage.mountPos.inverse()); // TODO TEST
+        return target.getBestCameraToTarget().plus(storage.mountPos.inverse()); // TODO test this
     }
 
     @Override
     public List<PhotonTrackedTarget> getTargets() {
         ArrayList<PhotonTrackedTarget> targets = new ArrayList<>();
-        for(PhotonCameraStorage storage : cameras.values())
-            targets.addAll(storage.camera.getTargets());
+        for(String name : cameras.keySet())
+            targets.addAll(getTargetsForCam(name));
 
         return targets;
     }

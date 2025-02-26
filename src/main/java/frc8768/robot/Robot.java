@@ -6,6 +6,8 @@
 package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -21,6 +23,7 @@ import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
+import frc8768.visionlib.multicam.PhotonMultiCam;
 
 import java.io.IOException;
 
@@ -51,7 +54,7 @@ public class Robot extends TimedRobot
      */
     private SwerveSubsystem swerve;
     private GroundIndefector groundIndefector;
-    private Elevator elevator;
+    //private Elevator elevator;
     private Arm arm;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
@@ -59,7 +62,8 @@ public class Robot extends TimedRobot
     /**
      * Vision API instance
      */
-    public LimelightVision vision;
+    public LimelightVision frontVision, backVision;
+    public PhotonMultiCam robotCams;
 
     /**
      * Auton Instance
@@ -86,6 +90,16 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit() {
         CameraServer.startAutomaticCapture();
+        /*
+        frontVision = new LimelightVision("front");
+        backVision = new LimelightVision("back");
+        robotCams = new PhotonMultiCam();
+
+        robotCams.addCamera("fl", new Transform3d(0, 0, 0, Rotation3d.kZero));
+        robotCams.addCamera("fr", new Transform3d(0, 0, 0, Rotation3d.kZero));
+        robotCams.addCamera("bl", new Transform3d(0, 0, 0, Rotation3d.kZero));
+        robotCams.addCamera("br", new Transform3d(0, 0, 0, Rotation3d.kZero));
+         */
 
         try {
           this.swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
@@ -94,11 +108,11 @@ public class Robot extends TimedRobot
         }
 
         this.groundIndefector = new GroundIndefector();
-        this.elevator = new Elevator();
+        //this.elevator = new Elevator();
         this.arm = new Arm();
 
-        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector, this.elevator);
-        this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
+        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector);
+        this.auxiliary = new AuxiliaryOperator(auxController, null, this.arm);
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
@@ -115,10 +129,6 @@ public class Robot extends TimedRobot
     }
      */
 
-    public Vision getVision() {
-        return this.vision;
-    }
-
     /**
      * Runs even if the Robot is disabled.
      */
@@ -126,6 +136,9 @@ public class Robot extends TimedRobot
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
         LogUtil.run();
+
+        //elevator.tick();
+        arm.tick();
     }
 
     /**
@@ -138,6 +151,11 @@ public class Robot extends TimedRobot
         }
     }
 
+    @Override
+    public void disabledPeriodic() {
+        //elevator.moveToState(Elevator.ElevatorState.ZERO);
+    }
+
     /**
      * Runs every 20ms during Autonomous
      */
@@ -148,7 +166,8 @@ public class Robot extends TimedRobot
      * Runs at the start of Teleop state
      */
     @Override
-    public void teleopInit() {}
+    public void teleopInit() {
+    }
 
     /**
      * Runs every 20ms of Teleop
@@ -188,12 +207,5 @@ public class Robot extends TimedRobot
         }
 
        */
-        if(driveController.getYButton()) {
-            elevator.up();
-        } else if (driveController.getAButton()) {
-            elevator.down();
-        } else {
-            elevator.stop();
-        }
     }
 }

@@ -15,9 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GroundIndefector implements Subsystem {
-    private static final double angleOffset = -192.3046875;
-    private static final double upperBound = 5;
-    private static final double lowerBound = 168;
+    private static final double angleOffset = 152.75390625;
+    private static final double angleOffset2 = 360 - angleOffset;
+    private static final double upperBound = 25;
+    private static final double lowerBound = 170;
 
     private static final SparkBaseConfig INTAKE_BASE_CONFIG = new SparkFlexConfig()
                 .idleMode(SparkBaseConfig.IdleMode.kBrake);
@@ -31,7 +32,7 @@ public class GroundIndefector implements Subsystem {
     public GroundIndefector() {
         intakeMotor = new SparkFlex(16, SparkLowLevel.MotorType.kBrushless);
         zRotMotor = new SparkFlex(15, SparkLowLevel.MotorType.kBrushless);
-        absEncoder = new CANcoder(21, "auxiliary");
+        absEncoder = new CANcoder(21);
 
         intakeMotor.configure(new SparkFlexConfig().apply(INTAKE_BASE_CONFIG), SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
         zRotMotor.configure(Z_ROT_CONFIG,
@@ -41,7 +42,12 @@ public class GroundIndefector implements Subsystem {
     }
 
     private double getPosition() {
-        return absEncoder.getPosition().getValue().in(Units.Degree) - angleOffset;
+        if(absEncoder.getPosition().getValue().in(Units.Degree) >= angleOffset - 5) {
+            return Math.abs(absEncoder.getPosition().getValue().in(Units.Degree) - angleOffset);
+        } else if (absEncoder.getPosition().getValue().in(Units.Degree) <= angleOffset2) {
+            return Math.abs(absEncoder.getPosition().getValue().in(Units.Degree) + angleOffset2);
+        }
+        return 0;
     }
 
     /**
@@ -68,7 +74,7 @@ public class GroundIndefector implements Subsystem {
     }
 
     public void spinIntake(boolean outTake) {
-        intakeMotor.set(outTake ? 0.5 : -0.40);
+        intakeMotor.set(outTake ? 0.5 : -0.4);
     }
 
     public void stopIntake() {

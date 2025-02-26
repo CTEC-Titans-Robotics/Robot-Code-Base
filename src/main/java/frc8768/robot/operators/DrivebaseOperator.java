@@ -17,8 +17,6 @@ public class DrivebaseOperator extends Operator {
     private final XboxController controller;
     private final SwerveSubsystem swerve;
     private final GroundIndefector indefector;
-    private final Elevator elevator;
-    private Command currCommand;
 
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
@@ -28,7 +26,7 @@ public class DrivebaseOperator extends Operator {
      *
      * @param swerve The required subsystem for this operator.
      */
-    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
+    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector) {
         super("Drivebase");
 
         this.swerve = swerve;
@@ -37,7 +35,6 @@ public class DrivebaseOperator extends Operator {
         // falconTank = Robot.getInstance().getFalcon();
 
         this.indefector = indefector;
-        this.elevator = elevator;
 
         // Init logging
         LogUtil.registerLogger(swerve::log);
@@ -51,26 +48,8 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.CONTROLLER_DEADBAND),
                 MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.CONTROLLER_DEADBAND));
 
-        if((MathUtil.applyDeadband(controller.getLeftX(), Constants.CONTROLLER_DEADBAND) != 0 || MathUtil.applyDeadband(controller.getLeftY(), Constants.CONTROLLER_DEADBAND) != 0 ||
-                MathUtil.applyDeadband(controller.getRightX(), Constants.CONTROLLER_DEADBAND) != 0) && currCommand != null) {
-            this.currCommand.cancel();
-            this.currCommand = null;
-        }
-
-        if(this.currCommand != null && !this.currCommand.isFinished()) {
-            return;
-        }
-
         if (controller.getBButtonPressed()) {
             swerve.getSwerveDrive().zeroGyro();
-        }
-
-        if (controller.getAButton()) {
-            elevator.down();
-        } else if (controller.getYButton()) {
-            elevator.up();
-        } else {
-            elevator.stop();
         }
 
         if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
@@ -84,9 +63,9 @@ public class DrivebaseOperator extends Operator {
         if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
             // Don't do anything.
         } else if(controller.getRightBumperButton()) {
-            indefector.forward();
-        } else if(controller.getRightTriggerAxis() > 0.1) {
             indefector.backwards();
+        } else if(controller.getRightTriggerAxis() > 0.1) {
+            indefector.forward();
         } else {
             indefector.stop();
         }
@@ -98,12 +77,24 @@ public class DrivebaseOperator extends Operator {
             xRobotRelative = 0.75;
         } else if (controller.getPOV() == 180) {
             xRobotRelative = -.75;
-        }
-
-        if (controller.getPOV() == 90) {
+        } else if (controller.getPOV() == 90) {
             yRobotRelative = 0.75;
         } else if (controller.getPOV() == 270) {
             yRobotRelative = -.75;
+        }
+
+        if (controller.getPOV() == 45) {
+            xRobotRelative = 0.75;
+            yRobotRelative = 0.75;
+        } else if (controller.getPOV() == 135) {
+            xRobotRelative = -0.75;
+            yRobotRelative = 0.75;
+        } else if (controller.getPOV() == 225) {
+            xRobotRelative = -.75;
+            yRobotRelative = -.75;
+        } else if (controller.getPOV() == 315) {
+            xRobotRelative = -.75;
+            yRobotRelative = .75;
         }
 
         Translation2d robotRelative = new Translation2d(xRobotRelative, yRobotRelative);

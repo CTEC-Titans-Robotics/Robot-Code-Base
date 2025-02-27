@@ -59,6 +59,7 @@ public class Auto {
         );
 
         autonChooser = new SendableChooser<>();
+        autonChooser.addOption("Taxi", AutoBuilder.buildAuto("taxi"));
         autonChooser.setDefaultOption("No-op", new InstantCommand());
     }
 

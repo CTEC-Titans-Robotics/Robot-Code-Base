@@ -43,7 +43,7 @@ public class Constants {
     /**
      * How often to poll operators, ms
      */
-    public static final int POLL_RATE = 20;
+    public static final int POLL_RATE = 50;
 
     /**
      * Swerve-specific configuration.

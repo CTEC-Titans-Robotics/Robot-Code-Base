@@ -54,7 +54,7 @@ public class Robot extends TimedRobot
      */
     private SwerveSubsystem swerve;
     private GroundIndefector groundIndefector;
-    //private Elevator elevator;
+    private Elevator elevator;
     private Arm arm;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
@@ -108,11 +108,11 @@ public class Robot extends TimedRobot
         }
 
         this.groundIndefector = new GroundIndefector();
-        //this.elevator = new Elevator();
+        this.elevator = new Elevator();
         this.arm = new Arm();
 
-        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector);
-        this.auxiliary = new AuxiliaryOperator(auxController, null, this.arm);
+        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector, this.elevator);
+        this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
@@ -137,7 +137,7 @@ public class Robot extends TimedRobot
         CommandScheduler.getInstance().run();
         LogUtil.run();
 
-        //elevator.tick();
+        elevator.tick();
         arm.tick();
     }
 
@@ -153,7 +153,7 @@ public class Robot extends TimedRobot
 
     @Override
     public void disabledPeriodic() {
-        //elevator.moveToState(Elevator.ElevatorState.ZERO);
+        elevator.moveToState(Elevator.ElevatorState.ZERO);
     }
 
     /**

@@ -17,6 +17,7 @@ public class DrivebaseOperator extends Operator {
     private final XboxController controller;
     private final SwerveSubsystem swerve;
     private final GroundIndefector indefector;
+    private final Elevator elevator;
 
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
@@ -26,7 +27,7 @@ public class DrivebaseOperator extends Operator {
      *
      * @param swerve The required subsystem for this operator.
      */
-    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector) {
+    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
         super("Drivebase");
 
         this.swerve = swerve;
@@ -35,6 +36,7 @@ public class DrivebaseOperator extends Operator {
         // falconTank = Robot.getInstance().getFalcon();
 
         this.indefector = indefector;
+        this.elevator = elevator;
 
         // Init logging
         LogUtil.registerLogger(swerve::log);
@@ -54,7 +56,7 @@ public class DrivebaseOperator extends Operator {
 
         if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
             indefector.spinIntake(true);
-        } if (controller.getLeftBumperButton()) {
+        } else if (controller.getLeftBumperButton()) {
             indefector.spinIntake(false);
         } else {
             indefector.stopIntake();
@@ -74,34 +76,26 @@ public class DrivebaseOperator extends Operator {
         double yRobotRelative = 0;
 
         if(controller.getPOV() == 0) {
-            xRobotRelative = 0.75;
+            xRobotRelative = .05;
         } else if (controller.getPOV() == 180) {
-            xRobotRelative = -.75;
+            xRobotRelative = -.05;
         } else if (controller.getPOV() == 90) {
-            yRobotRelative = 0.75;
+            yRobotRelative = .05;
         } else if (controller.getPOV() == 270) {
-            yRobotRelative = -.75;
+            yRobotRelative = -.05;
         }
 
-        if (controller.getPOV() == 45) {
-            xRobotRelative = 0.75;
-            yRobotRelative = 0.75;
-        } else if (controller.getPOV() == 135) {
-            xRobotRelative = -0.75;
-            yRobotRelative = 0.75;
-        } else if (controller.getPOV() == 225) {
-            xRobotRelative = -.75;
-            yRobotRelative = -.75;
-        } else if (controller.getPOV() == 315) {
-            xRobotRelative = -.75;
-            yRobotRelative = .75;
+        double rot = MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND);
+        if((elevator.state() != Elevator.ElevatorState.ZERO && elevator.state() != Elevator.ElevatorState.L1) || !elevator.isAtTarget()) {
+            translation2d = new Translation2d(0, 0);
+            rot *= 0.05;
         }
 
         Translation2d robotRelative = new Translation2d(xRobotRelative, yRobotRelative);
 
         // Swerve Example
         this.swerve.drive(robotRelative.getNorm() == 0 ? translation2d : robotRelative,
-                MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND),
+                rot,
                 robotRelative.getNorm() == 0, true, Constants.BOT_CENTER);
 
         // Tank Example (Falcons)

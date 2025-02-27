@@ -19,10 +19,14 @@ public class Elevator {
     private static final double TRAVEL_PER_ROT = (1.432*Math.PI)/GEAR_RATIO;
     private static final SparkBaseConfig ELEVATOR_BASE_CONFIG = new SparkFlexConfig()
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
+
+    private static final double upperBound = 46.5;
+
     private final SparkFlex elevatorMotor2, elevatorMotor1;
     private final RelativeEncoder elevatorEncoder;
     private ElevatorState currState = ElevatorState.ZERO;
     private boolean zeroed = false;
+    private boolean atTarget = false;
 
     public Elevator() {
         elevatorMotor1 = new SparkFlex(17, SparkLowLevel.MotorType.kBrushless);
@@ -42,11 +46,20 @@ public class Elevator {
         zeroed = false;
         while(!(elevatorMotor1.getOutputCurrent() > 15)) {
             elevatorMotor1.set(-0.05);
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         elevatorMotor1.set(0);
         elevatorEncoder.setPosition(0);
         zeroed = true;
+    }
+
+    public boolean isAtTarget() {
+        return atTarget;
     }
 
     private double getPosition() {
@@ -62,13 +75,19 @@ public class Elevator {
 
     public void tick() {
         if(zeroed) {
-            if (!MathUtil.isNear(currState.targetPosition, getPosition(), 1/16d)) {
-                if (currState.targetPosition > getPosition()) {
+            if (!MathUtil.isNear(currState.targetPosition, getPosition(), 1/4d)) {
+                atTarget = false;
+                if (currState.targetPosition > getPosition() && getPosition() < upperBound) {
                     elevatorMotor1.set(0.2);
+                } else if (getPosition() - currState.targetPosition < 1/2d){
+                    elevatorMotor1.set(-0.05);
+                } else if(getPosition() > 2) {
+                    elevatorMotor1.set(-0.2);
                 } else {
                     elevatorMotor1.set(-0.05);
                 }
             } else {
+                atTarget = true;
                 stop();
             }
         } else {
@@ -87,9 +106,9 @@ public class Elevator {
     public enum ElevatorState {
         ZERO(0),
         L1(0),
-        L2(11),
-        L3(27),
-        L4(46);
+        L2(8.75),
+        L3(25.25),
+        L4(45);
 
         final double targetPosition;
 

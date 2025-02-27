@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GroundIndefector implements Subsystem {
-    private static final double angleOffset = 152.75390625;
+    private static final double angleOffset = 156.796875;
     private static final double angleOffset2 = 360 - angleOffset;
     private static final double upperBound = 25;
     private static final double lowerBound = 170;
@@ -58,7 +58,7 @@ public class GroundIndefector implements Subsystem {
             stop();
         } else {
             zRotMotor.set(
-                    MathUtil.clamp(-Math.abs(lowerBound/getPosition()), -0.04, 0)
+                    MathUtil.clamp(-Math.abs(lowerBound/getPosition()), -0.07, 0)
             );
         }
     }

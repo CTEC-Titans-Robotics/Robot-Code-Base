@@ -107,13 +107,13 @@ public class Robot extends TimedRobot
           throw new RuntimeException("Swerve failed to create!", io);
         }
 
-        this.groundIndefector = new GroundIndefector();
+        // this.groundIndefector = new GroundIndefector();
         this.elevator = new Elevator();
         this.arm = new Arm();
 
-        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.groundIndefector, this.elevator);
+        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.elevator, this.arm);
         this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
-        // this.auto = new Auto(swerve);
+         this.auto = new Auto(swerve,arm);
         // this.vision = new LimelightVision("limelight");
 
         this.auxiliary.init();

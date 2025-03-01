@@ -99,6 +99,16 @@ public class Elevator {
         elevatorMotor1.set(0.02);
     }
 
+    public void moveUp() {
+        elevatorMotor1.set(0.05);
+    }
+
+
+    public void moveDown() {
+        elevatorMotor1.set(-0.05);
+    }
+
+
     public ElevatorState state() {
         return currState;
     }
@@ -108,7 +118,8 @@ public class Elevator {
         L1(0),
         L2(8.75),
         L3(25.25),
-        L4(45);
+        L4(45),
+        HANG(18);
 
         final double targetPosition;
 

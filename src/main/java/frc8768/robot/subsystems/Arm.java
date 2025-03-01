@@ -30,6 +30,7 @@ public class Arm implements Subsystem {
     private final SparkFlex intakeMotor, pivotMotor;
     private final CANcoder absEncoder;
     private final Lock intakeLock = new ReentrantLock();
+    private boolean atRotation = false;
 
     //OTT
     private static final double GEAR_RATIO = 8;
@@ -78,14 +79,18 @@ public class Arm implements Subsystem {
                 pivotMotor.set(0.17);
             } else if (currState.targetPosition > getPosition()) {
                 pivotMotor.set(-0.15);
+                atRotation = true;
             } else {
                 pivotMotor.set(0.15);
+                atRotation = true;
             }
         } else {
             stop();
         }
     }
-
+    public boolean isAtRotation() {
+        return atRotation;
+    }
     public void stop() {
         if(currState == ArmState.ZERO) {
             pivotMotor.set(0);

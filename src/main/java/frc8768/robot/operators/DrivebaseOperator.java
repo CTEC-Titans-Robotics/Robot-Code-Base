@@ -4,8 +4,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.Elevator;
-import frc8768.robot.subsystems.GroundIndefector;
+//import frc8768.robot.subsystems.GroundIndefector;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
@@ -16,8 +17,9 @@ import frc8768.robot.util.LogUtil;
 public class DrivebaseOperator extends Operator {
     private final XboxController controller;
     private final SwerveSubsystem swerve;
-    private final GroundIndefector indefector;
+   // private final GroundIndefector indefector;
     private final Elevator elevator;
+    private final Arm arm;
 
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
@@ -27,18 +29,23 @@ public class DrivebaseOperator extends Operator {
      *
      * @param swerve The required subsystem for this operator.
      */
-    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
+
+
+    //public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
+        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm) {
         super("Drivebase");
 
         this.swerve = swerve;
         this.controller = controller;
+
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
 
-        this.indefector = indefector;
+       // this.indefector = indefector;
         this.elevator = elevator;
+            this.arm = arm;
 
-        // Init logging
+            // Init logging
         LogUtil.registerLogger(swerve::log);
         LogUtil.registerDashLogger(swerve::dashboard);
     }
@@ -54,7 +61,26 @@ public class DrivebaseOperator extends Operator {
             swerve.getSwerveDrive().zeroGyro();
         }
 
-        if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
+        if (controller.getYButton()) {
+            elevator.moveToState(Elevator.ElevatorState.HANG);
+            arm.moveToState(Arm.ArmState.ZERO);
+        }
+
+        if (controller.getAButtonPressed()) {
+            elevator.moveToState(Elevator.ElevatorState.ZERO);
+            arm.moveToState(Arm.ArmState.ZERO);
+        }
+
+        if (controller.getXButton() && controller.getAButton()) {
+            elevator.moveDown();
+        }
+
+        if (controller.getXButton() && controller.getYButton()) {
+            elevator.moveDown();
+        }
+
+
+      /* if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
             indefector.spinIntake(true);
         } else if (controller.getLeftBumperButton()) {
             indefector.spinIntake(false);
@@ -71,7 +97,7 @@ public class DrivebaseOperator extends Operator {
         } else {
             indefector.stop();
         }
-
+*/
         double xRobotRelative = 0;
         double yRobotRelative = 0;
 
@@ -97,6 +123,9 @@ public class DrivebaseOperator extends Operator {
         this.swerve.drive(robotRelative.getNorm() == 0 ? translation2d : robotRelative,
                 rot,
                 robotRelative.getNorm() == 0, true, Constants.BOT_CENTER);
+
+
+
 
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);

@@ -50,9 +50,14 @@ public class GroundIndefector implements Subsystem {
         return 0;
     }
 
+
+
     /**
      * Up is positive, down is negative
      */
+
+
+
     public void forward() {
         if(lowerBound < getPosition()) {
             stop();
@@ -91,3 +96,7 @@ public class GroundIndefector implements Subsystem {
         return map;
     }
 }
+
+
+
+

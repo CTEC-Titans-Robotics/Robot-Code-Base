@@ -9,7 +9,7 @@ public class AuxiliaryOperator extends Operator {
     private final Elevator elevator;
     private final Arm arm;
 
-    private int release = 0;
+    public int release = 0;
 
     public AuxiliaryOperator(XboxController controller, Elevator elevator, Arm arm) {
         super("Auxiliary");
@@ -20,17 +20,17 @@ public class AuxiliaryOperator extends Operator {
 
     @Override
     public void run() {
-        if(controller.getRightStickButtonPressed()) {
+        if(controller.getRightStickButtonPressed() && elevator.state() == Elevator.ElevatorState.ZERO  ) {
             elevator.zeroElevator();
         }
 
-        if (controller.getPOV() == 180) {
+        if (controller.getPOV() == 180 && elevator.state() != Elevator.ElevatorState.L4) {
             elevator.moveToState(Elevator.ElevatorState.L1);
             arm.moveToState(Arm.ArmState.L1);
-        } else if (controller.getPOV() == 0) {
+        } else if (controller.getPOV() == 0 && elevator.state() != Elevator.ElevatorState.L4) {
             elevator.moveToState(Elevator.ElevatorState.L2);
-            arm.moveToState(Arm.ArmState.L2);
-        } else if (controller.getAButton()) {
+            arm.moveToState(Arm.ArmState.L2 );
+        } else if (controller.getAButton() && elevator.state() != Elevator.ElevatorState.L4) {
             elevator.moveToState(Elevator.ElevatorState.L3);
             arm.moveToState(Arm.ArmState.L3);
         } else if (controller.getYButton()) {
@@ -40,6 +40,7 @@ public class AuxiliaryOperator extends Operator {
             elevator.moveToState(Elevator.ElevatorState.ZERO);
             arm.moveToState(Arm.ArmState.ZERO);
         }
+
 
         if (controller.getLeftBumperButton()) {
             //align(); //TODO left align

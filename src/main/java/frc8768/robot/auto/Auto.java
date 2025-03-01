@@ -7,6 +7,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -15,6 +16,7 @@ import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
@@ -65,7 +67,7 @@ public class Auto {
                 swerveDrive::setChassisSpeeds,
                 driveController,
                 config,
-                () -> false
+                () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
         );
 
         NamedCommands.registerCommand("L1_Shoot", new L1Command(arm));
@@ -76,6 +78,8 @@ public class Auto {
         autonChooser.addOption("4 (middle) L1", AutoBuilder.buildAuto("4 (middle) L1"));
         autonChooser.addOption("6 (inside) L1", AutoBuilder.buildAuto("6 (inside) L1"));
         autonChooser.setDefaultOption("No-op", new InstantCommand());
+
+        SmartDashboard.putData("Auto", this.autonChooser);
     }
 
     /**

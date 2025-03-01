@@ -113,7 +113,7 @@ public class Robot extends TimedRobot
 
         this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.elevator, this.arm);
         this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
-         this.auto = new Auto(swerve,arm);
+        this.auto = new Auto(swerve, arm);
         // this.vision = new LimelightVision("limelight");
 
         this.auxiliary.init();

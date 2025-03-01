@@ -113,7 +113,7 @@ public class Arm implements Subsystem {
         } catch (Exception e) {
             // Ignore, some other thread has the lock
         } finally {
-            intakeMotor.set(0.02);
+            intakeMotor.set(0.04);
         }
     }
 
@@ -131,8 +131,8 @@ public class Arm implements Subsystem {
     public enum ArmState {
         ZERO(0),
         L1(-50),
-        L2(-50),
-        L3(-50),
+        L2(-57),
+        L3(-57),
         L4(145),
         INTAKE(-168);
 

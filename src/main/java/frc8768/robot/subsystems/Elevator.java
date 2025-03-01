@@ -119,7 +119,7 @@ public class Elevator {
         L2(8.75),
         L3(25.25),
         L4(45),
-        HANG(18);
+        HANG(35);
 
         final double targetPosition;
 

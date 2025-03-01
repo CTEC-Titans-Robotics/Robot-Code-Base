@@ -63,12 +63,12 @@ public class DrivebaseOperator extends Operator {
 
         if (controller.getYButton()) {
             elevator.moveToState(Elevator.ElevatorState.HANG);
-            arm.moveToState(Arm.ArmState.ZERO);
+            arm.moveToState(Arm.ArmState.L4);
         }
 
         if (controller.getAButtonPressed()) {
             elevator.moveToState(Elevator.ElevatorState.ZERO);
-            arm.moveToState(Arm.ArmState.ZERO);
+            arm.moveToState(Arm.ArmState.L4);
         }
 
         if (controller.getXButton() && controller.getAButton()) {
@@ -102,18 +102,31 @@ public class DrivebaseOperator extends Operator {
         double yRobotRelative = 0;
 
         if(controller.getPOV() == 0) {
-            xRobotRelative = .05;
+           if (elevator.state() == Elevator.ElevatorState.L4){
+               xRobotRelative = -.05; }
+           else
+               xRobotRelative = .05;
         } else if (controller.getPOV() == 180) {
-            xRobotRelative = -.05;
+            if (elevator.state() == Elevator.ElevatorState.L4){
+                xRobotRelative = .05; }
+            else
+                xRobotRelative = -.05;
         } else if (controller.getPOV() == 90) {
-            yRobotRelative = .05;
+            if (elevator.state() == Elevator.ElevatorState.L4){
+                yRobotRelative = -.05; }
+            else
+                yRobotRelative = .05;
         } else if (controller.getPOV() == 270) {
-            yRobotRelative = -.05;
+            if (elevator.state() == Elevator.ElevatorState.L4){
+                yRobotRelative = .05; }
+            else
+                yRobotRelative = -.05;
         }
+
 
         double rot = MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND);
         if((elevator.state() != Elevator.ElevatorState.ZERO && elevator.state() != Elevator.ElevatorState.L1) || !elevator.isAtTarget()) {
-            translation2d = new Translation2d(0, 0);
+            translation2d = translation2d.times(0.05);
             rot *= 0.05;
         }
 

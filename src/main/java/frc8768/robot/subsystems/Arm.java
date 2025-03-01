@@ -78,7 +78,7 @@ public class Arm implements Subsystem {
             } else if(currState == ArmState.INTAKE) {
                 pivotMotor.set(0.17);
             } else if (currState.targetPosition > getPosition()) {
-                pivotMotor.set(-0.15);
+                pivotMotor.set(-0.17);
                 atRotation = true;
             } else {
                 pivotMotor.set(0.15);
@@ -94,8 +94,10 @@ public class Arm implements Subsystem {
     public void stop() {
         if(currState == ArmState.ZERO) {
             pivotMotor.set(0);
-        } else if(currState == ArmState.L1 || currState == ArmState.L2 || currState == ArmState.L3){
+        } else if(currState == ArmState.L2 || currState == ArmState.L3){
             pivotMotor.set(0.02);
+        } else if(currState == ArmState.L1) {
+            pivotMotor.set(0.04);
         } else {
             pivotMotor.set(-0.04);
         }
@@ -130,11 +132,11 @@ public class Arm implements Subsystem {
 
     public enum ArmState {
         ZERO(0),
-        L1(-50),
-        L2(-57),
-        L3(-57),
+        L1(-102),
+        L2(-60),
+        L3(-60),
         L4(145),
-        INTAKE(-168);
+        INTAKE(-172);
 
         final double targetPosition;
 

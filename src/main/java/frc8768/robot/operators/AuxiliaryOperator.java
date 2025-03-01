@@ -20,9 +20,11 @@ public class AuxiliaryOperator extends Operator {
 
     @Override
     public void run() {
+        /*
         if(controller.getRightStickButtonPressed() && elevator.state() == Elevator.ElevatorState.ZERO  ) {
             elevator.zeroElevator();
         }
+        */
 
         if (controller.getPOV() == 180 && elevator.state() != Elevator.ElevatorState.L4) {
             elevator.moveToState(Elevator.ElevatorState.L1);

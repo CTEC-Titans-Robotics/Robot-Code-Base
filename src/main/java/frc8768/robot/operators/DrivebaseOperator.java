@@ -125,7 +125,7 @@ public class DrivebaseOperator extends Operator {
 
 
         double rot = MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND);
-        if((elevator.state() != Elevator.ElevatorState.ZERO && elevator.state() != Elevator.ElevatorState.L1) || !elevator.isAtTarget()) {
+        if(elevator.state() != Elevator.ElevatorState.ZERO && elevator.state() != Elevator.ElevatorState.L1) {
             translation2d = translation2d.times(0.05);
             rot *= 0.05;
         }

@@ -100,6 +100,10 @@ public class SwerveSubsystem {
         swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * Constants.SwerveConfig.MAX_ROTATION_SPEED, fieldRelative, isOpenLoop, pivotPoint);
     }
 
+    public void move(double xSpeed, double ySpeed, double rot) {
+        swerveDrive.drive(new Translation2d(xSpeed, ySpeed), rot, false, true, Constants.BOT_CENTER);
+    }
+
     /**
      * Get the Gyro rotation in degrees.
      *

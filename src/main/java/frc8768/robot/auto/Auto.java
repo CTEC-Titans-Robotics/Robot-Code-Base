@@ -73,11 +73,11 @@ public class Auto {
         NamedCommands.registerCommand("L1_Shoot", new L1Command(arm));
 
         autonChooser = new SendableChooser<>();
+        autonChooser.setDefaultOption("No-op", new InstantCommand());
         autonChooser.addOption("Taxi", AutoBuilder.buildAuto("taxi"));
         autonChooser.addOption("2 (outside) L1", AutoBuilder.buildAuto("2 (outside) L1"));
         autonChooser.addOption("4 (middle) L1", AutoBuilder.buildAuto("4 (middle) L1"));
         autonChooser.addOption("6 (inside) L1", AutoBuilder.buildAuto("6 (inside) L1"));
-        autonChooser.setDefaultOption("No-op", new InstantCommand());
 
         SmartDashboard.putData("Auto", this.autonChooser);
     }

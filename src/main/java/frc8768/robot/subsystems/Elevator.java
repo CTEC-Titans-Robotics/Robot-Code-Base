@@ -44,7 +44,7 @@ public class Elevator {
         currState = ElevatorState.ZERO;
 
         zeroed = false;
-        while(!(elevatorMotor1.getOutputCurrent() > 15)) {
+        while(!(elevatorMotor1.getOutputCurrent() > 20)) {
             elevatorMotor1.set(-0.05);
             try {
                 Thread.sleep(20);
@@ -78,13 +78,13 @@ public class Elevator {
             if (!MathUtil.isNear(currState.targetPosition, getPosition(), 1/4d)) {
                 atTarget = false;
                 if (currState.targetPosition > getPosition() && getPosition() < upperBound) {
-                    elevatorMotor1.set(0.2);
+                    elevatorMotor1.set(0.3);
                 } else if (getPosition() - currState.targetPosition < 1/2d){
                     elevatorMotor1.set(-0.05);
                 } else if(getPosition() > 2) {
                     elevatorMotor1.set(-0.2);
                 } else {
-                    elevatorMotor1.set(-0.05);
+                    elevatorMotor1.set(-0.08);
                 }
             } else {
                 atTarget = true;

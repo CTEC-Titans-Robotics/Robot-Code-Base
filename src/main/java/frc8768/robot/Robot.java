@@ -9,6 +9,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -144,23 +145,35 @@ public class Robot extends TimedRobot
     /**
      * Runs when first entering Autonomous mode
      */
+
+    Timer timer = new Timer();
     @Override
     public void autonomousInit() {
-        if (this.auto != null) {
+        /*if (this.auto != null) {
             this.auto.getSelected().schedule();
-        }
+         */
+        timer.reset();
+        timer.start();
     }
 
     @Override
     public void disabledPeriodic() {
         elevator.moveToState(Elevator.ElevatorState.ZERO);
+        arm.moveToState(Arm.ArmState.ZERO);
     }
 
     /**
      * Runs every 20ms during Autonomous
      */
     @Override
-    public void autonomousPeriodic() {}
+    public void autonomousPeriodic() {
+        if(!timer.hasElapsed(2)) {
+            swerve.move(-0.9,0, 0);
+        }
+        else {
+            swerve.move(0,0,0);
+        }
+    }
 
     /**
      * Runs at the start of Teleop state

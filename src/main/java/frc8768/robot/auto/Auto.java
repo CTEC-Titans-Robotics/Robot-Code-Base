@@ -7,16 +7,18 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.auto.commands.L1Command;
+import frc8768.robot.auto.commands.L1FullyAuto;
+import frc8768.robot.auto.commands.TestTaxi;
 import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
@@ -34,30 +36,29 @@ public class Auto {
      */
     public Auto(SwerveSubsystem swerve, Arm arm) {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
+        NamedCommands.registerCommand("L1_Shoot", new L1Command(arm));
 
         RobotConfig config = new RobotConfig(
                 Kilograms.of(Constants.WEIGHT),
                 KilogramSquareMeters.of(Constants.INERTIA),
                 new ModuleConfig(
-                        swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters(),
+                        Units.inchesToMeters(2),
                         Constants.SwerveConfig.MAX_SPEED,
-                        1.0,
+                        1.19,
                         swerveDrive.swerveDriveConfiguration.getDriveMotorSim(),
-                        30,
+                        40,
                         1
 
                 ),
-                new Translation2d(.267, .267),
-                new Translation2d(.267,-.273),
-                new Translation2d(-.267, .267),
-                new Translation2d(-.267, -.267)
-
+                new Translation2d(Units.inchesToMeters(10.5), Units.inchesToMeters(10.5)),
+                new Translation2d(Units.inchesToMeters(10.5),Units.inchesToMeters(-10.5)),
+                new Translation2d(Units.inchesToMeters(-10.5), Units.inchesToMeters(10.5)),
+                new Translation2d(Units.inchesToMeters(-10.5), Units.inchesToMeters(-10.5))
         );
 
         PPHolonomicDriveController driveController = new PPHolonomicDriveController(
-                new PIDConstants(0.01, 0, 0),
-                new PIDConstants(0.01, 0, 0),
-                0.02
+                new PIDConstants(51.753, 0, 4.0106),
+                new PIDConstants(0.01, 0, 0)
         );
 
         AutoBuilder.configure(
@@ -67,18 +68,15 @@ public class Auto {
                 swerveDrive::setChassisSpeeds,
                 driveController,
                 config,
-                () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Red
+                () -> {
+                    var alliance = DriverStation.getAlliance();
+                    return alliance.filter(value -> value == DriverStation.Alliance.Red).isPresent();
+                }
         );
 
-        NamedCommands.registerCommand("L1_Shoot", new L1Command(arm));
-
-        autonChooser = new SendableChooser<>();
-        autonChooser.setDefaultOption("No-op", new InstantCommand());
-        autonChooser.addOption("Taxi", AutoBuilder.buildAuto("taxi"));
-        autonChooser.addOption("2 (outside) L1", AutoBuilder.buildAuto("2 (outside) L1"));
-        autonChooser.addOption("4 (middle) L1", AutoBuilder.buildAuto("4 (middle) L1"));
-        autonChooser.addOption("6 (inside) L1", AutoBuilder.buildAuto("6 (inside) L1"));
-
+        autonChooser = AutoBuilder.buildAutoChooser();
+        autonChooser.addOption("Test Taxi", new TestTaxi(swerve));
+        autonChooser.addOption("L1 Full Auto", new L1FullyAuto(swerve, arm));
         SmartDashboard.putData("Auto", this.autonChooser);
     }
 

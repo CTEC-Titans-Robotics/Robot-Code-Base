@@ -101,7 +101,7 @@ public class SwerveSubsystem {
     }
 
     public void move(double xSpeed, double ySpeed, double rot) {
-        swerveDrive.drive(new Translation2d(xSpeed, ySpeed), rot, false, true, Constants.BOT_CENTER);
+        drive(new Translation2d(xSpeed, ySpeed), rot, false, true, Constants.BOT_CENTER);
     }
 
     /**

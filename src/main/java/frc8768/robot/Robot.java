@@ -91,7 +91,7 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit() {
         CameraServer.startAutomaticCapture();
-        /*
+
         frontVision = new LimelightVision("front");
         backVision = new LimelightVision("back");
         robotCams = new PhotonMultiCam();
@@ -100,7 +100,7 @@ public class Robot extends TimedRobot
         robotCams.addCamera("fr", new Transform3d(0, 0, 0, Rotation3d.kZero));
         robotCams.addCamera("bl", new Transform3d(0, 0, 0, Rotation3d.kZero));
         robotCams.addCamera("br", new Transform3d(0, 0, 0, Rotation3d.kZero));
-         */
+
 
         try {
           this.swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
@@ -112,7 +112,7 @@ public class Robot extends TimedRobot
         this.elevator = new Elevator();
         this.arm = new Arm();
 
-        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.elevator, this.arm);
+        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.elevator, this.arm, this.frontVision, this.backVision);
         this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
         this.auto = new Auto(swerve, arm);
         // this.vision = new LimelightVision("limelight");
@@ -138,7 +138,7 @@ public class Robot extends TimedRobot
         CommandScheduler.getInstance().run();
         LogUtil.run();
 
-        elevator.tick();
+        //elevator.tick();
         arm.tick();
     }
 
@@ -149,9 +149,11 @@ public class Robot extends TimedRobot
     Timer timer = new Timer();
     @Override
     public void autonomousInit() {
-        /*if (this.auto != null) {
-            this.auto.getSelected().schedule();
-         */
+        if (this.auto != null) {
+            if (this.auto.getSelected() != null)
+                this.auto.getSelected().schedule();
+        }
+
         timer.reset();
         timer.start();
     }
@@ -167,12 +169,23 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousPeriodic() {
+        /*
+        if(this.auto.getSelected() != null) {
+            if(this.auto.getSelected().isFinished()) {
+                return;
+            }
+            this.auto.getSelected().execute();
+        }
+         */
+
+/*
         if(!timer.hasElapsed(2)) {
             swerve.move(-0.9,0, 0);
         }
         else {
             swerve.move(0,0,0);
         }
+ */
     }
 
     /**

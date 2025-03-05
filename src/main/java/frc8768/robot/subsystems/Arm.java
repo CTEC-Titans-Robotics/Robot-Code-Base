@@ -22,18 +22,17 @@ public class Arm implements Subsystem {
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
     private static final SparkBaseConfig INTAKE_CONFIG = new SparkFlexConfig()
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
-    private static final double angleOffset = 42.890625;
+    private static final double angleOffset = -86.748046875;
 
-    private  static final double upperBound = 149;
-    private static final double lowerBound = -165;
+    private  static final double upperBound = 125;
+    private static final double lowerBound = -174;
     private ArmState currState = ArmState.ZERO;
     private final SparkFlex intakeMotor, pivotMotor;
     private final CANcoder absEncoder;
-    private final Lock intakeLock = new ReentrantLock();
     private boolean atRotation = false;
 
     //OTT
-    private static final double GEAR_RATIO = 8;
+    private static final double GEAR_RATIO = 6;
     private static final double CHAINTRAVEL_PER_ROT = (2.148*Math.PI)/GEAR_RATIO;
 
     //Chain Travel for one fill rotation os 2.148*pi (circumference) Approx. 6.744,
@@ -74,18 +73,26 @@ public class Arm implements Subsystem {
             */
 
             if(currState.targetPosition > getPosition() && currState == ArmState.INTAKE) {
-                pivotMotor.set(-0.17);
+//                pivotMotor.set(-0.3);
+                pivotMotor.setVoltage(-0.05);
             } else if(currState == ArmState.INTAKE) {
-                pivotMotor.set(0.17);
+//                pivotMotor.set(0.25);
+                pivotMotor.setVoltage(1.5);
+            } else if(currState == ArmState.L4) {
+//                pivotMotor.set(0.25);
+                pivotMotor.setVoltage(-1.5);
             } else if (currState.targetPosition > getPosition()) {
-                pivotMotor.set(-0.17);
+//                pivotMotor.set(-0.2);
+                pivotMotor.setVoltage(-1);
                 atRotation = true;
             } else {
-                pivotMotor.set(0.15);
+//                pivotMotor.set(0.15);
+                pivotMotor.setVoltage(1);
                 atRotation = true;
             }
         } else {
             stop();
+
         }
     }
     public boolean isAtRotation() {
@@ -98,25 +105,27 @@ public class Arm implements Subsystem {
             pivotMotor.set(0.02);
         } else if(currState == ArmState.L1) {
             pivotMotor.set(0.04);
+//        } else if(currState == ArmState.L4) {
+//            pivotMotor.set(-0.13);
+        } else if(currState == ArmState.INTAKE) {
+            pivotMotor.set(0.13);
+//            pivotMotor.setVoltage(1.5);
         } else {
             pivotMotor.set(-0.04);
         }
     }
 
     public void spinIntake(boolean outTake) {
-        if(intakeLock.tryLock()) {
-            intakeMotor.set(outTake ? -0.2 : 0.1);
+        if (currState == ArmState.L1) {
+            intakeMotor.set(outTake ? -0.3 : 0.13);
+        } else {
+            intakeMotor.set(outTake ? -0.2 : 0.13);
         }
     }
 
     public void stopIntake() {
-        try {
-            intakeLock.unlock();
-        } catch (Exception e) {
-            // Ignore, some other thread has the lock
-        } finally {
-            intakeMotor.set(0.04);
-        }
+        intakeMotor.set(0.04);
+        //currState = ArmState.ZERO;
     }
 
     private Map<String, Object> dashLog() {
@@ -132,11 +141,12 @@ public class Arm implements Subsystem {
 
     public enum ArmState {
         ZERO(0),
-        L1(-102),
-        L2(-60),
-        L3(-60),
-        L4(145),
-        INTAKE(-172);
+        L1(-107),
+        L2(-63),
+        L3(-63),
+        L4(132),
+        INTAKE(-149),
+        CORAL(-115);
 
         final double targetPosition;
 

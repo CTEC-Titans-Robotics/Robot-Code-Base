@@ -35,4 +35,7 @@ public interface Vision {
      * @return The maximum Y point for all corners, or -1 if none is found
      */
     double getMaxPointY();
+
+
+
 }

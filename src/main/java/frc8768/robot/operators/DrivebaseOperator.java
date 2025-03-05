@@ -1,6 +1,8 @@
 package frc8768.robot.operators;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -10,6 +12,14 @@ import frc8768.robot.subsystems.Elevator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
+import frc8768.visionlib.LimelightVision;
+import frc8768.visionlib.helpers.LimelightHelpers.LimelightTarget_Fiducial;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+import java.util.List;
+
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Inches;
 
 /**
  * Operator for driving the bot
@@ -20,6 +30,10 @@ public class DrivebaseOperator extends Operator {
    // private final GroundIndefector indefector;
     private final Elevator elevator;
     private final Arm arm;
+
+    private  final LimelightVision frontCam;
+
+    private  final LimelightVision backCam;
 
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
@@ -32,11 +46,13 @@ public class DrivebaseOperator extends Operator {
 
 
     //public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
-        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm) {
+        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
         super("Drivebase");
 
         this.swerve = swerve;
         this.controller = controller;
+        this.frontCam = frontCam;
+        this.backCam = backCam;
 
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
@@ -68,7 +84,6 @@ public class DrivebaseOperator extends Operator {
 
         if (controller.getAButtonPressed()) {
             elevator.moveToState(Elevator.ElevatorState.ZERO);
-            arm.moveToState(Arm.ArmState.L4);
         }
 
         if (controller.getXButton() && controller.getAButton()) {
@@ -78,6 +93,14 @@ public class DrivebaseOperator extends Operator {
         if (controller.getXButton() && controller.getYButton()) {
             elevator.moveDown();
         }
+
+
+        if (controller.getLeftBumperButton()) {
+            align(); //TODO left align
+        } else if (controller.getRightBumperButton()) {
+            //align(); //TODO right align
+        }
+
 
 
       /* if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
@@ -145,5 +168,66 @@ public class DrivebaseOperator extends Operator {
 
         // Tank Example (Spark)
         // sparkTank.drive(translation2d);
+    }
+    boolean reangle = false;
+    boolean strafe = false;
+
+
+    public void align() {
+        /*
+        if(controller.getYButton() && !reangle) {
+            reangle = true;
+        }
+
+        if(reangle) {
+            if (!MathUtil.isNear(0, yaw, 2)) {
+                swerve.move(0, 0, MathUtil.clamp(-Math.toRadians(yaw) / 1.5, -0.5, 0.5));
+            } else {
+                reangle = false;
+                swerve.move(0, 0, 0);
+            }
+        }
+*/
+        // linear follow attempt;
+        if(controller.getRightBumperButton() && !strafe) {
+            strafe = true;
+        }
+
+        List<LimelightTarget_Fiducial> targets = frontCam.getTargets();
+        if(strafe && !targets.isEmpty()) {
+            LimelightTarget_Fiducial target = targets.get(0);
+            Pose2d targetPose = target.getTargetPose_RobotSpace2D();
+
+            double xMov = 0;
+            double yMov = 0;
+            double rotMov = 0;
+
+            double targetInchesX = targetPose.getMeasureX().in(Inches);
+            double targetInchesY = targetPose.getMeasureY().in(Inches);
+            double targetAngle = Math.atan(targetInchesY/targetInchesX)* 180/Math.PI;
+
+
+            // X: Forward
+            if(!MathUtil.isNear(32, targetInchesX, 3)) {
+                xMov = -MathUtil.clamp((32-targetInchesX)/60, -0.5, 0.5);
+            }
+
+            // Y: Left
+            if(!MathUtil.isNear(0, targetInchesX, 3)) {
+                yMov = MathUtil.clamp(targetInchesX/50, -0.5, 0.5);
+            }
+
+
+            if(!MathUtil.isNear(0,targetAngle, 12)) {
+                rotMov = MathUtil.clamp(-targetAngle/75, -0.1, 0.1);
+            }
+
+            if(xMov == 0.0 && yMov == 0.0 && rotMov == 0.0) {
+                swerve.move(0, 0, 0);
+                strafe = false;
+            } else {
+                swerve.move(xMov, yMov, rotMov);
+            }
+        }
     }
 }

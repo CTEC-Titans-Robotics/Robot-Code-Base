@@ -2,9 +2,11 @@ package frc8768.robot.operators;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.Elevator;
@@ -35,6 +37,11 @@ public class DrivebaseOperator extends Operator {
 
     private  final LimelightVision backCam;
 
+
+    double targetInchesX = 0;
+    double targetInchesY = 0;
+    double targetAngle = 0;
+
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
 
@@ -64,6 +71,8 @@ public class DrivebaseOperator extends Operator {
             // Init logging
         LogUtil.registerLogger(swerve::log);
         LogUtil.registerDashLogger(swerve::dashboard);
+
+
     }
 
     @Override
@@ -94,13 +103,26 @@ public class DrivebaseOperator extends Operator {
             elevator.moveDown();
         }
 
-
         if (controller.getLeftBumperButton()) {
-            align(); //TODO left align
+            //align(); //TODO left align
         } else if (controller.getRightBumperButton()) {
             //align(); //TODO right align
         }
 
+        //TODO Temporary Target logging. Remove when issue found
+
+        List<LimelightTarget_Fiducial> targets = frontCam.getTargets();
+        LimelightTarget_Fiducial target = targets.get(0);
+        Pose3d targetPose = target.getTargetPose_RobotSpace();
+
+
+        targetInchesX = targetPose.getMeasureX().in(Inches);
+        targetInchesY = targetPose.getMeasureY().in(Inches);
+        targetAngle = Math.atan(targetInchesY/targetInchesX)* 180/Math.PI;
+
+        SmartDashboard.putNumber("Target X", targetInchesX);
+        SmartDashboard.putNumber("Target Y", targetInchesY);
+        SmartDashboard.putNumber("Target Angle", targetAngle);
 
 
       /* if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
@@ -202,9 +224,9 @@ public class DrivebaseOperator extends Operator {
             double yMov = 0;
             double rotMov = 0;
 
-            double targetInchesX = targetPose.getMeasureX().in(Inches);
-            double targetInchesY = targetPose.getMeasureY().in(Inches);
-            double targetAngle = Math.atan(targetInchesY/targetInchesX)* 180/Math.PI;
+            targetInchesX = targetPose.getMeasureX().in(Inches);
+            targetInchesY = targetPose.getMeasureY().in(Inches);
+            targetAngle = Math.atan(targetInchesY/targetInchesX)* 180/Math.PI;
 
 
             // X: Forward

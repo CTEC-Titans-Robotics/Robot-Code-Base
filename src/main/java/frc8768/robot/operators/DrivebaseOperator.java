@@ -115,16 +115,19 @@ public class DrivebaseOperator extends Operator {
         LimelightTarget_Fiducial target = targets.get(0);
         Pose3d targetPose = target.getTargetPose_RobotSpace();
 
-
-        targetInchesX = targetPose.getMeasureX().in(Inches);
-        targetInchesY = targetPose.getMeasureY().in(Inches);
-        targetAngle = Math.atan(targetInchesY/targetInchesX)* 180/Math.PI;
+        if(!targets.isEmpty()) {
+            targetInchesX = targetPose.getMeasureX().in(Inches);
+            targetInchesY = targetPose.getMeasureY().in(Inches);
+            targetAngle = Math.atan(targetInchesY / targetInchesX) * 180 / Math.PI;
+        } else {
+            targetInchesX = 0;
+            targetInchesY = 0;
+            targetAngle = 0;
+        }
 
         SmartDashboard.putNumber("Target X", targetInchesX);
         SmartDashboard.putNumber("Target Y", targetInchesY);
         SmartDashboard.putNumber("Target Angle", targetAngle);
-
-
       /* if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
             indefector.spinIntake(true);
         } else if (controller.getLeftBumperButton()) {

@@ -1,6 +1,7 @@
 package frc8768.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
@@ -27,7 +28,8 @@ public class Arm implements Subsystem {
     private  static final double upperBound = 125;
     private static final double lowerBound = -174;
     private ArmState currState = ArmState.ZERO;
-    private final SparkFlex intakeMotor, pivotMotor;
+    private final SparkFlex intakeMotor;
+    private TalonFX pivotMotor;
     private final CANcoder absEncoder;
     private boolean atRotation = false;
 
@@ -43,11 +45,12 @@ public class Arm implements Subsystem {
 
 
     public Arm() {
-        pivotMotor = new SparkFlex(19, SparkLowLevel.MotorType.kBrushless);
+        pivotMotor = new TalonFX(19);
+
         intakeMotor = new SparkFlex(20, SparkLowLevel.MotorType.kBrushless);
         absEncoder = new CANcoder(22);
 
-        pivotMotor.configure(PIVOT_CONFIG, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
+        //pivotMotor.configure(PIVOT_CONFIG, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
         intakeMotor.configure(INTAKE_CONFIG, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
 
         LogUtil.registerDashLogger(this::dashLog);
@@ -86,7 +89,7 @@ public class Arm implements Subsystem {
                 pivotMotor.setVoltage(1.8);
             } else if(currState == ArmState.L4) {
 //                pivotMotor.set(0.25);
-                pivotMotor.setVoltage(-1.5);
+                pivotMotor.setVoltage(1.3);
             } else if (currState.targetPosition > getPosition()) {
 //                pivotMotor.set(-0.2);
                 pivotMotor.setVoltage(-1);
@@ -149,8 +152,8 @@ public class Arm implements Subsystem {
         ZERO(0),
         L1(-107),
         L2(-149),
-        L3(-149),
-        L4(132),
+        L3(-170),
+        L4(-152),
         INTAKE(100),
         CORAL(-115);
 

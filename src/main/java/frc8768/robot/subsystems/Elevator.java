@@ -116,8 +116,8 @@ public class Elevator {
     public enum ElevatorState {
         ZERO(0),
         L1(0),
-        L2(8.75),
-        L3(27.25),
+        L2(0),
+        L3(16.5),
         L4(45),
         HANG(35);
 

@@ -111,7 +111,7 @@ public class DrivebaseOperator extends Operator {
 
         //TODO Temporary Target logging. Remove when issue found
 
-        List<LimelightTarget_Fiducial> targets = frontCam.getTargets();
+        /* List<LimelightTarget_Fiducial> targets = frontCam.getTargets();
         LimelightTarget_Fiducial target = targets.get(0);
         Pose3d targetPose = target.getTargetPose_RobotSpace();
 
@@ -128,6 +128,8 @@ public class DrivebaseOperator extends Operator {
         SmartDashboard.putNumber("Target X", targetInchesX);
         SmartDashboard.putNumber("Target Y", targetInchesY);
         SmartDashboard.putNumber("Target Angle", targetAngle);
+
+         */
       /* if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
             indefector.spinIntake(true);
         } else if (controller.getLeftBumperButton()) {

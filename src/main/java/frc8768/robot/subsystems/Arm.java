@@ -22,7 +22,7 @@ public class Arm implements Subsystem {
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
     private static final SparkBaseConfig INTAKE_CONFIG = new SparkFlexConfig()
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
-    private static final double angleOffset = -86.748046875;
+    private static final double angleOffset = -94.74609375;
 
     private  static final double upperBound = 125;
     private static final double lowerBound = -174;
@@ -74,10 +74,16 @@ public class Arm implements Subsystem {
 
             if(currState.targetPosition > getPosition() && currState == ArmState.INTAKE) {
 //                pivotMotor.set(-0.3);
-                pivotMotor.setVoltage(-0.05);
+                pivotMotor.setVoltage(-1.05);
             } else if(currState == ArmState.INTAKE) {
 //                pivotMotor.set(0.25);
                 pivotMotor.setVoltage(1.5);
+            } else if(currState == ArmState.L2) {
+//                pivotMotor.set(0.25);
+                pivotMotor.setVoltage(1.8);
+            } else if(currState == ArmState.L3) {
+//                pivotMotor.set(0.25);
+                pivotMotor.setVoltage(1.8);
             } else if(currState == ArmState.L4) {
 //                pivotMotor.set(0.25);
                 pivotMotor.setVoltage(-1.5);
@@ -119,7 +125,7 @@ public class Arm implements Subsystem {
         if (currState == ArmState.L1) {
             intakeMotor.set(outTake ? -0.3 : 0.13);
         } else {
-            intakeMotor.set(outTake ? -0.2 : 0.13);
+            intakeMotor.set(outTake ? -0.2 : 0.2);
         }
     }
 
@@ -142,10 +148,10 @@ public class Arm implements Subsystem {
     public enum ArmState {
         ZERO(0),
         L1(-107),
-        L2(-63),
-        L3(-63),
+        L2(-149),
+        L3(-149),
         L4(132),
-        INTAKE(-149),
+        INTAKE(100),
         CORAL(-115);
 
         final double targetPosition;

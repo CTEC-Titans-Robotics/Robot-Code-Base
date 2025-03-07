@@ -32,16 +32,18 @@ public class AuxiliaryOperator extends Operator {
         } else if (controller.getPOV() == 0 && elevator.state() != Elevator.ElevatorState.L4) {
             elevator.moveToState(Elevator.ElevatorState.L2);
             arm.moveToState(Arm.ArmState.L2 );
-        } else if (controller.getPOV() == 270) {
-            elevator.moveToState(Elevator.ElevatorState.L4);
-            arm.moveToState(Arm.ArmState.CORAL );
-/*        } else if (controller.getPOV() == 90) {
+
+           /* elevator.moveToState(Elevator.ElevatorState.L4);
+            arm.moveToState(Arm.ArmState.CORAL );*/
+       /* } else if (controller.getPOV() == 90) {
             elevator.moveToState(Elevator.ElevatorState.L1);
             arm.moveToState(Arm.ArmState.CORAL);
+
+        */
         } else if (controller.getAButton() && elevator.state() != Elevator.ElevatorState.L4) {
             elevator.moveToState(Elevator.ElevatorState.L3);
             arm.moveToState(Arm.ArmState.L3);
-*/        } else if (controller.getYButton()) {
+       } else if (controller.getYButton()) {
             elevator.moveToState(Elevator.ElevatorState.L4);
             arm.moveToState(Arm.ArmState.L4);
         } else if (controller.getLeftStickButton()) {
@@ -51,11 +53,15 @@ public class AuxiliaryOperator extends Operator {
 
 
 
-
-        if (controller.getLeftTriggerAxis() > 0.1 && elevator.isAtTarget()){
+       if (controller.getLeftTriggerAxis() > 0.1 && elevator.isAtTarget()){
             arm.spinIntake(true);
             release = 1;
-            //elevator.moveToState(Elevator.ElevatorState.ZERO);
+            elevator.moveToState(Elevator.ElevatorState.ZERO);
+
+
+
+
+
         } else if (controller.getRightTriggerAxis() > 0.1 && elevator.state() == Elevator.ElevatorState.ZERO && elevator.isAtTarget()) {
             arm.spinIntake(false);
             arm.moveToState(Arm.ArmState.INTAKE);

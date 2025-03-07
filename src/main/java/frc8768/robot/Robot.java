@@ -138,7 +138,7 @@ public class Robot extends TimedRobot
         CommandScheduler.getInstance().run();
         LogUtil.run();
 
-        //elevator.tick();
+        elevator.tick();
         arm.tick();
     }
 

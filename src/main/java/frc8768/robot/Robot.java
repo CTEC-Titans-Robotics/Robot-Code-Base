@@ -92,8 +92,8 @@ public class Robot extends TimedRobot
     public void robotInit() {
         CameraServer.startAutomaticCapture();
 
-        frontVision = new LimelightVision("front");
-        backVision = new LimelightVision("back");
+        frontVision = new LimelightVision("limelight-front");
+        backVision = new LimelightVision("limelight-back");
         robotCams = new PhotonMultiCam();
 
         robotCams.addCamera("fl", new Transform3d(0, 0, 0, Rotation3d.kZero));

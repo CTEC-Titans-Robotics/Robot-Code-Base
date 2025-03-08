@@ -18,7 +18,9 @@ import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.helpers.LimelightHelpers.LimelightTarget_Fiducial;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Inches;
@@ -71,8 +73,17 @@ public class DrivebaseOperator extends Operator {
             // Init logging
         LogUtil.registerLogger(swerve::log);
         LogUtil.registerDashLogger(swerve::dashboard);
+        LogUtil.registerDashLogger(this::dashboard);
+    }
 
+    private Map<String, Object> dashboard() {
+        HashMap<String, Object> encoder = new HashMap<>();
 
+        encoder.put("tX", targetInchesX);
+        encoder.put("tY", targetInchesY);
+        encoder.put("tAngle", targetAngle);
+
+        return encoder;
     }
 
     @Override
@@ -106,30 +117,19 @@ public class DrivebaseOperator extends Operator {
         if (controller.getLeftBumperButton()) {
             //align(); //TODO left align
         } else if (controller.getRightBumperButton()) {
-            //align(); //TODO right align
+            align(32,0,0); //TODO right align
         }
 
-        //TODO Temporary Target logging. Remove when issue found
-
-        /* List<LimelightTarget_Fiducial> targets = frontCam.getTargets();
-        LimelightTarget_Fiducial target = targets.get(0);
-        Pose3d targetPose = target.getTargetPose_RobotSpace();
-
+        List<LimelightTarget_Fiducial> targets = backCam.getTargets();
         if(!targets.isEmpty()) {
+            LimelightTarget_Fiducial target = targets.get(0);
+            Pose2d targetPose = target.getTargetPose_RobotSpace2D();
+
             targetInchesX = targetPose.getMeasureX().in(Inches);
             targetInchesY = targetPose.getMeasureY().in(Inches);
             targetAngle = Math.atan(targetInchesY / targetInchesX) * 180 / Math.PI;
-        } else {
-            targetInchesX = 0;
-            targetInchesY = 0;
-            targetAngle = 0;
         }
 
-        SmartDashboard.putNumber("Target X", targetInchesX);
-        SmartDashboard.putNumber("Target Y", targetInchesY);
-        SmartDashboard.putNumber("Target Angle", targetAngle);
-
-         */
       /* if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
             indefector.spinIntake(true);
         } else if (controller.getLeftBumperButton()) {
@@ -200,27 +200,26 @@ public class DrivebaseOperator extends Operator {
     boolean strafe = false;
 
 
-    public void align() {
-        /*
-        if(controller.getYButton() && !reangle) {
-            reangle = true;
-        }
+    public void align(double x, double y, double rotation) {
+
+        strafe = true;
+        reangle = true;
+
 
         if(reangle) {
-            if (!MathUtil.isNear(0, yaw, 2)) {
-                swerve.move(0, 0, MathUtil.clamp(-Math.toRadians(yaw) / 1.5, -0.5, 0.5));
+            if (!MathUtil.isNear(0, rotation, 2)) {
+                swerve.move(0, 0, MathUtil.clamp(-Math.toRadians(rotation) / 1.5, -0.5, 0.5));
             } else {
                 reangle = false;
                 swerve.move(0, 0, 0);
             }
         }
-*/
+
         // linear follow attempt;
         if(controller.getRightBumperButton() && !strafe) {
-            strafe = true;
         }
 
-        List<LimelightTarget_Fiducial> targets = frontCam.getTargets();
+        List<LimelightTarget_Fiducial> targets = backCam.getTargets();
         if(strafe && !targets.isEmpty()) {
             LimelightTarget_Fiducial target = targets.get(0);
             Pose2d targetPose = target.getTargetPose_RobotSpace2D();
@@ -233,20 +232,19 @@ public class DrivebaseOperator extends Operator {
             targetInchesY = targetPose.getMeasureY().in(Inches);
             targetAngle = Math.atan(targetInchesY/targetInchesX)* 180/Math.PI;
 
-
             // X: Forward
-            if(!MathUtil.isNear(32, targetInchesX, 3)) {
-                xMov = -MathUtil.clamp((32-targetInchesX)/60, -0.5, 0.5);
+            if(!MathUtil.isNear(x, targetInchesX, 3)) {
+                xMov = -MathUtil.clamp((targetInchesX-x)*0.232, -0.2, 0.2);
             }
 
             // Y: Left
-            if(!MathUtil.isNear(0, targetInchesX, 3)) {
-                yMov = MathUtil.clamp(targetInchesX/50, -0.5, 0.5);
+            if(!MathUtil.isNear(y, targetInchesY, 3)) {
+                yMov = MathUtil.clamp((targetInchesY-y)*0.232, -0.2, 0.2);
             }
 
 
-            if(!MathUtil.isNear(0,targetAngle, 12)) {
-                rotMov = MathUtil.clamp(-targetAngle/75, -0.1, 0.1);
+            if(!MathUtil.isNear(rotation,targetAngle, 12)) {
+                rotMov = MathUtil.clamp(rotation-targetAngle/140, -0.1, 0.1);
             }
 
             if(xMov == 0.0 && yMov == 0.0 && rotMov == 0.0) {
@@ -254,6 +252,24 @@ public class DrivebaseOperator extends Operator {
                 strafe = false;
             } else {
                 swerve.move(xMov, yMov, rotMov);
+            }
+
+             enum AlignState {
+
+                LeftAlign (30,30,0),
+                RightAlign(-30,-30,0);
+
+                final double x;
+                final double y;
+                final double rotation;
+
+                 AlignState(double x, double y, double rotation) {
+
+                     this.x = x;
+                     this.y = y;
+                     this.rotation = rotation;
+
+                }
             }
         }
     }

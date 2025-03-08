@@ -13,7 +13,7 @@ public class LimelightVision implements Vision {
 
     @Override
     public List<LimelightHelpers.LimelightTarget_Fiducial> getTargets() {
-        return List.of(LimelightHelpers.getLatestResults(this.limelightName).targetingResults.targets_Fiducials);
+        return List.of(LimelightHelpers.getLatestResults(this.limelightName).targets_Fiducials);
     }
 
     @Override

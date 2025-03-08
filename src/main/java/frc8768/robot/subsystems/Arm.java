@@ -23,7 +23,7 @@ public class Arm implements Subsystem {
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
     private static final SparkBaseConfig INTAKE_CONFIG = new SparkFlexConfig()
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
-    private static final double angleOffset = -94.74609375;
+    private static final double angleOffset = -73.47656250000001;
 
     private  static final double upperBound = 125;
     private static final double lowerBound = -174;
@@ -80,16 +80,16 @@ public class Arm implements Subsystem {
                 pivotMotor.setVoltage(-1.05);
             } else if(currState == ArmState.INTAKE) {
 //                pivotMotor.set(0.25);
-                pivotMotor.setVoltage(1.5);
+                pivotMotor.setVoltage(1.2);
             } else if(currState == ArmState.L2) {
 //                pivotMotor.set(0.25);
-                pivotMotor.setVoltage(1.8);
+                pivotMotor.setVoltage(1.2);
             } else if(currState == ArmState.L3) {
 //                pivotMotor.set(0.25);
-                pivotMotor.setVoltage(1.8);
+                pivotMotor.setVoltage(1.2);
             } else if(currState == ArmState.L4) {
 //                pivotMotor.set(0.25);
-                pivotMotor.setVoltage(1.3);
+                pivotMotor.setVoltage(1.2);
             } else if (currState.targetPosition > getPosition()) {
 //                pivotMotor.set(-0.2);
                 pivotMotor.setVoltage(-1);
@@ -114,10 +114,10 @@ public class Arm implements Subsystem {
             pivotMotor.set(0.02);
         } else if(currState == ArmState.L1) {
             pivotMotor.set(0.04);
-//        } else if(currState == ArmState.L4) {
-//            pivotMotor.set(-0.13);
+        } else if(currState == ArmState.L4) {
+            pivotMotor.set(0.02);
         } else if(currState == ArmState.INTAKE) {
-            pivotMotor.set(0.13);
+            pivotMotor.set(-0.02);
 //            pivotMotor.setVoltage(1.5);
         } else {
             pivotMotor.set(-0.04);
@@ -151,9 +151,9 @@ public class Arm implements Subsystem {
     public enum ArmState {
         ZERO(0),
         L1(-107),
-        L2(-149),
-        L3(-170),
-        L4(-152),
+        L2(-178),
+        L3(-178),
+        L4(-182),
         INTAKE(100),
         CORAL(-115);
 

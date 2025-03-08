@@ -44,7 +44,7 @@ public class Elevator {
         currState = ElevatorState.ZERO;
 
         zeroed = false;
-        while(!(elevatorMotor1.getOutputCurrent() > 10)) {
+        while(!(elevatorMotor1.getOutputCurrent() > 27)) {
             elevatorMotor1.set(-0.05);
             try {
                 Thread.sleep(20);

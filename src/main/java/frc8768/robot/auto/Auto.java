@@ -57,7 +57,7 @@ public class Auto {
         );
 
         PPHolonomicDriveController driveController = new PPHolonomicDriveController(
-                new PIDConstants(51.753, 0, 4.0106),
+                new PIDConstants(0.01, 0, 0),
                 new PIDConstants(0.01, 0, 0)
         );
 

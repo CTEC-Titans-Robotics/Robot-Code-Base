@@ -6,8 +6,10 @@
 package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -100,7 +102,6 @@ public class Robot extends TimedRobot
         robotCams.addCamera("fr", new Transform3d(0, 0, 0, Rotation3d.kZero));
         robotCams.addCamera("bl", new Transform3d(0, 0, 0, Rotation3d.kZero));
         robotCams.addCamera("br", new Transform3d(0, 0, 0, Rotation3d.kZero));
-
 
         try {
           this.swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
@@ -204,14 +205,23 @@ public class Robot extends TimedRobot
     /**
      * Runs at the start of Test state
      */
+    double setpoint = Units.inchesToMeters(12);
     @Override
-    public void testInit() {}
+    public void testInit() {
+        swerve.getSwerveDrive().resetOdometry(new Pose2d());
+    }
 
     /**
      * Runs every 20ms of Test
      */
     @Override
     public void testPeriodic() {
+        if(swerve.getSwerveDrive().getPose().getX() < setpoint) {
+            swerve.move(0.05, 0, 0);
+        } else {
+            swerve.move(0, 0, 0);
+        }
+
       /*  if(driveController.getAButtonPressed()) {
             swerve.sysIdQuasistaticDrive(SysIdRoutine.Direction.kForward).schedule();
         } else if(driveController.getBButtonPressed()) {

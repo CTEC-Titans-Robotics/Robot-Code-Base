@@ -60,7 +60,8 @@ public class Arm implements Subsystem {
      * @return Degrees
      */
     private double getPosition() {
-        return absEncoder.getPosition().getValue().in(Units.Degree) - angleOffset;
+        return
+                absEncoder.getPosition().getValue().in(Units.Degree) - angleOffset;
     }
 
     public void tick() {
@@ -153,7 +154,7 @@ public class Arm implements Subsystem {
         L1(-107),
         L2(-178),
         L3(-178),
-        L4(-182),
+        L4(-192),
         INTAKE(100),
         CORAL(-115);
 

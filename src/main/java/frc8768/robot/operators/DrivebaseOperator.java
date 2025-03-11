@@ -1,10 +1,8 @@
 package frc8768.robot.operators;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static edu.wpi.first.math.util.Units.degreesToRadians;
+import static edu.wpi.first.math.util.Units.inchesToMeters;
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Inches;
 
@@ -38,11 +38,6 @@ public class DrivebaseOperator extends Operator {
     private  final LimelightVision frontCam;
 
     private  final LimelightVision backCam;
-
-
-    double targetInchesX = 0;
-    double targetInchesY = 0;
-    double targetAngle = 0;
 
     // private final TankSubsystemSpark sparkTank;
     // private final TankSubsystemFalcon falconTank;
@@ -79,9 +74,9 @@ public class DrivebaseOperator extends Operator {
     private Map<String, Object> dashboard() {
         HashMap<String, Object> encoder = new HashMap<>();
 
-        encoder.put("tX", targetInchesX);
-        encoder.put("tY", targetInchesY);
-        encoder.put("tAngle", targetAngle);
+        encoder.put("targetX", targetPose.getMeasureX().in(Inches));
+        encoder.put("targetY", targetPose.getMeasureY().in(Inches));
+        encoder.put("targetRot", targetPose.getRotation().getDegrees());
 
         return encoder;
     }
@@ -104,6 +99,7 @@ public class DrivebaseOperator extends Operator {
 
         if (controller.getAButtonPressed()) {
             elevator.moveToState(Elevator.ElevatorState.ZERO);
+            arm.moveToState(Arm.ArmState.ZERO);
         }
 
         if (controller.getXButton() && controller.getAButton()) {
@@ -115,19 +111,11 @@ public class DrivebaseOperator extends Operator {
         }
 
         if (controller.getLeftBumperButton()) {
-            //align(); //TODO left align
+            align(AlignState.LEFT_ALIGN);
+            return;
         } else if (controller.getRightBumperButton()) {
-            align(32,0,0); //TODO right align
-        }
-
-        List<LimelightTarget_Fiducial> targets = backCam.getTargets();
-        if(!targets.isEmpty()) {
-            LimelightTarget_Fiducial target = targets.get(0);
-            Pose2d targetPose = target.getTargetPose_RobotSpace2D();
-
-            targetInchesX = targetPose.getMeasureX().in(Inches);
-            targetInchesY = targetPose.getMeasureY().in(Inches);
-            targetAngle = Math.atan(targetInchesY / targetInchesX) * 180 / Math.PI;
+            align(AlignState.RIGHT_ALIGN);
+            return;
         }
 
       /* if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
@@ -185,7 +173,7 @@ public class DrivebaseOperator extends Operator {
         // Swerve Example
         this.swerve.drive(robotRelative.getNorm() == 0 ? translation2d : robotRelative,
                 rot,
-                robotRelative.getNorm() == 0, true, Constants.BOT_CENTER);
+                robotRelative.getNorm() == 0, false, Constants.BOT_CENTER);
 
 
 
@@ -196,81 +184,60 @@ public class DrivebaseOperator extends Operator {
         // Tank Example (Spark)
         // sparkTank.drive(translation2d);
     }
-    boolean reangle = false;
-    boolean strafe = false;
 
+    private AlignState currState = AlignState.NONE;
+    Pose2d targetPose = Pose2d.kZero;
 
-    public void align(double x, double y, double rotation) {
-
-        strafe = true;
-        reangle = true;
-
-
-        if(reangle) {
-            if (!MathUtil.isNear(0, rotation, 2)) {
-                swerve.move(0, 0, MathUtil.clamp(-Math.toRadians(rotation) / 1.5, -0.5, 0.5));
-            } else {
-                reangle = false;
-                swerve.move(0, 0, 0);
-            }
-        }
-
-        // linear follow attempt;
-        if(controller.getRightBumperButton() && !strafe) {
-        }
-
+    private void align(AlignState targetState) {
         List<LimelightTarget_Fiducial> targets = backCam.getTargets();
-        if(strafe && !targets.isEmpty()) {
+        System.out.println("189");
+        if(!targets.isEmpty()) {
             LimelightTarget_Fiducial target = targets.get(0);
-            Pose2d targetPose = target.getTargetPose_RobotSpace2D();
-
-            double xMov = 0;
-            double yMov = 0;
-            double rotMov = 0;
-
-            targetInchesX = targetPose.getMeasureX().in(Inches);
-            targetInchesY = targetPose.getMeasureY().in(Inches);
-            targetAngle = Math.atan(targetInchesY/targetInchesX)* 180/Math.PI;
-
-            // X: Forward
-            if(!MathUtil.isNear(x, targetInchesX, 3)) {
-                xMov = -MathUtil.clamp((targetInchesX-x)*0.232, -0.2, 0.2);
+            System.out.println("192");
+            if(currState != targetState && target != null) {
+                System.out.println("195");
+                currState = targetState;
+                Pose2d tagToRobotPose = target.getRobotPose_TargetSpace2D();
+                targetPose = new Pose2d(new Translation2d(tagToRobotPose.getX() + targetState.x, tagToRobotPose.getY() + targetState.y),
+                        tagToRobotPose.getRotation().plus(Rotation2d.fromDegrees(targetState.rotation)));
             }
+        }
+        if(!targetState.isAtState(targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees(), inchesToMeters(0.25), degreesToRadians(2)) && targetPose != Pose2d.kZero) {
+            Pose2d drivePose = swerve.getSwerveDrive().getPose();
+            swerve.drive(
+                    targetPose.getTranslation().minus(drivePose.getTranslation()).times(0.05),
+                    (targetPose.getRotation().getDegrees() - drivePose.getRotation().getDegrees()) * 0.05,
+                    true,
+                    false,
+                    Constants.BOT_CENTER
+            );
+        } else if(currState != AlignState.NONE) {
+            currState = AlignState.NONE;
+            targetPose = Pose2d.kZero;
+            swerve.move(0, 0, 0);
+        }
+    }
 
-            // Y: Left
-            if(!MathUtil.isNear(y, targetInchesY, 3)) {
-                yMov = MathUtil.clamp((targetInchesY-y)*0.232, -0.2, 0.2);
-            }
+    enum AlignState {
 
+        LEFT_ALIGN(new double[] {6}, 0, inchesToMeters(-7), 0),
+        RIGHT_ALIGN(new double[] {6}, 0,inchesToMeters(7),0),
+        NONE(new double[] {}, 0, 0, 0);
 
-            if(!MathUtil.isNear(rotation,targetAngle, 12)) {
-                rotMov = MathUtil.clamp(rotation-targetAngle/140, -0.1, 0.1);
-            }
+        final double[] ids;
+        final double x;
+        final double y;
+        final double rotation;
 
-            if(xMov == 0.0 && yMov == 0.0 && rotMov == 0.0) {
-                swerve.move(0, 0, 0);
-                strafe = false;
-            } else {
-                swerve.move(xMov, yMov, rotMov);
-            }
+        AlignState(double[] ids, double x, double y, double rotation) {
+            this.ids = ids;
+            this.x = x;
+            this.y = y;
+            this.rotation = rotation;
+        }
 
-             enum AlignState {
-
-                LeftAlign (30,30,0),
-                RightAlign(-30,-30,0);
-
-                final double x;
-                final double y;
-                final double rotation;
-
-                 AlignState(double x, double y, double rotation) {
-
-                     this.x = x;
-                     this.y = y;
-                     this.rotation = rotation;
-
-                }
-            }
+        public boolean isAtState(double x, double y, double rot, double translationTol, double rotTol) {
+            return MathUtil.isNear(this.x, x, translationTol) && MathUtil.isNear(this.y, y, translationTol) && MathUtil.isNear(this.rotation, rot, rotTol);
         }
     }
 }

@@ -13,6 +13,7 @@ import frc8768.robot.util.MotorType;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
+import swervelib.telemetry.SwerveDriveTelemetry;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,6 +86,9 @@ public class SwerveSubsystem {
                         new Subsystem() {}
                 )
         );
+
+        swerveDrive.setHeadingCorrection(false);
+
     }
 
     /**
@@ -101,7 +105,7 @@ public class SwerveSubsystem {
     }
 
     public void move(double xSpeed, double ySpeed, double rot) {
-        drive(new Translation2d(xSpeed, ySpeed), rot, false, true, Constants.BOT_CENTER);
+        drive(new Translation2d(xSpeed, ySpeed), rot, false, false, Constants.BOT_CENTER);
     }
 
     /**
@@ -183,4 +187,6 @@ public class SwerveSubsystem {
         // Insert string buffer/different logic for detecting faults here
         return new ArrayList<>();
     }
+
+
 }

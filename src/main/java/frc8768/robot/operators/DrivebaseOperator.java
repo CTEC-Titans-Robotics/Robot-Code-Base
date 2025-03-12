@@ -32,8 +32,8 @@ public class DrivebaseOperator extends Operator {
     private final XboxController controller;
     private final SwerveSubsystem swerve;
    // private final GroundIndefector indefector;
-    private final Elevator elevator;
-    private final Arm arm;
+///    private final Elevator elevator;
+///    private final Arm arm;
 
     private  final LimelightVision frontCam;
 
@@ -50,7 +50,8 @@ public class DrivebaseOperator extends Operator {
 
 
     //public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
-        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
+///        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
+        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, LimelightVision frontCam, LimelightVision backCam) {
         super("Drivebase");
 
         this.swerve = swerve;
@@ -62,8 +63,8 @@ public class DrivebaseOperator extends Operator {
         // falconTank = Robot.getInstance().getFalcon();
 
        // this.indefector = indefector;
-        this.elevator = elevator;
-            this.arm = arm;
+///        this.elevator = elevator;
+///            this.arm = arm;
 
             // Init logging
         LogUtil.registerLogger(swerve::log);
@@ -93,21 +94,21 @@ public class DrivebaseOperator extends Operator {
         }
 
         if (controller.getYButton()) {
-            elevator.moveToState(Elevator.ElevatorState.HANG);
-            arm.moveToState(Arm.ArmState.L4);
+///            elevator.moveToState(Elevator.ElevatorState.HANG);
+///            arm.moveToState(Arm.ArmState.L4);
         }
 
         if (controller.getAButtonPressed()) {
-            elevator.moveToState(Elevator.ElevatorState.ZERO);
-            arm.moveToState(Arm.ArmState.ZERO);
+///            elevator.moveToState(Elevator.ElevatorState.ZERO);
+///            arm.moveToState(Arm.ArmState.ZERO);
         }
 
         if (controller.getXButton() && controller.getAButton()) {
-            elevator.moveDown();
+///            elevator.moveDown();
         }
 
         if (controller.getXButton() && controller.getYButton()) {
-            elevator.moveDown();
+///            elevator.moveDown();
         }
 
         if (controller.getLeftBumperButton()) {
@@ -116,6 +117,8 @@ public class DrivebaseOperator extends Operator {
         } else if (controller.getRightBumperButton()) {
             align(AlignState.RIGHT_ALIGN);
             return;
+        } else if(controller.getXButtonPressed()) {
+            align(AlignState.CENTER);
         }
 
       /* if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
@@ -138,7 +141,7 @@ public class DrivebaseOperator extends Operator {
 */
         double xRobotRelative = 0;
         double yRobotRelative = 0;
-
+/*///
         if(controller.getPOV() == 0) {
            if (elevator.state() == Elevator.ElevatorState.L4){
                xRobotRelative = -.05; }
@@ -160,14 +163,15 @@ public class DrivebaseOperator extends Operator {
             else
                 yRobotRelative = -.05;
         }
-
+*/
 
         double rot = MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND);
+/*///
         if(elevator.state() != Elevator.ElevatorState.ZERO && elevator.state() != Elevator.ElevatorState.L1) {
             translation2d = translation2d.times(0.05);
             rot *= 0.05;
         }
-
+*/
         Translation2d robotRelative = new Translation2d(xRobotRelative, yRobotRelative);
 
         // Swerve Example
@@ -189,48 +193,50 @@ public class DrivebaseOperator extends Operator {
     Pose2d targetPose = Pose2d.kZero;
 
     private void align(AlignState targetState) {
+        if(currState != targetState) {
+            currState = targetState;
+            swerve.getSwerveDrive().resetOdometry(new Pose2d(Translation2d.kZero, swerve.getSwerveDrive().getYaw()));
+        }
         List<LimelightTarget_Fiducial> targets = backCam.getTargets();
-        System.out.println("189");
-        if(!targets.isEmpty()) {
-            LimelightTarget_Fiducial target = targets.get(0);
-            System.out.println("192");
-            if(currState != targetState && target != null) {
-                System.out.println("195");
-                currState = targetState;
-                Pose2d tagToRobotPose = target.getRobotPose_TargetSpace2D();
-                targetPose = new Pose2d(new Translation2d(tagToRobotPose.getX() + targetState.x, tagToRobotPose.getY() + targetState.y),
-                        tagToRobotPose.getRotation().plus(Rotation2d.fromDegrees(targetState.rotation)));
+
+        boolean atState = false;
+        if(!targets.isEmpty() && targetState == AlignState.CENTER) {
+            targetPose = targets.get(0).getRobotPose_TargetSpace2D();
+        }
+
+        if(targetState != AlignState.CENTER && targetState != AlignState.NONE) {
+            Translation2d desired = new Translation2d(targetState.x, targetState.y);
+            targetPose = new Pose2d(swerve.getSwerveDrive().getPose().getTranslation().plus(desired),
+                    Rotation2d.fromDegrees(swerve.getSwerveDrive().getYaw().getDegrees() + targetState.rotation));
+        }
+
+        Pose2d drivePose = swerve.getSwerveDrive().getPose();
+        if(targetPose != Pose2d.kZero) {
+            Transform2d transform = targetPose.minus(drivePose);
+            if (MathUtil.isNear(0, transform.getX(), 0.25) && MathUtil.isNear(0, transform.getY(), 0.25) && MathUtil.isNear(0, transform.getRotation().getDegrees(), 2)) {
+                atState = true;
+            } else {
+                swerve.drive(transform.getTranslation().times(0.05), transform.getRotation().getDegrees(), false, false, Constants.BOT_CENTER);
             }
         }
-        if(!targetState.isAtState(targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees(), inchesToMeters(0.25), degreesToRadians(2)) && targetPose != Pose2d.kZero) {
-            Pose2d drivePose = swerve.getSwerveDrive().getPose();
-            swerve.drive(
-                    targetPose.getTranslation().minus(drivePose.getTranslation()).times(0.05),
-                    (targetPose.getRotation().getDegrees() - drivePose.getRotation().getDegrees()) * 0.05,
-                    true,
-                    false,
-                    Constants.BOT_CENTER
-            );
-        } else if(currState != AlignState.NONE) {
+
+        if(currState != AlignState.NONE && atState) {
             currState = AlignState.NONE;
             targetPose = Pose2d.kZero;
-            swerve.move(0, 0, 0);
         }
     }
 
     enum AlignState {
+        LEFT_ALIGN(0, inchesToMeters(-7), 0),//tag 6, 0 front/back, 7 left, 0 rotation
+        RIGHT_ALIGN(0, inchesToMeters(7),0),//tag 6, 0 front/back, 7 right, 0 rotation
+        CENTER(inchesToMeters(-7), 0, 0),
+        NONE(0, 0, 0);
 
-        LEFT_ALIGN(new double[] {6}, 0, inchesToMeters(-7), 0),
-        RIGHT_ALIGN(new double[] {6}, 0,inchesToMeters(7),0),
-        NONE(new double[] {}, 0, 0, 0);
-
-        final double[] ids;
         final double x;
         final double y;
         final double rotation;
 
-        AlignState(double[] ids, double x, double y, double rotation) {
-            this.ids = ids;
+        AlignState(double x, double y, double rotation) {
             this.x = x;
             this.y = y;
             this.rotation = rotation;

@@ -39,7 +39,7 @@ import java.io.IOException;
 public class Robot extends TimedRobot
 {
     private static final XboxController driveController = new XboxController(Constants.DRIVER_CONTROLLER_ID);
-///    private static final XboxController auxController = new XboxController(1);
+    private static final XboxController auxController = new XboxController(1);
 
     /**
      * Robot instance, can't be seen across threads
@@ -50,15 +50,17 @@ public class Robot extends TimedRobot
      * Drivebase Operator
      */
     private DrivebaseOperator drivebase;
-///    private AuxiliaryOperator auxiliary;
+    private AuxiliaryOperator auxiliary;
 
     /**
      * The swerve subsystem, held in here for Auton.
      */
+
+
     private SwerveSubsystem swerve;
     private GroundIndefector groundIndefector;
-///    private Elevator elevator;
-///    private Arm arm;
+    private Elevator elevator;
+    private Arm arm;
     // private TankSubsystemFalcon falcon;
     // private TankSubsystemSpark spark;
 
@@ -110,17 +112,18 @@ public class Robot extends TimedRobot
         }
 
         // this.groundIndefector = new GroundIndefector();
-///        this.elevator = new Elevator();
-///        this.arm = new Arm();
+        this.elevator = new Elevator();
+        this.arm = new Arm();
 
-        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.frontVision, this.backVision);
-///        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.elevator, this.arm, this.frontVision, this.backVision);
-///        this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
-///        this.auto = new Auto(swerve, arm);
+///        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.frontVision, this.backVision);
+        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.elevator, this.arm, this.frontVision, this.backVision);
+        this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
+        this.auto = new Auto(swerve, arm, elevator);
         // this.vision = new LimelightVision("limelight");
 
-///        this.auxiliary.init();
+        this.auxiliary.init();
         this.drivebase.init();
+
     }
 
     /* For tank
@@ -140,8 +143,8 @@ public class Robot extends TimedRobot
         CommandScheduler.getInstance().run();
         LogUtil.run();
 
-///        elevator.tick();
-///        arm.tick();
+        elevator.tick();
+        arm.tick();
     }
 
     /**
@@ -162,8 +165,8 @@ public class Robot extends TimedRobot
 
     @Override
     public void disabledPeriodic() {
-///        elevator.moveToState(Elevator.ElevatorState.ZERO);
-///        arm.moveToState(Arm.ArmState.ZERO);
+        elevator.moveToState(Elevator.ElevatorState.ZERO);
+        arm.moveToState(Arm.ArmState.ZERO);
     }
 
     /**
@@ -217,12 +220,14 @@ public class Robot extends TimedRobot
      */
     @Override
     public void testPeriodic() {
+
+        /*
         if(swerve.getSwerveDrive().getPose().getX() < setpoint) {
             swerve.move(0.05, 0, 0);
         } else {
             swerve.move(0, 0, 0);
         }
-
+*/
       /*  if(driveController.getAButtonPressed()) {
             swerve.sysIdQuasistaticDrive(SysIdRoutine.Direction.kForward).schedule();
         } else if(driveController.getBButtonPressed()) {

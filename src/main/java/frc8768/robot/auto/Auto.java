@@ -16,6 +16,7 @@ import frc8768.robot.auto.commands.L1Command;
 import frc8768.robot.auto.commands.L1FullyAuto;
 import frc8768.robot.auto.commands.TestTaxi;
 import frc8768.robot.subsystems.Arm;
+import frc8768.robot.subsystems.Elevator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import swervelib.SwerveDrive;
@@ -34,7 +35,7 @@ public class Auto {
      *
      * @param swerve The Robots swerve subsystem
      */
-    public Auto(SwerveSubsystem swerve, Arm arm) {
+    public Auto(SwerveSubsystem swerve, Arm arm, Elevator elevator) {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
         NamedCommands.registerCommand("L1_Shoot", new L1Command(arm));
 
@@ -76,7 +77,7 @@ public class Auto {
 
         autonChooser = AutoBuilder.buildAutoChooser();
         autonChooser.addOption("Test Taxi", new TestTaxi(swerve));
-        autonChooser.addOption("L1 Full Auto", new L1FullyAuto(swerve, arm));
+        autonChooser.addOption("L1 Full Auto", new L1FullyAuto(swerve, arm, elevator));
         SmartDashboard.putData("Auto", this.autonChooser);
     }
 

@@ -1,9 +1,11 @@
 package frc8768.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -13,7 +15,6 @@ import frc8768.robot.util.MotorType;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
-import swervelib.telemetry.SwerveDriveTelemetry;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Container class for everything Swerve
@@ -41,6 +44,13 @@ public class SwerveSubsystem {
      */
     private SwerveDrive swerveDrive;
 
+    private Rotation2d initialYaw;
+
+
+
+
+
+
     /**
      * @param type Neos or Falcons, see {@link MotorType}
      * @throws IOException if it can't find the resources.
@@ -54,6 +64,8 @@ public class SwerveSubsystem {
             case TALONFX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/falcon")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, metersPerDeg, metersPerRotation);
             case SPARKFLEX -> swerveDrive = new SwerveParser(new File(Filesystem.getDeployDirectory(), "swerve/sparkflex")).createSwerveDrive(Constants.SwerveConfig.MAX_SPEED, metersPerDeg, metersPerRotation);
         }
+
+        initialYaw = Rotation2d.fromDegrees(swerveDrive.getYaw().getDegrees());
 
         driveSysIdRoutine = new SysIdRoutine(
                 new SysIdRoutine.Config(),
@@ -106,6 +118,26 @@ public class SwerveSubsystem {
 
     public void move(double xSpeed, double ySpeed, double rot) {
         drive(new Translation2d(xSpeed, ySpeed), rot, false, false, Constants.BOT_CENTER);
+    }
+
+    public void zeroGyro() {
+        swerveDrive.zeroGyro();
+        initialYaw = swerveDrive.getYaw();
+    }
+
+    public void setTargetHeading(double target) {
+        Pose2d currPose = swerveDrive.getPose();
+        DriverStation.getAlliance().ifPresent((alliance) -> {
+            if(target == 0) {
+                swerveDrive.resetOdometry(new Pose2d(currPose.getTranslation(), initialYaw));
+                return;
+            }
+            if(alliance == DriverStation.Alliance.Red) {
+                swerveDrive.resetOdometry(new Pose2d(currPose.getTranslation(), Rotation2d.fromDegrees(target - initialYaw.getDegrees() + 180)));
+            } else {
+                swerveDrive.resetOdometry(new Pose2d(currPose.getTranslation(), Rotation2d.fromDegrees(target - initialYaw.getDegrees())));
+            }
+        });
     }
 
     /**

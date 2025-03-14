@@ -20,7 +20,7 @@ public class L1Command extends Command{
 
     @Override
     public void execute() {
-        this.arm.moveToState(Arm.ArmState.L1);
+        this.arm.moveToState(Arm.ArmState.L4);
 
         if(arm.isAtRotation()){
             if (!timer.isRunning()) {

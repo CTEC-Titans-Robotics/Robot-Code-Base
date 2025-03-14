@@ -3,6 +3,7 @@ package frc8768.robot.auto.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc8768.robot.subsystems.Arm;
+import frc8768.robot.subsystems.Elevator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 
 public class L1FullyAuto extends Command {
@@ -10,9 +11,12 @@ public class L1FullyAuto extends Command {
     private final Arm arm;
     private AutoState state;
 
-    public L1FullyAuto(SwerveSubsystem swerveSubsystem, Arm arm) {
+    private final Elevator elevator;
+
+    public L1FullyAuto(SwerveSubsystem swerveSubsystem, Arm arm, Elevator elevator) {
         this.swerve = swerveSubsystem;
         this.arm = arm;
+        this.elevator = elevator;
     }
 
     @Override
@@ -51,6 +55,8 @@ public class L1FullyAuto extends Command {
                 if(!state.started()) {
                     state.startTimer();
                     swerve.move(-0.1, 0, 0);
+                    arm.moveToState(Arm.ArmState.L4);
+                    elevator.moveToState(Elevator.ElevatorState.L4);
                 } else if(state.hasElapsed()) {
                     state = AutoState.STOP;
                 } else {
@@ -61,6 +67,7 @@ public class L1FullyAuto extends Command {
                 if(!state.started()) {
                     state.startTimer();
                     swerve.move(0, 0, 0);
+
                 } else if(state.hasElapsed()) {
                     state = AutoState.ARM_L1;
                 }
@@ -68,7 +75,8 @@ public class L1FullyAuto extends Command {
             case ARM_L1 -> {
                 if(!state.started()) {
                     state.startTimer();
-                    arm.moveToState(Arm.ArmState.L1);
+
+
                 } else if(state.hasElapsed()) {
                     state = AutoState.OUTTAKE;
                 }
@@ -86,11 +94,28 @@ public class L1FullyAuto extends Command {
                     state.startTimer();
                     arm.stopIntake();
                 } else if(state.hasElapsed()) {
-                    state = AutoState.DONE;
+                    state = AutoState.REVERSE;
                     arm.stopIntake();
-                    arm.moveToState(Arm.ArmState.ZERO);
                 }
             }
+            case REVERSE -> {
+                if(!state.started()) {
+                    state.startTimer();
+                    swerve.move(0.1, 0, 0);
+                } else if(state.hasElapsed()) {
+                    state = AutoState.LOWER;
+                }
+            }
+            case LOWER -> {
+                if(!state.started()) {
+                    state.startTimer();
+                   elevator.moveToState(Elevator.ElevatorState.ZERO);
+
+                } else if(state.hasElapsed()) {
+                    state = AutoState.DONE;
+                }
+            }
+
         }
 
         /*
@@ -157,7 +182,12 @@ public class L1FullyAuto extends Command {
         ARM_L1(1),
         OUTTAKE(1),
         STOP_OUTTAKE(0),
+
+        REVERSE (1),
+        LOWER (2),
         DONE(0);
+
+
 
         private final Timer timer = new Timer();
         private double seconds;

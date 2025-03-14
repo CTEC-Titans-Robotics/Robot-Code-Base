@@ -26,10 +26,11 @@ public class AuxiliaryOperator extends Operator {
         }
         */
 
-        if (controller.getPOV() == 180 && elevator.state() != Elevator.ElevatorState.L4) {
-            elevator.moveToState(Elevator.ElevatorState.L1);
-            arm.moveToState(Arm.ArmState.L1);
-        } else if (controller.getPOV() == 0 && elevator.state() != Elevator.ElevatorState.L4) {
+       // if (controller.getPOV() == 180 && elevator.state() != Elevator.ElevatorState.L4) {
+       //     elevator.moveToState(Elevator.ElevatorState.L1);
+       //     arm.moveToState(Arm.ArmState.L1);
+       // } else
+            if (controller.getPOV() == 0 && elevator.state() != Elevator.ElevatorState.L4) {
             elevator.moveToState(Elevator.ElevatorState.L2);
             arm.moveToState(Arm.ArmState.L2 );
 
@@ -40,7 +41,7 @@ public class AuxiliaryOperator extends Operator {
             arm.moveToState(Arm.ArmState.CORAL);
 
         */
-        } else if (controller.getAButton() && elevator.state() != Elevator.ElevatorState.L4) {
+        } else if (controller.getAButton()) {
             elevator.moveToState(Elevator.ElevatorState.L3);
             arm.moveToState(Arm.ArmState.L3);
        } else if (controller.getYButton()) {
@@ -56,6 +57,7 @@ public class AuxiliaryOperator extends Operator {
        if (controller.getLeftTriggerAxis() > 0.1 ){
             arm.spinIntake(true);
             release = 1;
+            //arm.moveToState(Arm.ArmState.HOLD);
             elevator.moveToState(Elevator.ElevatorState.ZERO);
 
 
@@ -76,7 +78,7 @@ public class AuxiliaryOperator extends Operator {
 
         if(release >= 2) {
             release = 0;
-            arm.moveToState(Arm.ArmState.ZERO);
+            //arm.moveToState(Arm.ArmState.HOLD);
             elevator.moveToState(Elevator.ElevatorState.ZERO);
         }
 

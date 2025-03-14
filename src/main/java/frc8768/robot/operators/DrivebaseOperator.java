@@ -32,8 +32,8 @@ public class DrivebaseOperator extends Operator {
     private final XboxController controller;
     private final SwerveSubsystem swerve;
    // private final GroundIndefector indefector;
-///    private final Elevator elevator;
-///    private final Arm arm;
+    private final Elevator elevator;
+    private final Arm arm;
 
     private  final LimelightVision frontCam;
 
@@ -50,8 +50,8 @@ public class DrivebaseOperator extends Operator {
 
 
     //public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
-///        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
-        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, LimelightVision frontCam, LimelightVision backCam) {
+        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
+///        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, LimelightVision frontCam, LimelightVision backCam) {
         super("Drivebase");
 
         this.swerve = swerve;
@@ -63,8 +63,8 @@ public class DrivebaseOperator extends Operator {
         // falconTank = Robot.getInstance().getFalcon();
 
        // this.indefector = indefector;
-///        this.elevator = elevator;
-///            this.arm = arm;
+        this.elevator = elevator;
+            this.arm = arm;
 
             // Init logging
         LogUtil.registerLogger(swerve::log);
@@ -89,39 +89,50 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.CONTROLLER_DEADBAND),
                 MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.CONTROLLER_DEADBAND));
 
-        if (controller.getBButtonPressed()) {
-            swerve.getSwerveDrive().zeroGyro();
+        if (controller.getStartButtonPressed()) {
+            swerve.zeroGyro();
         }
 
+        if (controller.getXButton()){
+            swerve.setTargetHeading(128);
+        } else if (controller.getBButton()){
+            swerve.setTargetHeading(232);
+        } else if(controller.getXButtonReleased() || controller.getBButtonReleased()) {
+            swerve.setTargetHeading(0);
+        }
+/*
         if (controller.getYButton()) {
-///            elevator.moveToState(Elevator.ElevatorState.HANG);
-///            arm.moveToState(Arm.ArmState.L4);
+            elevator.moveToState(Elevator.ElevatorState.HANG);
+            arm.moveToState(Arm.ArmState.L4);
         }
 
+*/
         if (controller.getAButtonPressed()) {
-///            elevator.moveToState(Elevator.ElevatorState.ZERO);
-///            arm.moveToState(Arm.ArmState.ZERO);
+            elevator.moveToState(Elevator.ElevatorState.ZERO);
+            arm.moveToState(Arm.ArmState.L2);
         }
-
+/*
         if (controller.getXButton() && controller.getAButton()) {
-///            elevator.moveDown();
+            elevator.moveDown();
         }
 
         if (controller.getXButton() && controller.getYButton()) {
-///            elevator.moveDown();
+            elevator.moveDown();
         }
-
+*/
+/* remove Align
         if (controller.getLeftBumperButton()) {
             align(AlignState.LEFT_ALIGN);
             return;
         } else if (controller.getRightBumperButton()) {
             align(AlignState.RIGHT_ALIGN);
             return;
-        } else if(controller.getXButtonPressed()) {
+        } else if(controller.getYButtonPressed()) {
             align(AlignState.CENTER);
         }
-
-      /* if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
+*/
+/*  Removed Algae
+       if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
             indefector.spinIntake(true);
         } else if (controller.getLeftBumperButton()) {
             indefector.spinIntake(false);
@@ -141,37 +152,44 @@ public class DrivebaseOperator extends Operator {
 */
         double xRobotRelative = 0;
         double yRobotRelative = 0;
-/*///
+        double rot = MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND);
+
+        if(controller.getLeftTriggerAxis() > 0.1){
+            translation2d = translation2d.times(0.1);
+            rot *= 0.1;
+        }
+
         if(controller.getPOV() == 0) {
-           if (elevator.state() == Elevator.ElevatorState.L4){
+           if (elevator.state() == Elevator.ElevatorState.ZERO){
                xRobotRelative = -.05; }
            else
                xRobotRelative = .05;
         } else if (controller.getPOV() == 180) {
-            if (elevator.state() == Elevator.ElevatorState.L4){
+            if (elevator.state() == Elevator.ElevatorState.ZERO){
                 xRobotRelative = .05; }
             else
                 xRobotRelative = -.05;
         } else if (controller.getPOV() == 90) {
-            if (elevator.state() == Elevator.ElevatorState.L4){
+            if (elevator.state() == Elevator.ElevatorState.ZERO){
                 yRobotRelative = -.05; }
             else
                 yRobotRelative = .05;
         } else if (controller.getPOV() == 270) {
-            if (elevator.state() == Elevator.ElevatorState.L4){
+            if (elevator.state() == Elevator.ElevatorState.ZERO){
                 yRobotRelative = .05; }
             else
                 yRobotRelative = -.05;
         }
-*/
 
-        double rot = MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND);
-/*///
-        if(elevator.state() != Elevator.ElevatorState.ZERO && elevator.state() != Elevator.ElevatorState.L1) {
+
+
+
+
+        if(elevator.state() == Elevator.ElevatorState.L3 || elevator.state() == Elevator.ElevatorState.L4) {
             translation2d = translation2d.times(0.05);
             rot *= 0.05;
         }
-*/
+
         Translation2d robotRelative = new Translation2d(xRobotRelative, yRobotRelative);
 
         // Swerve Example

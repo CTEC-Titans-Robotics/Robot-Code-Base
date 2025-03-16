@@ -26,11 +26,10 @@ public class AuxiliaryOperator extends Operator {
         }
         */
 
-       // if (controller.getPOV() == 180 && elevator.state() != Elevator.ElevatorState.L4) {
-       //     elevator.moveToState(Elevator.ElevatorState.L1);
-       //     arm.moveToState(Arm.ArmState.L1);
-       // } else
-            if (controller.getPOV() == 0 && elevator.state() != Elevator.ElevatorState.L4) {
+       if (controller.getPOV() == 180 && elevator.state() != Elevator.ElevatorState.L4) {
+            elevator.moveToState(Elevator.ElevatorState.L1);
+            arm.moveToState(Arm.ArmState.L1);
+        } else if (controller.getPOV() == 0 && elevator.state() != Elevator.ElevatorState.L4) {
             elevator.moveToState(Elevator.ElevatorState.L2);
             arm.moveToState(Arm.ArmState.L2 );
 

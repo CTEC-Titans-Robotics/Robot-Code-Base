@@ -101,7 +101,7 @@ public class Arm implements Subsystem {
                 pivotMotor.setVoltage(1.2);
             } else if(currState == ArmState.L1) {
 //                pivotMotor.set(0.25);
-                pivotMotor.setVoltage(0.65);
+                pivotMotor.setVoltage(1.2);
             } else if (currState.targetPosition > getPosition()) {
 //                pivotMotor.set(-0.2);
                 pivotMotor.setVoltage(-1);
@@ -121,7 +121,7 @@ public class Arm implements Subsystem {
     }
     public void stop() {
         if(currState == ArmState.ZERO) {
-            pivotMotor.set(-0.02);
+            pivotMotor.set(0.05);
         }else if(currState == ArmState.L2 || currState == ArmState.L3){
             pivotMotor.set(0.02);  //0.02
         } else if(currState == ArmState.L1) {
@@ -140,9 +140,11 @@ public class Arm implements Subsystem {
         if (currState == ArmState.L1) {
             intakeMotor.set(outTake ? -0.3 : 0.13);
         } else {
-            intakeMotor.set(outTake ? -0.2 : 0.25);
+            intakeMotor.set(outTake ? -0.2 : 0.28);
         }
     }
+
+
 
     public void stopIntake() {
         intakeMotor.set(0.04);
@@ -164,11 +166,11 @@ public class Arm implements Subsystem {
 
         ZERO(0),
         HOLD(-50),
-        L1(-107),
-        L2(-178),
+        L1(-196),
+        L2(-180),
         L3(-185),
         L4(-196),
-        INTAKE(74.5),
+        INTAKE(76.5),
         CORAL(-115);
 
         final double targetPosition;

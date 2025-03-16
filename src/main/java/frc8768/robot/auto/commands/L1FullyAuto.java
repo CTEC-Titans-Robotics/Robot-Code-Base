@@ -55,8 +55,8 @@ public class L1FullyAuto extends Command {
                 if(!state.started()) {
                     state.startTimer();
                     swerve.move(-0.1, 0, 0);
-                    arm.moveToState(Arm.ArmState.L4);
-                    elevator.moveToState(Elevator.ElevatorState.L4);
+                    arm.moveToState(Arm.ArmState.L2);
+                    elevator.moveToState(Elevator.ElevatorState.L2);
                 } else if(state.hasElapsed()) {
                     state = AutoState.STOP;
                 } else {
@@ -177,7 +177,7 @@ public class L1FullyAuto extends Command {
     private enum AutoState {
         INTAKE(0.5),
         INTAKE_STOP(0),
-        MOVE(3.5),
+        MOVE(5),
         STOP(0),
         ARM_L1(1),
         OUTTAKE(1),

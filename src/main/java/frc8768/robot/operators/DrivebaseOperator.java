@@ -159,6 +159,11 @@ public class DrivebaseOperator extends Operator {
             rot *= 0.1;
         }
 
+        if(controller.getRightTriggerAxis() > 0.1){
+            translation2d = translation2d.times(0.5);
+            rot *= 0.5;
+        }
+
         if(controller.getPOV() == 0) {
            if (elevator.state() == Elevator.ElevatorState.ZERO){
                xRobotRelative = -.05; }

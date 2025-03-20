@@ -167,9 +167,9 @@ public class Arm implements Subsystem {
         ZERO(0),
         HOLD(-50),
         L1(-196),
-        L2(-180),
+        L2(-173),
         L3(-185),
-        L4(-196),
+        L4(-191),
         INTAKE(76.5),
         CORAL(-115);
 
@@ -180,3 +180,4 @@ public class Arm implements Subsystem {
         }
     }
 }
+

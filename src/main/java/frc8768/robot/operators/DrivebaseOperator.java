@@ -160,8 +160,8 @@ public class DrivebaseOperator extends Operator {
         }
 
         if(controller.getRightTriggerAxis() > 0.1){
-            translation2d = translation2d.times(0.5);
-            rot *= 0.5;
+            translation2d = translation2d.times(0.4);
+            rot *= 0.4;
         }
 
         if(controller.getPOV() == 0) {

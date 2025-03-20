@@ -26,8 +26,11 @@ import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.LimelightVision;
 import frc8768.visionlib.Vision;
-import frc8768.visionlib.multicam.PhotonMultiCam;
 
+import frc8768.visionlib.multicam.PhotonMultiCam;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import java.io.IOException;
 
 /**
@@ -95,15 +98,23 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit() {
         CameraServer.startAutomaticCapture();
+        Transform3d frontLimeLightTransform = new Transform3d(0,0.29898,0.21601,
+                new Rotation3d(Math.toRadians(10),Math.toRadians(0),Math.toRadians(0)));
+        Transform3d backLimeLightTransform = new Transform3d(0,-0.31070,0.27621,
+                new Rotation3d(Math.toRadians(0),Math.toRadians(0),Math.toRadians(0)));
 
-        frontVision = new LimelightVision("limelight-front");
-        backVision = new LimelightVision("limelight-back");
+        frontVision = new LimelightVision("limelight-front",frontLimeLightTransform);
+        backVision = new LimelightVision("limelight-back",backLimeLightTransform);
         robotCams = new PhotonMultiCam();
 
-        robotCams.addCamera("fl", new Transform3d(0, 0, 0, Rotation3d.kZero));
-        robotCams.addCamera("fr", new Transform3d(0, 0, 0, Rotation3d.kZero));
-        robotCams.addCamera("bl", new Transform3d(0, 0, 0, Rotation3d.kZero));
-        robotCams.addCamera("br", new Transform3d(0, 0, 0, Rotation3d.kZero));
+        robotCams.addCamera("fl", new Transform3d(-0.301516, 0.301516, 0.184,
+                new Rotation3d(Math.toRadians(10),Math.toRadians(-45),Math.toRadians(0))));
+        robotCams.addCamera("fr", new Transform3d(0.301516, 0.301516, 0.184,
+                new Rotation3d(Math.toRadians(10),Math.toRadians(45),Math.toRadians(0))));
+        robotCams.addCamera("bl", new Transform3d(-0.301516, -0.301516, 0.184,
+                new Rotation3d(Math.toRadians(10),Math.toRadians(-135),Math.toRadians(0))));
+        robotCams.addCamera("br", new Transform3d(0.301516, -0.301516, 0.184,
+                new Rotation3d(Math.toRadians(10),Math.toRadians(135),Math.toRadians(0))));
 
         try {
           this.swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);

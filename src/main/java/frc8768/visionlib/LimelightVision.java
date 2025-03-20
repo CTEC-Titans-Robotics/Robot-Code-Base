@@ -1,14 +1,18 @@
 package frc8768.visionlib;
 
+import edu.wpi.first.math.geometry.Transform3d;
 import frc8768.visionlib.helpers.LimelightHelpers;
 
 import java.util.List;
 
 public class LimelightVision implements Vision {
     private final String limelightName;
+    private Transform3d cameraTransform;
 
-    public LimelightVision(String name) {
+    public LimelightVision(String name, Transform3d transform) {
+
         this.limelightName = name;
+        this.cameraTransform = transform;
     }
 
     @Override

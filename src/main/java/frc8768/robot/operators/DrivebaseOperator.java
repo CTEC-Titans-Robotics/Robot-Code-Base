@@ -148,7 +148,7 @@ public class DrivebaseOperator extends Operator {
                     .getTable("limelight-back")
                     .getEntry("camerapose_targetspace")
                     .getDoubleArray(new double[6]);
-
+//These are the correct components of the array
             if (pose.length >= 6 && isValidPose(pose)) {
                 snapshotX = pose[2]; // Forward distance
                 snapshotY = pose[0];// + 0.1778; // 7 inches left of tag

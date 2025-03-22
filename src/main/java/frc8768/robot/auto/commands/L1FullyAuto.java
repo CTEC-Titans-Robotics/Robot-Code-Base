@@ -48,15 +48,25 @@ public class L1FullyAuto extends Command {
                     state.startTimer();
                     arm.stopIntake();
                 } else if(state.hasElapsed()) {
-                    state = AutoState.MOVE;
+                    state = AutoState.MOVE1;
                 }
             }
-            case MOVE -> {
+            case MOVE1 -> {
                 if(!state.started()) {
                     state.startTimer();
                     swerve.move(-0.1, 0, 0);
-                    arm.moveToState(Arm.ArmState.L2);
-                    elevator.moveToState(Elevator.ElevatorState.L2);
+                    arm.moveToState(Arm.ArmState.L4);
+                } else if(state.hasElapsed()) {
+                    state = AutoState.MOVE2;
+                } else {
+                    swerve.move(-0.1, 0, 0);
+                }
+            }
+            case MOVE2 -> {
+                if(!state.started()) {
+                    state.startTimer();
+                    swerve.move(-0.1, 0, 0);
+                    elevator.moveToState(Elevator.ElevatorState.L4);
                 } else if(state.hasElapsed()) {
                     state = AutoState.STOP;
                 } else {
@@ -177,7 +187,9 @@ public class L1FullyAuto extends Command {
     private enum AutoState {
         INTAKE(0.5),
         INTAKE_STOP(0),
-        MOVE(5),
+        MOVE1(1.25),
+
+        MOVE2(2.25),
         STOP(0),
         ARM_L1(1),
         OUTTAKE(1),

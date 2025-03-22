@@ -82,6 +82,9 @@ public class Robot extends TimedRobot
      */
     private Auto auto;
 
+
+
+
     public Robot() {
         instance = this;
     }
@@ -102,13 +105,16 @@ public class Robot extends TimedRobot
     @Override
     public void robotInit() {
         CameraServer.startAutomaticCapture();
+        /*
         Transform3d frontLimeLightTransform = new Transform3d(0,0.29898,0.21601,
                 new Rotation3d(Math.toRadians(10),Math.toRadians(0),Math.toRadians(0)));
         Transform3d backLimeLightTransform = new Transform3d(0,-0.31070,0.27621,
                 new Rotation3d(Math.toRadians(0),Math.toRadians(0),Math.toRadians(0)));
-
         frontVision = new LimelightVision("limelight-front",frontLimeLightTransform);
         backVision = new LimelightVision("limelight-back",backLimeLightTransform);
+*/
+        frontVision = new LimelightVision("limelight-front");
+        backVision = new LimelightVision("limelight-back");
         robotCams = new PhotonMultiCam();
 
         robotCams.addCamera("fl", new Transform3d(-0.301516, 0.301516, 0.184,

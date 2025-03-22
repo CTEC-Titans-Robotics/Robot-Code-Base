@@ -9,10 +9,11 @@ public class LimelightVision implements Vision {
     private final String limelightName;
     private Transform3d cameraTransform;
 
-    public LimelightVision(String name, Transform3d transform) {
+//    public LimelightVision(String name, Transform3d transform) {
+    public LimelightVision(String name) {
 
         this.limelightName = name;
-        this.cameraTransform = transform;
+        //this.cameraTransform = transform;
     }
 
     @Override

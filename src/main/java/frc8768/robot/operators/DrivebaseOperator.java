@@ -1,11 +1,16 @@
 package frc8768.robot.operators;
 
+import com.revrobotics.spark.SparkFlex;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc8768.robot.Robot;
 import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.Elevator;
 //import frc8768.robot.subsystems.GroundIndefector;
@@ -25,10 +30,32 @@ import static edu.wpi.first.math.util.Units.inchesToMeters;
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Inches;
 
+
+
 /**
  * Operator for driving the bot
  */
 public class DrivebaseOperator extends Operator {
+    /**
+     * OTT Vision
+     */
+    private boolean autoAlignActive = false;
+    private double snapshotX = 0;
+    private double snapshotY = 0;
+    private double snapshotRot = 0;
+    private double driveStartTime = 0;
+    private final double driveTimeout = 3.0;
+
+    private final PIDController xPID = new PIDController(1.5, 0, 0);
+    private final PIDController yPID = new PIDController(1.5, 0, 0);
+    private final PIDController rotPID = new PIDController(0.05, 0, 0);
+
+    //END OTT Vision
+
+
+
+
+
     private final XboxController controller;
     private final SwerveSubsystem swerve;
    // private final GroundIndefector indefector;
@@ -85,6 +112,12 @@ public class DrivebaseOperator extends Operator {
     public double speedscale = 0.50;  //Value between 0 and 1, Drive Sticks
     public double turtlespeedscale = 0.1;  //Value between 0 and 1, Driver Left Trigger
     public double slowspeedscale = 0.4;  //Value between 0 and 1, Driver Right Trigger
+    private double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+    private boolean isValidPose(double[] pose) {
+        return Math.abs(pose[0]) < 5 && Math.abs(pose[1]) < 5 && Math.abs(pose[5]) < 180;
+    }
     @Override
     public void run() {
 
@@ -104,11 +137,67 @@ public class DrivebaseOperator extends Operator {
             arm.moveToState(Arm.ArmState.L2);
         }
 
+        /**
+         * OTT Vision
+         */
+
+
+
+        if (controller.getLeftBumperButton() && !autoAlignActive) {
+            double[] pose = NetworkTableInstance.getDefault()
+                    .getTable("limelight-back")
+                    .getEntry("camerapose_targetspace")
+                    .getDoubleArray(new double[6]);
+
+            if (pose.length >= 6 && isValidPose(pose)) {
+                snapshotX = pose[2]; // Forward distance
+                snapshotY = pose[0];// + 0.1778; // 7 inches left of tag
+                snapshotRot = pose[4]; // Tag's rotation
+
+                driveStartTime = Timer.getFPGATimestamp();
+                autoAlignActive = true;
+
+                System.out.println("Auto-align started → X: " + snapshotX + " Y: " + snapshotY + " Rot: " + snapshotRot);
+            } else {
+                System.out.println("No tag visible on backVision — can't auto-align.");
+            }
+        }
+        // === STEP 2: Execute drive to target ===
+        if (autoAlignActive) {
+            double elapsed = Timer.getFPGATimestamp() - driveStartTime;
+
+            Pose2d currentPose = swerve.getSwerveDrive().getPose(); // Or your equivalent odometry call
+            Pose2d goalPose = currentPose.relativeTo(
+                    new Pose2d(new Translation2d(snapshotX, snapshotY), Rotation2d.fromDegrees(snapshotRot))
+            );
+
+            double xSpeed = clamp(xPID.calculate(currentPose.getX(), goalPose.getX()), -1.0, 1.0);
+            double ySpeed = clamp(yPID.calculate(currentPose.getY(), goalPose.getY()), -1.0, 1.0);
+            double rotSpeed = clamp(rotPID.calculate(currentPose.getRotation().getDegrees(), snapshotRot), -0.5, 0.5);
+
+            swerve.move(xSpeed, ySpeed, rotSpeed); // robot-relative
+
+            if (elapsed > driveTimeout) {
+                swerve.move(0, 0, 0);
+                autoAlignActive = false;
+                System.out.println("Auto-align complete or timed out.");
+            }
+        }
+
+
+        //END OTT Vision
+
         if (controller.getXButton()){
-            swerve.setTargetHeading(translation2d, 128);
+            if(arm.getRollersCurrent() > 18) {
+                swerve.setTargetHeading(translation2d, 120);
+            } else {swerve.setTargetHeading(translation2d, 128);}
+///            swerve.setTargetHeading(translation2d, 128);
             return;
         } else if (controller.getBButton()){
-            swerve.setTargetHeading(translation2d, -128);
+            if(arm.getRollersCurrent() > 18) {
+                swerve.setTargetHeading(translation2d, -120);
+            } else {swerve.setTargetHeading(translation2d, -128);}
+///                swerve.setTargetHeading(translation2d, -128);
             return;
         } else if(controller.getXButtonReleased() || controller.getBButtonReleased()) {
             swerve.setTargetHeading(translation2d, 0);

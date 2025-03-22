@@ -95,9 +95,9 @@ public class SwerveSubsystem implements Subsystem {
                 )
         );
 
-        swerveDrive.setHeadingCorrection(false);
-        swerveDrive.setCosineCompensator(true);
-        swerveDrive.setAngularVelocityCompensation(true, true, 0.15);
+        swerveDrive.setHeadingCorrection(true);
+        // swerveDrive.setCosineCompensator(true);
+        // swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
     }
 
     /**
@@ -125,7 +125,7 @@ public class SwerveSubsystem implements Subsystem {
 
     public void setTargetHeading(Translation2d translation, double target) {
         Pose2d currPose = swerveDrive.getPose();
-        if(MathUtil.isNear(target, currPose.getRotation().getDegrees(), 5)) {
+        if(MathUtil.isNear(target, currPose.getRotation().getDegrees(), 2)) {
             drive(translation, 0, true, false, Constants.BOT_CENTER);
             return;
         }

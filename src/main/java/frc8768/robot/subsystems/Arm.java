@@ -23,7 +23,8 @@ public class Arm implements Subsystem {
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
     private static final SparkBaseConfig INTAKE_CONFIG = new SparkFlexConfig()
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
-    private static final double angleOffset = -71.455078125;
+    private static final double trueMaxZeroOffset = -80;
+    private static final double angleOffset = trueMaxZeroOffset + 188;  //Reset to 0, then return to +188 to find trueMaxZeroOffset
 
     private  static final double upperBound = 78;
     private static final double lowerBound = -197;
@@ -60,10 +61,12 @@ public class Arm implements Subsystem {
      * @return Degrees
      */
     private double getPosition() {
-        return
-                absEncoder.getPosition().getValue().in(Units.Degree) - angleOffset;
+        return absEncoder.getPosition().getValue().in(Units.Degree) - angleOffset;
     }
 
+    public double getRollersCurrent() {
+       return intakeMotor.getOutputCurrent();
+    }
     public void tick() {
         if (!MathUtil.isNear(currState.targetPosition, getPosition(), 4) && currState != ArmState.ZERO) {
             // if pos > upperbound go to else statement
@@ -166,8 +169,6 @@ public class Arm implements Subsystem {
 
 
     public void stopIntake() {
-        intakeMotor.getOutputCurrent();
-
         intakeMotor.set(0.04);
         //currState = ArmState.ZERO;
     }
@@ -176,7 +177,7 @@ public class Arm implements Subsystem {
         HashMap<String, Object> map = new HashMap<>();
         map.put("Arm position", getPosition());
         map.put("Arm state", currState.name());
-        map.put("Rollers", intakeMotor.getOutputCurrent());
+        map.put("Rollers Current", intakeMotor.getOutputCurrent());
         return map;
     }
 
@@ -184,15 +185,16 @@ public class Arm implements Subsystem {
         currState = state;
     }
 
+    private double armMax = -368;  //was -197  so -171 difference
     public enum ArmState {
 
         ZERO(0),
         HOLD(-50),
-        L1(-176),  //-190
-        L2(-159),//-173
-        L3(-171),//-185
-        L4(-177),//-191
-        INTAKE(90),
+        L1(-176),
+        L2(-159),
+        L3(-171),
+        L4(-174), //-177  removed 3 degrees due to tightened chain
+        INTAKE(87),  //90   removed 3 degrees due to tightened chain
         CORAL(-115);
 
         final double targetPosition;

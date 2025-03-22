@@ -6,13 +6,17 @@
 package frc8768.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.auto.Auto;
@@ -135,6 +139,7 @@ public class Robot extends TimedRobot
         this.auxiliary.init();
         this.drivebase.init();
 
+        CommandScheduler.getInstance().registerSubsystem(swerve);
     }
 
     /* For tank
@@ -167,7 +172,7 @@ public class Robot extends TimedRobot
     public void autonomousInit() {
         if (this.auto != null) {
             if (this.auto.getSelected() != null)
-                this.auto.getSelected().schedule();
+                this.auto.getSelected().initialize();
         }
 
         timer.reset();
@@ -185,14 +190,12 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousPeriodic() {
-        /*
         if(this.auto.getSelected() != null) {
             if(this.auto.getSelected().isFinished()) {
                 return;
             }
             this.auto.getSelected().execute();
         }
-         */
 
 /*
         if(!timer.hasElapsed(2)) {
@@ -224,15 +227,55 @@ public class Robot extends TimedRobot
     @Override
     public void testInit() {
         swerve.getSwerveDrive().resetOdometry(new Pose2d());
+
+                relocate = false;
+                reangle = false;
+                reposition = false;
+                strafe = false;
     }
+    private void move(double xSpeed, double ySpeed, double rot) {
+        swerve.drive(new Translation2d(xSpeed, ySpeed), rot,
+                false,
+                true, Constants.BOT_CENTER);
+    }
+    boolean relocate = false; //move forward 1 ft
+     boolean reangle = false; //rotate towards april tag
+     boolean reposition = false; //move towards april tag
+     boolean strafe = false; // Move left or right to center april tag
+
 
     /**
      * Runs every 20ms of Test
      */
     @Override
     public void testPeriodic() {
+        for (swervelib.SwerveModule module : this.swerve.getSwerveDrive().getModules()) {
+            SmartDashboard.putNumber("Module" + module.moduleNumber + " Encoder", module.getAbsolutePosition());
+        }
 
-        /*
+        var table = NetworkTableInstance.getDefault().getTable("photonvision").getSubTable("Left");
+        boolean hasTarget = table.getEntry("hasTarget").getBoolean(false);double yaw = table.getEntry("targetYaw").getDouble(0.0);//
+        //double yaw = vision.getTargetYaw();
+        double distY = table.getEntry("targetPixelsY").getDouble(0.0);
+
+        SmartDashboard.putBoolean("Has Target", hasTarget);SmartDashboard.putNumber("Target Yaw", yaw);
+        SmartDashboard.putNumber("Target Yaw", yaw);
+        //Motor movement
+
+        if(auxController.getBButton() && !reposition) {
+            reposition = true;
+        }
+        double distX = backVision.getDistanceToTarget(0,11,10.3125,false);
+        if(reposition && distX != -1) {
+            if(!MathUtil.isNear(12, distX, 0.001)) {
+                move(MathUtil.clamp(12-distX*2, -0.1, 0.1), 0,0);
+            } else {
+                reposition = false;
+                move(0, 0,0);
+            }
+        }
+
+/*
         if(swerve.getSwerveDrive().getPose().getX() < setpoint) {
             swerve.move(0.05, 0, 0);
         } else {

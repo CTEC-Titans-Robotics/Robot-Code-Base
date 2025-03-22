@@ -57,10 +57,12 @@ public class AuxiliaryOperator extends Operator {
             arm.spinIntake(true);
             release = 1;
             //arm.moveToState(Arm.ArmState.HOLD);
-            elevator.moveToState(Elevator.ElevatorState.ZERO);
-
-
-
+            if(controller.getLeftTriggerAxis() <0.1){
+                elevator.moveToState(Elevator.ElevatorState.ZERO);
+                if(elevator.isAtTarget()){
+                    arm.moveToState(Arm.ArmState.INTAKE);
+                }
+            }
 
 
         } else if (controller.getRightTriggerAxis() > 0.1 && elevator.state() == Elevator.ElevatorState.ZERO && elevator.isAtTarget()) {

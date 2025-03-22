@@ -27,7 +27,12 @@ public class LimelightVision implements Vision {
 
     @Override
     public double getDistanceToTarget(double mountAngle, double mountHeight, double goalHeight, boolean topY) {
-        LimelightHelpers.LimelightTarget_Fiducial classifier = getTargets().get(0);
+        List<LimelightHelpers.LimelightTarget_Fiducial> targets = getTargets();
+        if(targets.isEmpty()) {
+            return -1;
+        }
+
+        LimelightHelpers.LimelightTarget_Fiducial classifier = targets.get(0);
         if(classifier != null) {
             double angleToGoalDegrees = mountAngle + (topY ? getMaxPointY() : classifier.ty);
             double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);

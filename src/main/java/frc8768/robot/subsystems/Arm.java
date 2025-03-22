@@ -27,7 +27,7 @@ public class Arm implements Subsystem {
 
     private  static final double upperBound = 78;
     private static final double lowerBound = -197;
-    private ArmState currState = ArmState.ZERO;
+    private ArmState currState = ArmState.INTAKE;
     private final SparkFlex intakeMotor;
     private TalonFX pivotMotor;
     private final CANcoder absEncoder;
@@ -78,27 +78,46 @@ public class Arm implements Subsystem {
 
             if(currState.targetPosition > getPosition() && currState == ArmState.INTAKE) {
 //                pivotMotor.set(-0.3);
-                pivotMotor.setVoltage(-1.05);
-            } else if(currState == ArmState.INTAKE) {
+                if(getPosition() < 50){pivotMotor.setVoltage(-2.10);}
+                else {pivotMotor.setVoltage(-1.05);}///-1.05
+///            } else if(currState == ArmState.INTAKE) {
 //                pivotMotor.set(0.25);
-                pivotMotor.setVoltage(1.4);
+//                if(getPosition() < 50){     //76.5
+///                pivotMotor.setVoltage(0.1);} else {pivotMotor.setVoltage(0.1);}  ///1.4
+
+
+
             } else if(currState == ArmState.L2) {
                 if(currState.targetPosition < getPosition()){
-//                pivotMotor.set(0.25);
-                pivotMotor.setVoltage(1.2);}
-                else {pivotMotor.setVoltage(-0.05);}
+                    if(getPosition() > -150){
+                        pivotMotor.setVoltage(2.4);}
+                        else {pivotMotor.setVoltage(1.2);}///1.2
+                        //                pivotMotor.set(0.25);
+                        ///    pivotMotor.setVoltage(1.2);}
+                    } else {pivotMotor.setVoltage(-0.05);}
             } else if(currState == ArmState.HOLD) {
 //                pivotMotor.set(0.25);
                 pivotMotor.setVoltage(1.1);
             } else if(currState == ArmState.L3) {
                 if(currState.targetPosition < getPosition()){
-//                pivotMotor.set(0.25);
-                pivotMotor.setVoltage(1.2);}
+                    if(getPosition() > -155){
+                        pivotMotor.setVoltage(2.4);}
+                        else {pivotMotor.setVoltage(1.2);}
+                    }       ///1.2
+                            //                pivotMotor.set(0.25);
+                            ///                pivotMotor.setVoltage(1.2);}
                     else {pivotMotor.setVoltage(-0.05);}
             } else if(currState == ArmState.L4) {
-//                pivotMotor.set(0.25);
-
-                pivotMotor.setVoltage(1.2);
+                if(currState.targetPosition < getPosition()){
+                    if(getPosition() > -155){
+                        pivotMotor.setVoltage(2.4);}
+                    else {pivotMotor.setVoltage(1.2);}
+                }       ///1.2
+                //                pivotMotor.set(0.25);
+                ///                pivotMotor.setVoltage(1.2);}
+                else {pivotMotor.setVoltage(-0.05);}
+                //                pivotMotor.set(0.25);
+                ///pivotMotor.setVoltage(1.2);
             } else if(currState == ArmState.L1) {
 //                pivotMotor.set(0.25);
                 pivotMotor.setVoltage(1.2);
@@ -121,11 +140,11 @@ public class Arm implements Subsystem {
     }
     public void stop() {
         if(currState == ArmState.ZERO) {
-            pivotMotor.set(0.05);
+            pivotMotor.set(0.05);///0.05
         }else if(currState == ArmState.L2 || currState == ArmState.L3){
             pivotMotor.set(0.02);  //0.02
         } else if(currState == ArmState.L1) {
-            pivotMotor.set(0.04);
+            pivotMotor.set(0.03);
         } else if(currState == ArmState.L4) {
             pivotMotor.set(0.02);
         } else if(currState == ArmState.INTAKE) {
@@ -138,7 +157,7 @@ public class Arm implements Subsystem {
 
     public void spinIntake(boolean outTake) {
         if (currState == ArmState.L1) {
-            intakeMotor.set(outTake ? -0.3 : 0.13);
+            intakeMotor.set(outTake ? -0.1 : 0.13);
         } else {
             intakeMotor.set(outTake ? -0.2 : 0.28);
         }
@@ -147,6 +166,8 @@ public class Arm implements Subsystem {
 
 
     public void stopIntake() {
+        intakeMotor.getOutputCurrent();
+
         intakeMotor.set(0.04);
         //currState = ArmState.ZERO;
     }
@@ -155,6 +176,7 @@ public class Arm implements Subsystem {
         HashMap<String, Object> map = new HashMap<>();
         map.put("Arm position", getPosition());
         map.put("Arm state", currState.name());
+        map.put("Rollers", intakeMotor.getOutputCurrent());
         return map;
     }
 
@@ -166,11 +188,11 @@ public class Arm implements Subsystem {
 
         ZERO(0),
         HOLD(-50),
-        L1(-196),
-        L2(-173),
-        L3(-185),
-        L4(-191),
-        INTAKE(76.5),
+        L1(-176),  //-190
+        L2(-159),//-173
+        L3(-171),//-185
+        L4(-177),//-191
+        INTAKE(90),
         CORAL(-115);
 
         final double targetPosition;

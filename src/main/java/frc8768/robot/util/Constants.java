@@ -34,12 +34,12 @@ public class Constants {
     /**
      * Weight of Robot in Kilograms
      */
-    public static final double WEIGHT = Units.lbsToKilograms(111.5);
+    public static final double WEIGHT = Units.lbsToKilograms(107.5);
 
     /**
      * Inertia of Momentum in KG Sq Meters
      */
-    public static final double INERTIA = 4;
+    public static final double INERTIA = 0.2;
 
     /**
      * How often to poll operators, ms

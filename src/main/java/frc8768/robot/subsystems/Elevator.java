@@ -8,12 +8,11 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import frc8768.robot.util.LogUtil;
-
+import frc8768.robot.subsystems.Arm;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
 public class Elevator {
     private static final double GEAR_RATIO = 16;
     private static final double TRAVEL_PER_ROT = (1.432*Math.PI)/GEAR_RATIO;
@@ -78,11 +77,12 @@ public class Elevator {
             if (!MathUtil.isNear(currState.targetPosition, getPosition(), 1/4d)) {
                 atTarget = false;
                 if (currState.targetPosition > getPosition() && getPosition() < upperBound) {
-                    elevatorMotor1.set(0.3);
+                    if(currState == ElevatorState.L3){elevatorMotor1.set(0.35);}
+                    else {elevatorMotor1.set(0.3);}
                 } else if (getPosition() - currState.targetPosition < 1/2d){
                     elevatorMotor1.set(-0.05);
                 } else if(getPosition() > 2) {
-                    elevatorMotor1.set(-0.2);
+                    elevatorMotor1.set(-0.30);
                 } else {
                     elevatorMotor1.set(-0.08);
                 }

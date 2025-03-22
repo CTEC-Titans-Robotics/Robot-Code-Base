@@ -81,24 +81,37 @@ public class DrivebaseOperator extends Operator {
 
         return encoder;
     }
-
+    //Controller Overall Speed
+    public double speedscale = 0.50;  //Value between 0 and 1, Drive Sticks
+    public double turtlespeedscale = 0.1;  //Value between 0 and 1, Driver Left Trigger
+    public double slowspeedscale = 0.4;  //Value between 0 and 1, Driver Right Trigger
     @Override
     public void run() {
+
+
         // Apply controller deadband
         Translation2d translation2d = new Translation2d(
-                MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.CONTROLLER_DEADBAND),
-                MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.CONTROLLER_DEADBAND));
+                MathUtil.applyDeadband(-controller.getLeftY() /* For Tank, use controller.getLeftY() */, Constants.CONTROLLER_DEADBAND)*speedscale,
+                MathUtil.applyDeadband(-controller.getLeftX() /* For Tank, use controller.getRightY() */, Constants.CONTROLLER_DEADBAND)*speedscale
+        );
 
         if (controller.getStartButtonPressed()) {
             swerve.zeroGyro();
         }
 
+        if (controller.getAButtonPressed()) {
+            elevator.moveToState(Elevator.ElevatorState.ZERO);
+            arm.moveToState(Arm.ArmState.L2);
+        }
+
         if (controller.getXButton()){
-            swerve.setTargetHeading(128);
+            swerve.setTargetHeading(translation2d, 128);
+            return;
         } else if (controller.getBButton()){
-            swerve.setTargetHeading(232);
+            swerve.setTargetHeading(translation2d, -128);
+            return;
         } else if(controller.getXButtonReleased() || controller.getBButtonReleased()) {
-            swerve.setTargetHeading(0);
+            swerve.setTargetHeading(translation2d, 0);
         }
 /*
         if (controller.getYButton()) {
@@ -107,10 +120,6 @@ public class DrivebaseOperator extends Operator {
         }
 
 */
-        if (controller.getAButtonPressed()) {
-            elevator.moveToState(Elevator.ElevatorState.ZERO);
-            arm.moveToState(Arm.ArmState.L2);
-        }
 /*
         if (controller.getXButton() && controller.getAButton()) {
             elevator.moveDown();
@@ -154,14 +163,15 @@ public class DrivebaseOperator extends Operator {
         double yRobotRelative = 0;
         double rot = MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND);
 
+        //Turtle Mode
         if(controller.getLeftTriggerAxis() > 0.1){
-            translation2d = translation2d.times(0.1);
-            rot *= 0.1;
+            translation2d = translation2d.times(turtlespeedscale);
+            rot *= turtlespeedscale;
         }
-
+        //Slower Speed
         if(controller.getRightTriggerAxis() > 0.1){
-            translation2d = translation2d.times(0.4);
-            rot *= 0.4;
+            translation2d = translation2d.times(slowspeedscale);
+            rot *= slowspeedscale;
         }
 
         if(controller.getPOV() == 0) {
@@ -191,8 +201,8 @@ public class DrivebaseOperator extends Operator {
 
 
         if(elevator.state() == Elevator.ElevatorState.L3 || elevator.state() == Elevator.ElevatorState.L4) {
-            translation2d = translation2d.times(0.05);
-            rot *= 0.05;
+            translation2d = translation2d.times(0.2);
+            rot *= 0.2;
         }
 
         Translation2d robotRelative = new Translation2d(xRobotRelative, yRobotRelative);

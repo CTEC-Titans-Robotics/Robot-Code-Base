@@ -1,5 +1,6 @@
 package frc8768.robot.subsystems;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -28,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Container class for everything Swerve
  */
-public class SwerveSubsystem {
+public class SwerveSubsystem implements Subsystem {
     /**
      * SysID routine for the Drive motor of module 0
      */
@@ -45,11 +46,6 @@ public class SwerveSubsystem {
     private SwerveDrive swerveDrive;
 
     private Rotation2d initialYaw;
-
-
-
-
-
 
     /**
      * @param type Neos or Falcons, see {@link MotorType}
@@ -79,7 +75,7 @@ public class SwerveSubsystem {
                                     .linearVelocity(
                                             Units.MetersPerSecond.of(swerveDrive.getModules()[0].getDriveMotor().getVelocity()));
                         },
-                        new Subsystem() {}
+                        this
                 )
         );
 
@@ -95,12 +91,13 @@ public class SwerveSubsystem {
                                     .angularVelocity(
                                             Units.DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
                         },
-                        new Subsystem() {}
+                        this
                 )
         );
 
         swerveDrive.setHeadingCorrection(false);
-
+        swerveDrive.setCosineCompensator(true);
+        swerveDrive.setAngularVelocityCompensation(true, true, 0.15);
     }
 
     /**
@@ -122,22 +119,17 @@ public class SwerveSubsystem {
 
     public void zeroGyro() {
         swerveDrive.zeroGyro();
+
         initialYaw = swerveDrive.getYaw();
     }
 
-    public void setTargetHeading(double target) {
+    public void setTargetHeading(Translation2d translation, double target) {
         Pose2d currPose = swerveDrive.getPose();
-        DriverStation.getAlliance().ifPresent((alliance) -> {
-            if(target == 0) {
-                swerveDrive.resetOdometry(new Pose2d(currPose.getTranslation(), initialYaw));
-                return;
-            }
-            if(alliance == DriverStation.Alliance.Red) {
-                swerveDrive.resetOdometry(new Pose2d(currPose.getTranslation(), Rotation2d.fromDegrees(target - initialYaw.getDegrees() + 180)));
-            } else {
-                swerveDrive.resetOdometry(new Pose2d(currPose.getTranslation(), Rotation2d.fromDegrees(target - initialYaw.getDegrees())));
-            }
-        });
+        if(MathUtil.isNear(target, currPose.getRotation().getDegrees(), 5)) {
+            drive(translation, 0, true, false, Constants.BOT_CENTER);
+            return;
+        }
+        drive(translation, target > currPose.getRotation().getDegrees() ? 0.2 : -0.2, true, false, Constants.BOT_CENTER);
     }
 
     /**

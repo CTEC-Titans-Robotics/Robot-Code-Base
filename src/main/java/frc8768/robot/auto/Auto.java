@@ -19,7 +19,10 @@ import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.Elevator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
+import org.json.simple.parser.ParseException;
 import swervelib.SwerveDrive;
+
+import java.io.IOException;
 
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.Kilograms;
@@ -39,27 +42,16 @@ public class Auto {
         SwerveDrive swerveDrive = swerve.getSwerveDrive();
         NamedCommands.registerCommand("L1_Shoot", new L1Command(arm));
 
-        RobotConfig config = new RobotConfig(
-                Kilograms.of(Constants.WEIGHT),
-                KilogramSquareMeters.of(Constants.INERTIA),
-                new ModuleConfig(
-                        Units.inchesToMeters(2),
-                        Constants.SwerveConfig.MAX_SPEED,
-                        1.19,
-                        swerveDrive.swerveDriveConfiguration.getDriveMotorSim(),
-                        40,
-                        1
-
-                ),
-                new Translation2d(Units.inchesToMeters(10.5), Units.inchesToMeters(10.5)),
-                new Translation2d(Units.inchesToMeters(10.5),Units.inchesToMeters(-10.5)),
-                new Translation2d(Units.inchesToMeters(-10.5), Units.inchesToMeters(10.5)),
-                new Translation2d(Units.inchesToMeters(-10.5), Units.inchesToMeters(-10.5))
-        );
+        RobotConfig config;
+        try {
+            config = RobotConfig.fromGUISettings();
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
 
         PPHolonomicDriveController driveController = new PPHolonomicDriveController(
-                new PIDConstants(0.01, 0, 0),
-                new PIDConstants(0.01, 0, 0)
+                new PIDConstants(.01, 0, 0),
+                new PIDConstants(10, 0, 0)
         );
 
         AutoBuilder.configure(
@@ -72,7 +64,8 @@ public class Auto {
                 () -> {
                     var alliance = DriverStation.getAlliance();
                     return alliance.filter(value -> value == DriverStation.Alliance.Red).isPresent();
-                }
+                },
+                swerve
         );
 
         autonChooser = AutoBuilder.buildAutoChooser();

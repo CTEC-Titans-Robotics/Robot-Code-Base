@@ -143,7 +143,7 @@ public class Arm implements Subsystem {
     }
     public void stop() {
         if(currState == ArmState.ZERO) {
-            pivotMotor.set(0.05);///0.05
+            pivotMotor.set(0.05);///0.05    FIX ME
         }else if(currState == ArmState.L2 || currState == ArmState.L3){
             pivotMotor.set(0.02);  //0.02
         } else if(currState == ArmState.L1) {
@@ -169,7 +169,7 @@ public class Arm implements Subsystem {
 
 
     public void stopIntake() {
-        intakeMotor.set(0.04);
+        intakeMotor.set(0.04);  //0.04    FIX ME
         //currState = ArmState.ZERO;
     }
 

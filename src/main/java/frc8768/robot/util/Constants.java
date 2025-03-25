@@ -63,7 +63,7 @@ public class Constants {
         /**
          * Output wheel diameter in meters
          */
-        public static final double WHEEL_DIAMETER = Units.inchesToMeters(4);
+        public static final double WHEEL_DIAMETER = Units.inchesToMeters(4*0.98);
 
         /**
          * Drive gear ratio from motor to output shaft

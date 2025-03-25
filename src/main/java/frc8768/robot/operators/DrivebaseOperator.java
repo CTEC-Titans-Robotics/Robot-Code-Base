@@ -297,13 +297,18 @@ public class DrivebaseOperator extends Operator {
         Translation2d robotRelative = new Translation2d(xRobotRelative, yRobotRelative);
 
         // Swerve Example
+        boolean isFieldRelative = (robotRelative.getNorm() == 0);
+        this.swerve.drive(robotRelative.getNorm() == 0 ? translation2d : robotRelative,
+                rot,
+                isFieldRelative,
+                false,
+                Constants.BOT_CENTER);
+
+/*
         this.swerve.drive(robotRelative.getNorm() == 0 ? translation2d : robotRelative,
                 rot,
                 robotRelative.getNorm() == 0, false, Constants.BOT_CENTER);
-
-
-
-
+*/
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);
 
@@ -338,7 +343,7 @@ public class DrivebaseOperator extends Operator {
             if (MathUtil.isNear(0, transform.getX(), 0.25) && MathUtil.isNear(0, transform.getY(), 0.25) && MathUtil.isNear(0, transform.getRotation().getDegrees(), 2)) {
                 atState = true;
             } else {
-                swerve.drive(transform.getTranslation().times(0.05), transform.getRotation().getDegrees(), false, false, Constants.BOT_CENTER);
+                swerve.drive(transform.getTranslation().times(0.05), transform.getRotation().getDegrees(), true, false, Constants.BOT_CENTER);
             }
         }
 

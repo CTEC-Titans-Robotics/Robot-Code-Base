@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.MotorType;
+import frc8768.visionlib.helpers.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveParser;
@@ -25,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 /**
  * Container class for everything Swerve
@@ -89,7 +93,7 @@ public class SwerveSubsystem implements Subsystem {
                                     .voltage(Units.Volts.of(swerveDrive.getModules()[0].getAngleMotor().getVoltage()))
                                     .angularPosition(Units.Degree.of(swerveDrive.getModules()[0].getAbsolutePosition()))
                                     .angularVelocity(
-                                            Units.DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
+                                            DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
                         },
                         this
                 )
@@ -212,5 +216,13 @@ public class SwerveSubsystem implements Subsystem {
         return new ArrayList<>();
     }
 
-
+    @Override
+    public void periodic() {
+        swerveDrive.updateOdometry();
+        LimelightHelpers.SetRobotOrientation("limelight-back",swerveDrive.getYaw().getDegrees(),swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back");
+        if(mt2 != null) {
+            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+        }
+    }
 }

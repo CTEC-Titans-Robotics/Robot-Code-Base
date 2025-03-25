@@ -167,6 +167,10 @@ public class Robot extends TimedRobot
 
         elevator.tick();
         arm.tick();
+        SmartDashboard.putNumber("Swerve X", swerve.getSwerveDrive().getPose().getX());
+        SmartDashboard.putNumber("Swerve Y", swerve.getSwerveDrive().getPose().getY());
+        SmartDashboard.putNumber("Swerve Rot", swerve.getSwerveDrive().getPose().getRotation().getDegrees());
+
     }
 
     /**

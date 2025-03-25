@@ -3,14 +3,14 @@
     "front": -10.375,
     "left": 10.375
   },
-  "absoluteEncoderOffset": 6.943359375,
+  "absoluteEncoderOffset": 2.724609375,
   "drive": {
-    "type": "talonfx",
+    "type": "krakenx60",
     "id": 12,
     "canbus": null
   },
   "angle": {
-    "type": "talonfx",
+    "type": "krakenx60",
     "id": 8,
     "canbus": null
   },

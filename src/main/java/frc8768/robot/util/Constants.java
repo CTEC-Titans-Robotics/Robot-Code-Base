@@ -1,11 +1,16 @@
 package frc8768.robot.util;
 
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
+import static edu.wpi.first.units.Units.*;
 
 /**
  * Anything that stays the same throughout the runtime of the program should be in here.
@@ -46,6 +51,16 @@ public class Constants {
      */
     public static final int POLL_RATE = 50;
 
+    public static final Command DEFAULT_COMMAND = new InstantCommand();
+    public static final PathConstraints DEFAULT_CONSTRAINTS = new PathConstraints(
+            MetersPerSecond.of(2),
+            MetersPerSecondPerSecond.of(1),
+            RadiansPerSecond.of(6),
+            RadiansPerSecondPerSecond.of(6),
+            Volts.of(12),
+            false
+    );
+
     /**
      * Swerve-specific configuration.
      */
@@ -63,7 +78,7 @@ public class Constants {
         /**
          * Output wheel diameter in meters
          */
-        public static final double WHEEL_DIAMETER = Units.inchesToMeters(4*0.98);
+        public static final double WHEEL_DIAMETER = Units.inchesToMeters(4*0.95);
 
         /**
          * Drive gear ratio from motor to output shaft
@@ -79,5 +94,19 @@ public class Constants {
          * Max rotation speed
          */
         public static final double MAX_ROTATION_SPEED = Math.toRadians(450);
+    }
+
+    public enum DesiredPoses {
+        TAG_17(0, 0, Rotation2d.fromDegrees(180));
+
+        Pose2d desiredPose;
+
+        DesiredPoses(double x, double y, Rotation2d rot) {
+            desiredPose = new Pose2d(x, y, rot);
+        }
+
+        public Pose2d getDesiredPose() {
+            return desiredPose;
+        }
     }
 }

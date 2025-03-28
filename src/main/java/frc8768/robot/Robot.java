@@ -5,11 +5,20 @@
 
 package frc8768.robot;
 
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -34,8 +43,9 @@ import frc8768.visionlib.Vision;
 import frc8768.visionlib.multicam.PhotonMultiCam;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
+
 import java.io.IOException;
+import java.util.List;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -45,6 +55,7 @@ import java.io.IOException;
  */
 public class Robot extends TimedRobot
 {
+
     private static final XboxController driveController = new XboxController(Constants.DRIVER_CONTROLLER_ID);
     private static final XboxController auxController = new XboxController(1);
 
@@ -104,7 +115,8 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotInit() {
-        CameraServer.startAutomaticCapture();
+
+        ////    CameraServer.startAutomaticCapture();
         /*
         Transform3d frontLimeLightTransform = new Transform3d(0,0.29898,0.21601,
                 new Rotation3d(Math.toRadians(10),Math.toRadians(0),Math.toRadians(0)));
@@ -164,12 +176,12 @@ public class Robot extends TimedRobot
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
         LogUtil.run();
-
         elevator.tick();
         arm.tick();
         SmartDashboard.putNumber("Swerve X", swerve.getSwerveDrive().getPose().getX());
         SmartDashboard.putNumber("Swerve Y", swerve.getSwerveDrive().getPose().getY());
-        SmartDashboard.putNumber("Swerve Rot", swerve.getSwerveDrive().getPose().getRotation().getDegrees());
+        SmartDashboard.putString("Swerve Rot", swerve.getSwerveDrive().getPose().getRotation().toString());
+        SmartDashboard.putNumber("TEST", swerve.getGyroRot().getAngle());
 
     }
 
@@ -233,10 +245,12 @@ public class Robot extends TimedRobot
     /**
      * Runs at the start of Test state
      */
-    double setpoint = Units.inchesToMeters(12);
+    double setpoint = Units.inchesToMeters(36);
     @Override
     public void testInit() {
-        swerve.getSwerveDrive().resetOdometry(new Pose2d());
+
+
+/*        swerve.getSwerveDrive().resetOdometry(new Pose2d());
 
                 relocate = false;
                 reangle = false;
@@ -247,6 +261,18 @@ public class Robot extends TimedRobot
         swerve.drive(new Translation2d(xSpeed, ySpeed), rot,
                 false,
                 true, Constants.BOT_CENTER);
+  */
+
+/*
+        kinematics = swerve.getSwerveDrive().kinematics;
+
+        PIDController xController = new PIDController(4.157,0,0);
+        PIDController yController = new PIDController(4.157,0,0);
+        ProfiledPIDController thetaController = new ProfiledPIDController(1,0,0, new TrapezoidProfile.Constraints(Math.PI, Math.PI)
+        );
+        thetaController.enableContinuousInput(-Math.PI,Math.PI);
+        dController = new HolonomicDriveController(xController, yController, thetaController);
+ */
     }
     boolean relocate = false; //move forward 1 ft
      boolean reangle = false; //rotate towards april tag
@@ -254,11 +280,52 @@ public class Robot extends TimedRobot
      boolean strafe = false; // Move left or right to center april tag
 
 
+
     /**
      * Runs every 20ms of Test
      */
     @Override
     public void testPeriodic() {
+
+//        swerve.setTargetPose(new Pose2d(0.6096, 0.6096, Rotation2d.fromDegrees(90)));
+//swerve.getSwerveDrive().setChassisSpeeds(new ChassisSpeeds(0.4,0.2,Units.degreesToRadians(15)));
+
+//        swerve.getSwerveDrive().setChassisSpeeds();
+/*        if(swerve.getSwerveDrive().getPose().getX() < Units.inchesToMeters(12)) {
+            swerve.move(0.1, 0, 0);
+        } else {
+            swerve.move(0, 0, 0);
+        }
+*/
+//        double yaw = swerve.getSwerveDrive().getYaw().getDegrees();
+//        double Xvalue = swerve.getSwerveDrive().getPose().getX();
+//        double Yvalue = swerve.getSwerveDrive().getPose().getY();
+/*
+        if(yaw < 45) {
+            swerve.rotate(1);
+        } else {
+            swerve.rotate(0);
+        }
+*/
+
+/*
+        if(swerve.getSwerveDrive().getPose().getX() < 12) {
+            swerve.move(0.1, 0, 0);
+        } else {
+            swerve.move(0, 0, 0);
+        }
+*/
+       /* if(Yvalue < 12) {
+            swerve.move(0, 0.1, 0);
+        } else {
+            swerve.move(0, 0, 0);
+        }
+*/
+
+
+
+
+        /*
         for (swervelib.SwerveModule module : this.swerve.getSwerveDrive().getModules()) {
             SmartDashboard.putNumber("Module" + module.moduleNumber + " Encoder", module.getAbsolutePosition());
         }
@@ -278,20 +345,23 @@ public class Robot extends TimedRobot
         double distX = backVision.getDistanceToTarget(0,11,10.3125,false);
         if(reposition && distX != -1) {
             if(!MathUtil.isNear(12, distX, 0.001)) {
-                move(MathUtil.clamp(12-distX*2, -0.1, 0.1), 0,0);
+                swerve.move(MathUtil.clamp(12-distX*2, -0.1, 0.1), 0,0);
             } else {
                 reposition = false;
-                move(0, 0,0);
+                swerve.move(0, 0,0);
             }
         }
+*/
 
 /*
         if(swerve.getSwerveDrive().getPose().getX() < setpoint) {
-            swerve.move(0.05, 0, 0);
+            swerve.move(0.1, 0, 0);
         } else {
             swerve.move(0, 0, 0);
         }
 */
+
+
       /*  if(driveController.getAButtonPressed()) {
             swerve.sysIdQuasistaticDrive(SysIdRoutine.Direction.kForward).schedule();
         } else if(driveController.getBButtonPressed()) {

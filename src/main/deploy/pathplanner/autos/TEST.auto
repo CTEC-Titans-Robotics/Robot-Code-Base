@@ -5,45 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "TEST F"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TEST S"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TEST SR"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TEST S"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TEST SR"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TEST S"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "TEST SR"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "JO SWERVE"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L1_Shoot"
+                }
+              }
+            ]
           }
         }
       ]

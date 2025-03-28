@@ -13,7 +13,13 @@
         {
           "type": "named",
           "data": {
-            "name": "L1_Shoot"
+            "name": "L3Elevator"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3Shoot"
           }
         }
       ]

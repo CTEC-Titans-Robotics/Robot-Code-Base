@@ -23,8 +23,8 @@ public class Arm implements Subsystem {
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
     private static final SparkBaseConfig INTAKE_CONFIG = new SparkFlexConfig()
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
-    private static final double trueMaxZeroOffset = -80;
-    private static final double angleOffset = trueMaxZeroOffset + 188;  //Reset to 0, then return to +188 to find trueMaxZeroOffset
+    private static final double trueMaxZeroOffset = -78.310546875;
+    private static final double angleOffset = trueMaxZeroOffset + 196;  //Reset to 0, then return to +188 to find trueMaxZeroOffset
 
     private  static final double upperBound = 78;
     private static final double lowerBound = -197;
@@ -143,7 +143,7 @@ public class Arm implements Subsystem {
     }
     public void stop() {
         if(currState == ArmState.ZERO) {
-            pivotMotor.set(0.05);///0.05    FIX ME
+            pivotMotor.set(0.0);///0.05    FIX ME
         }else if(currState == ArmState.L2 || currState == ArmState.L3){
             pivotMotor.set(0.02);  //0.02
         } else if(currState == ArmState.L1) {
@@ -169,7 +169,7 @@ public class Arm implements Subsystem {
 
 
     public void stopIntake() {
-        intakeMotor.set(0.04);  //0.04    FIX ME
+        intakeMotor.set(0.0);  //0.04    FIX ME
         //currState = ArmState.ZERO;
     }
 
@@ -190,11 +190,11 @@ public class Arm implements Subsystem {
 
         ZERO(0),
         HOLD(-50),
-        L1(-176),
-        L2(-159),
-        L3(-171),
-        L4(-174), //-177  removed 3 degrees due to tightened chain
-        INTAKE(87),  //90   removed 3 degrees due to tightened chain
+        L1(-186),
+        L2(-169),
+        L3(-181),
+        L4(-184), //-177  removed 3 degrees due to tightened chain
+        INTAKE(77),  //90   removed 3 degrees due to tightened chain
         CORAL(-115);
 
         final double targetPosition;

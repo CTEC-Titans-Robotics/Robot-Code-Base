@@ -1,19 +1,21 @@
 package frc8768.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.MotorType;
+import frc8768.visionlib.LimelightVision;
+import frc8768.visionlib.Vision;
 import frc8768.visionlib.helpers.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -24,11 +26,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+
+
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 /**
  * Container class for everything Swerve
@@ -44,6 +56,22 @@ public class SwerveSubsystem implements Subsystem {
      */
     private final SysIdRoutine angleSysIdRoutine;
 
+
+
+    ////
+    // Holonomic controller components
+    private final PIDController xController = new PIDController(1.5, 0.0, 0.0);
+    private final PIDController yController = new PIDController(1.5, 0.0, 0.0);
+    private final ProfiledPIDController thetaController = new ProfiledPIDController(
+            3.0, 0.0, 0.0,
+            new TrapezoidProfile.Constraints(Math.toRadians(360), Math.toRadians(720))
+    );
+    private final HolonomicDriveController holonomicController;
+    private Pose2d targetPose = null;
+    ////
+
+
+
     /**
      * The underlying YAGSL implementation
      */
@@ -56,6 +84,9 @@ public class SwerveSubsystem implements Subsystem {
      * @throws IOException if it can't find the resources.
      */
     public SwerveSubsystem(MotorType type) throws IOException {
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        holonomicController = new HolonomicDriveController(xController, yController, thetaController);
+
         double metersPerRotation = SwerveMath.calculateMetersPerRotation(Constants.SwerveConfig.WHEEL_DIAMETER, Constants.SwerveConfig.DRIVE_GEAR_RATIO);
         double metersPerDeg = SwerveMath.calculateDegreesPerSteeringRotation(Constants.SwerveConfig.TURN_GEAR_RATIO);
 
@@ -101,7 +132,7 @@ public class SwerveSubsystem implements Subsystem {
 
         swerveDrive.setHeadingCorrection(true);
         // swerveDrive.setCosineCompensator(true);
-        // swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
+         swerveDrive.setAngularVelocityCompensation(true, true, 0.15);
     }
 
     /**
@@ -117,6 +148,9 @@ public class SwerveSubsystem implements Subsystem {
         swerveDrive.drive(translation2d.times(Constants.SwerveConfig.MAX_SPEED), rotation * Constants.SwerveConfig.MAX_ROTATION_SPEED, fieldRelative, isOpenLoop, pivotPoint);
     }
 
+    public void rotate(double rotationSpeed){
+        swerveDrive.drive(new Translation2d(0,0),rotationSpeed, false, false, Constants.BOT_CENTER);
+    }
     public void move(double xSpeed, double ySpeed, double rot) {
         drive(new Translation2d(xSpeed, ySpeed), rot, false, false, Constants.BOT_CENTER);
     }
@@ -216,13 +250,78 @@ public class SwerveSubsystem implements Subsystem {
         return new ArrayList<>();
     }
 
+
+    public void setTargetPose(Pose2d target) {
+        this.targetPose = target;
+    }
+
+    LimelightHelpers.PoseEstimate mt2BACK;
+
+    int[] ReefIDs = {6,7,8,9,10,11,17,18,19,20,21,22};
     @Override
     public void periodic() {
         swerveDrive.updateOdometry();
-        LimelightHelpers.SetRobotOrientation("limelight-back",swerveDrive.getYaw().getDegrees(),swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back");
-        if(mt2 != null) {
-            swerveDrive.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+
+        ////
+        // Drive toward target pose if one is set
+        if (targetPose != null) {
+            Pose2d currentPose = swerveDrive.getPose();
+
+            Trajectory.State goalState = new Trajectory.State(
+                    0.0,                          // timeSeconds (not used here)
+                    0.0,                          // velocity (optional)
+                    0.0,                          // acceleration (optional)
+                    targetPose,                   // your target pose
+                    0.0                           // curvature (optional)
+            );
+
+            ChassisSpeeds speeds = holonomicController.calculate(
+                    swerveDrive.getPose(),
+                    goalState,
+                    targetPose.getRotation()
+            );
+
+
+            ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    speeds.vxMetersPerSecond,
+                    speeds.vyMetersPerSecond,
+                    speeds.omegaRadiansPerSecond,
+                    currentPose.getRotation()
+            );
+
+            swerveDrive.drive(fieldRelativeSpeeds);
+
+            double distance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
+            double angleError = Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getDegrees());
+
+            if (distance < 0.05 && angleError < 5.0) {
+                targetPose = null;
+                swerveDrive.drive(new ChassisSpeeds());
+            }
         }
+
+
+    ////
+
+
+        //Provide yaw data to utilize MegaTag2
+        LimelightHelpers.SetRobotOrientation("limelight-back",swerveDrive.getYaw().getDegrees(),swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
+        LimelightHelpers.SetRobotOrientation("limelight-front",swerveDrive.getYaw().getDegrees(),swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
+
+        //Post esitamtion from vision, only use if < 2 meters
+        if(LimelightHelpers.getTargetCount("limelight-back") > -1){mt2BACK = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back");}
+        //SmartDashboard.putNumber("LL Swerve X", mt2BACK.pose.getX());
+        //SmartDashboard.putNumber("LL Swerve Y", mt2BACK.pose.getY());
+        //SmartDashboard.putNumber("LL Swerve Rot", mt2BACK.pose.getRotation().getDegrees());
+        //SmartDashboard.putNumber("LL Tag Dist", mt2BACK.avgTagDist);
+/*
+        if(mt2BACK.pose.getX() !=  0 && mt2BACK.pose.getY() != 0 && mt2BACK.pose.getRotation().getDegrees() != 0) {
+
+                    //SmartDashboard.putNumber("LL Tag ID", mt2BACK.rawFiducials[0].id);
+            if(mt2BACK.avgTagDist < 2 && Arrays.asList(ReefIDs).contains(mt2BACK.rawFiducials[0].id)) {
+                swerveDrive.addVisionMeasurement(mt2BACK.pose, mt2BACK.timestampSeconds);
+            }
+        }
+*/
     }
 }

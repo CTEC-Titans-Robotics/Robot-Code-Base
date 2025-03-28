@@ -1,5 +1,6 @@
 package frc8768.robot.operators;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.revrobotics.spark.SparkFlex;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -10,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.Robot;
 import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.Elevator;
@@ -77,7 +79,7 @@ public class DrivebaseOperator extends Operator {
 
 
     //public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
-        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
+    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
 ///        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, LimelightVision frontCam, LimelightVision backCam) {
         super("Drivebase");
 
@@ -118,6 +120,8 @@ public class DrivebaseOperator extends Operator {
     private boolean isValidPose(double[] pose) {
         return Math.abs(pose[0]) < 5 && Math.abs(pose[1]) < 5 && Math.abs(pose[5]) < 180;
     }
+
+    Command currCommand = Constants.DEFAULT_COMMAND;
     @Override
     public void run() {
 
@@ -135,6 +139,22 @@ public class DrivebaseOperator extends Operator {
         if (controller.getAButtonPressed()) {
             elevator.moveToState(Elevator.ElevatorState.ZERO);
             arm.moveToState(Arm.ArmState.L2);
+        }
+
+        if(currCommand != Constants.DEFAULT_COMMAND) {
+            if(currCommand.isFinished()) {
+                currCommand = Constants.DEFAULT_COMMAND;
+            }
+
+            if(translation2d.getNorm() != 0) {
+                currCommand.cancel();
+                return;
+            }
+        }
+
+        if(controller.getBButtonReleased()) {
+            currCommand = AutoBuilder.pathfindToPose(Constants.DesiredPoses.TAG_17.getDesiredPose(), Constants.DEFAULT_CONSTRAINTS);
+            currCommand.schedule();
         }
 
         /**
@@ -297,18 +317,9 @@ public class DrivebaseOperator extends Operator {
         Translation2d robotRelative = new Translation2d(xRobotRelative, yRobotRelative);
 
         // Swerve Example
-        boolean isFieldRelative = (robotRelative.getNorm() == 0);
-        this.swerve.drive(robotRelative.getNorm() == 0 ? translation2d : robotRelative,
-                rot,
-                isFieldRelative,
-                false,
-                Constants.BOT_CENTER);
-
-/*
         this.swerve.drive(robotRelative.getNorm() == 0 ? translation2d : robotRelative,
                 rot,
                 robotRelative.getNorm() == 0, false, Constants.BOT_CENTER);
-*/
         // Tank Example (Falcons)
         // falconTank.drive(translation2d);
 

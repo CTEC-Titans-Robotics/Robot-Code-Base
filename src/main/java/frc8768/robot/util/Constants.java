@@ -97,7 +97,7 @@ public class Constants {
     }
 
     public enum DesiredPoses {
-        TAG_17(0, 0, Rotation2d.fromDegrees(180));
+        TAG_17(1, 1, Rotation2d.fromDegrees(180));
 
         Pose2d desiredPose;
 

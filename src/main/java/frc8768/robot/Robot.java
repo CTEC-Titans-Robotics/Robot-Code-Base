@@ -4,7 +4,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc8768.robot;
-
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
@@ -115,7 +115,6 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotInit() {
-
         ////    CameraServer.startAutomaticCapture();
         /*
         Transform3d frontLimeLightTransform = new Transform3d(0,0.29898,0.21601,

@@ -20,6 +20,7 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.LimelightVision;
+import frc8768.visionlib.helpers.LimelightHelpers;
 import frc8768.visionlib.helpers.LimelightHelpers.LimelightTarget_Fiducial;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -53,7 +54,6 @@ public class DrivebaseOperator extends Operator {
     private final PIDController rotPID = new PIDController(0.05, 0, 0);
 
     //END OTT Vision
-
 
 
 
@@ -268,10 +268,8 @@ public class DrivebaseOperator extends Operator {
             indefector.stop();
         }
 */
-        double xRobotRelative = 0;
-        double yRobotRelative = 0;
+        //Speed Scaling
         double rot = MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND);
-
         //Turtle Mode
         if(controller.getLeftTriggerAxis() > 0.1){
             translation2d = translation2d.times(turtlespeedscale);
@@ -283,6 +281,9 @@ public class DrivebaseOperator extends Operator {
             rot *= slowspeedscale;
         }
 
+        //Robot Relative MOvement
+        double xRobotRelative = 0;
+        double yRobotRelative = 0;
         if(controller.getPOV() == 0) {
            if (elevator.state() == Elevator.ElevatorState.ZERO){
                xRobotRelative = -.05; }
@@ -305,10 +306,7 @@ public class DrivebaseOperator extends Operator {
                 yRobotRelative = -.05;
         }
 
-
-
-
-
+        //Slower speed when elevator is up
         if(elevator.state() == Elevator.ElevatorState.L3 || elevator.state() == Elevator.ElevatorState.L4) {
             translation2d = translation2d.times(0.2);
             rot *= 0.2;
@@ -320,11 +318,6 @@ public class DrivebaseOperator extends Operator {
         this.swerve.drive(robotRelative.getNorm() == 0 ? translation2d : robotRelative,
                 rot,
                 robotRelative.getNorm() == 0, false, Constants.BOT_CENTER);
-        // Tank Example (Falcons)
-        // falconTank.drive(translation2d);
-
-        // Tank Example (Spark)
-        // sparkTank.drive(translation2d);
     }
 
     private AlignState currState = AlignState.NONE;

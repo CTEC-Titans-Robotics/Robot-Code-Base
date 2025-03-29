@@ -102,13 +102,7 @@ public class DrivebaseOperator extends Operator {
     }
 
     private Map<String, Object> dashboard() {
-        HashMap<String, Object> encoder = new HashMap<>();
-
-        encoder.put("targetX", targetPose.getMeasureX().in(Inches));
-        encoder.put("targetY", targetPose.getMeasureY().in(Inches));
-        encoder.put("targetRot", targetPose.getRotation().getDegrees());
-
-        return encoder;
+        return new HashMap<>();
     }
     //Controller Overall Speed
     public double speedscale = 0.50;  //Value between 0 and 1, Drive Sticks
@@ -148,13 +142,15 @@ public class DrivebaseOperator extends Operator {
 
             if(translation2d.getNorm() != 0) {
                 currCommand.cancel();
+                currCommand = Constants.DEFAULT_COMMAND;
                 return;
             }
-        }
-
-        if(controller.getBButtonReleased()) {
-            currCommand = AutoBuilder.pathfindToPose(Constants.DesiredPoses.TAG_17.getDesiredPose(), Constants.DEFAULT_CONSTRAINTS);
-            currCommand.schedule();
+        } else {
+            if(controller.getLeftBumperButtonPressed()) {
+                align(AlignState.LEFT_ALIGN);
+            } else if(controller.getRightBumperButtonPressed()) {
+                align(AlignState.RIGHT_ALIGN);
+            }
         }
 
         /**
@@ -162,7 +158,7 @@ public class DrivebaseOperator extends Operator {
          */
 
 
-
+/*
         if (controller.getLeftBumperButton() && !autoAlignActive) {
             double[] pose = NetworkTableInstance.getDefault()
                     .getTable("limelight-back")
@@ -203,7 +199,7 @@ public class DrivebaseOperator extends Operator {
                 System.out.println("Auto-align complete or timed out.");
             }
         }
-
+ */
 
         //END OTT Vision
 
@@ -222,13 +218,6 @@ public class DrivebaseOperator extends Operator {
         } else if(controller.getXButtonReleased() || controller.getBButtonReleased()) {
             swerve.setTargetHeading(translation2d, 0);
         }
-/*
-        if (controller.getYButton()) {
-            elevator.moveToState(Elevator.ElevatorState.HANG);
-            arm.moveToState(Arm.ArmState.L4);
-        }
-
-*/
 /*
         if (controller.getXButton() && controller.getAButton()) {
             elevator.moveDown();
@@ -285,22 +274,22 @@ public class DrivebaseOperator extends Operator {
         double xRobotRelative = 0;
         double yRobotRelative = 0;
         if(controller.getPOV() == 0) {
-           if (elevator.state() == Elevator.ElevatorState.ZERO){
+           if (elevator.state() == Elevator.ElevatorState.ZERO) {
                xRobotRelative = -.05; }
            else
                xRobotRelative = .05;
         } else if (controller.getPOV() == 180) {
-            if (elevator.state() == Elevator.ElevatorState.ZERO){
+            if (elevator.state() == Elevator.ElevatorState.ZERO) {
                 xRobotRelative = .05; }
             else
                 xRobotRelative = -.05;
         } else if (controller.getPOV() == 90) {
-            if (elevator.state() == Elevator.ElevatorState.ZERO){
+            if (elevator.state() == Elevator.ElevatorState.ZERO) {
                 yRobotRelative = -.05; }
             else
                 yRobotRelative = .05;
         } else if (controller.getPOV() == 270) {
-            if (elevator.state() == Elevator.ElevatorState.ZERO){
+            if (elevator.state() == Elevator.ElevatorState.ZERO) {
                 yRobotRelative = .05; }
             else
                 yRobotRelative = -.05;
@@ -320,10 +309,9 @@ public class DrivebaseOperator extends Operator {
                 robotRelative.getNorm() == 0, false, Constants.BOT_CENTER);
     }
 
-    private AlignState currState = AlignState.NONE;
-    Pose2d targetPose = Pose2d.kZero;
 
     private void align(AlignState targetState) {
+        /*
         if(currState != targetState) {
             currState = targetState;
             swerve.getSwerveDrive().resetOdometry(new Pose2d(Translation2d.kZero, swerve.getSwerveDrive().getYaw()));
@@ -355,26 +343,35 @@ public class DrivebaseOperator extends Operator {
             currState = AlignState.NONE;
             targetPose = Pose2d.kZero;
         }
+         */
+
+        Constants.DesiredPoses desiredPose = Constants.DesiredPoses.getClosest(swerve.getSwerveDrive().getPose());
+
+        Translation2d offset = new Translation2d(targetState.x, targetState.y).rotateBy(desiredPose.getDesiredPose().getRotation());
+        Pose2d offsetPose = new Pose2d(desiredPose.getDesiredPose().getTranslation().plus(offset), desiredPose.getDesiredPose().getRotation());
+
+        currCommand = AutoBuilder.pathfindToPose(offsetPose, Constants.DEFAULT_CONSTRAINTS);
+        currCommand.schedule();
     }
 
     enum AlignState {
-        LEFT_ALIGN(0, inchesToMeters(-7), 0),//tag 6, 0 front/back, 7 left, 0 rotation
-        RIGHT_ALIGN(0, inchesToMeters(7),0),//tag 6, 0 front/back, 7 right, 0 rotation
-        CENTER(inchesToMeters(-7), 0, 0),
-        NONE(0, 0, 0);
+        LEFT_ALIGN(0, inchesToMeters(-7), Rotation2d.kZero),//tag 6, 0 front/back, 7 left, 0 rotation
+        RIGHT_ALIGN(0, inchesToMeters(7), Rotation2d.kZero),//tag 6, 0 front/back, 7 right, 0 rotation
+        CENTER(inchesToMeters(7), 0, Rotation2d.kZero),
+        NONE(0, 0, Rotation2d.kZero);
 
         final double x;
         final double y;
-        final double rotation;
+        final Rotation2d rotation;
 
-        AlignState(double x, double y, double rotation) {
+        AlignState(double x, double y, Rotation2d rotation) {
             this.x = x;
             this.y = y;
             this.rotation = rotation;
         }
 
-        public boolean isAtState(double x, double y, double rot, double translationTol, double rotTol) {
-            return MathUtil.isNear(this.x, x, translationTol) && MathUtil.isNear(this.y, y, translationTol) && MathUtil.isNear(this.rotation, rot, rotTol);
+        public boolean isAtState(double x, double y, Rotation2d rot, double translationTol, double rotTol) {
+            return MathUtil.isNear(this.x, x, translationTol) && MathUtil.isNear(this.y, y, translationTol) && MathUtil.isNear(this.rotation.getDegrees(), rot.getDegrees(), rotTol);
         }
     }
 }

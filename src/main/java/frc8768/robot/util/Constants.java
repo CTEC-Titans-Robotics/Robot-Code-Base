@@ -4,11 +4,14 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+
+import java.sql.Driver;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -53,8 +56,8 @@ public class Constants {
 
     public static final Command DEFAULT_COMMAND = new InstantCommand();
     public static final PathConstraints DEFAULT_CONSTRAINTS = new PathConstraints(
-            MetersPerSecond.of(2),
-            MetersPerSecondPerSecond.of(1),
+            MetersPerSecond.of(3),
+            MetersPerSecondPerSecond.of(1.5),
             RadiansPerSecond.of(6),
             RadiansPerSecondPerSecond.of(6),
             Volts.of(12),
@@ -97,7 +100,10 @@ public class Constants {
     }
 
     public enum DesiredPoses {
-        TAG_17(1, 1, Rotation2d.fromDegrees(180));
+        TAG_8_RED(3.86, 2.97, Rotation2d.fromDegrees(60 - 180)),
+        TAG_9_RED(5.09, 2.97, Rotation2d.fromDegrees(120 - 180)),
+        TAG_19_BLUE(3.86, 4.95, Rotation2d.fromDegrees(120)),
+        TAG_20_BLUE(5.09, 5.09, Rotation2d.fromDegrees(60));
 
         Pose2d desiredPose;
 
@@ -107,6 +113,29 @@ public class Constants {
 
         public Pose2d getDesiredPose() {
             return desiredPose;
+        }
+
+        public static DesiredPoses getClosest(Pose2d currPose) {
+            DesiredPoses closest = null;
+            for(DesiredPoses pose : DesiredPoses.values()) {
+                if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red && pose.name().contains("RED")) {
+                    if(closest == null) {
+                        closest = pose;
+                    } else if(currPose.getTranslation().getDistance(pose.desiredPose.getTranslation()) <
+                            closest.desiredPose.getTranslation().getDistance(pose.desiredPose.getTranslation())) {
+                        closest = pose;
+                    }
+                } else if(pose.name().contains("BLUE")) {
+                    if(closest == null) {
+                        closest = pose;
+                    } else if(currPose.getTranslation().getDistance(pose.desiredPose.getTranslation()) <
+                            closest.desiredPose.getTranslation().getDistance(pose.desiredPose.getTranslation())) {
+                        closest = pose;
+                    }
+                }
+            }
+
+            return closest;
         }
     }
 }

@@ -4,18 +4,14 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.MotorType;
-import frc8768.visionlib.LimelightVision;
-import frc8768.visionlib.Vision;
 import frc8768.visionlib.helpers.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -23,18 +19,11 @@ import swervelib.parser.SwerveParser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.*;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 
-import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -255,9 +244,9 @@ public class SwerveSubsystem implements Subsystem {
         this.targetPose = target;
     }
 
-    LimelightHelpers.PoseEstimate mt2BACK;
+    Optional<LimelightHelpers.PoseEstimate> mt2BACK = Optional.empty();
+    List<Integer> reefIds = List.of(6,7,8,9,10,11,17,18,19,20,21,22);
 
-    int[] ReefIDs = {6,7,8,9,10,11,17,18,19,20,21,22};
     @Override
     public void periodic() {
         swerveDrive.updateOdometry();
@@ -300,28 +289,37 @@ public class SwerveSubsystem implements Subsystem {
             }
         }
 
-
-    ////
-
-
-        //Provide yaw data to utilize MegaTag2
-        LimelightHelpers.SetRobotOrientation("limelight-back",swerveDrive.getYaw().getDegrees(),swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
-        LimelightHelpers.SetRobotOrientation("limelight-front",swerveDrive.getYaw().getDegrees(),swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
+        if(DriverStation.getAlliance().isPresent()) {
+            DriverStation.Alliance alliance = DriverStation.getAlliance().get();
+            if(alliance == DriverStation.Alliance.Red) {
+                LimelightHelpers.SetRobotOrientation("limelight-back", swerveDrive.getYaw().getDegrees() - 180, swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
+                LimelightHelpers.SetRobotOrientation("limelight-front", swerveDrive.getYaw().getDegrees() - 180, swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
+                if(LimelightHelpers.getTargetCount("limelight-back") > 0){
+                    mt2BACK = Optional.ofNullable(LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2("limelight-back"));
+                }
+            } else {
+                LimelightHelpers.SetRobotOrientation("limelight-back", swerveDrive.getYaw().getDegrees(), swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
+                LimelightHelpers.SetRobotOrientation("limelight-front", swerveDrive.getYaw().getDegrees(), swerveDrive.getGyro().getYawAngularVelocity().in(DegreesPerSecond),0,0,0,0);
+                if(LimelightHelpers.getTargetCount("limelight-back") > 0){
+                    mt2BACK = Optional.ofNullable(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back"));
+                }
+            }
+        }
 
         //Post esitamtion from vision, only use if < 2 meters
-        if(LimelightHelpers.getTargetCount("limelight-back") > -1){mt2BACK = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-back");}
+
         //SmartDashboard.putNumber("LL Swerve X", mt2BACK.pose.getX());
         //SmartDashboard.putNumber("LL Swerve Y", mt2BACK.pose.getY());
         //SmartDashboard.putNumber("LL Swerve Rot", mt2BACK.pose.getRotation().getDegrees());
         //SmartDashboard.putNumber("LL Tag Dist", mt2BACK.avgTagDist);
-/*
-        if(mt2BACK.pose.getX() !=  0 && mt2BACK.pose.getY() != 0 && mt2BACK.pose.getRotation().getDegrees() != 0) {
 
-                    //SmartDashboard.putNumber("LL Tag ID", mt2BACK.rawFiducials[0].id);
-            if(mt2BACK.avgTagDist < 2 && Arrays.asList(ReefIDs).contains(mt2BACK.rawFiducials[0].id)) {
-                swerveDrive.addVisionMeasurement(mt2BACK.pose, mt2BACK.timestampSeconds);
+        mt2BACK.ifPresent((poseEstimate) -> {
+            if (poseEstimate.pose.getX() != 0 && poseEstimate.pose.getY() != 0 && poseEstimate.pose.getRotation().getDegrees() != 0) {
+                //SmartDashboard.putNumber("LL Tag ID", mt2BACK.rawFiducials[0].id);
+                if (poseEstimate.avgTagDist < 2 && reefIds.contains(poseEstimate.rawFiducials[0].id)) {
+                    swerveDrive.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
+                }
             }
-        }
-*/
+        });
     }
 }

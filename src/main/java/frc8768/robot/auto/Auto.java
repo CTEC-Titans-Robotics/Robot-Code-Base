@@ -62,8 +62,8 @@ public class Auto {
         }
 
         PPHolonomicDriveController driveController = new PPHolonomicDriveController(
-                new PIDConstants(.01, 0, 0),
-                new PIDConstants(10, 0, 0)
+                new PIDConstants(0.16229, 0, 0),
+                new PIDConstants(0.05, 0, 0)
         );
 
         AutoBuilder.configure(

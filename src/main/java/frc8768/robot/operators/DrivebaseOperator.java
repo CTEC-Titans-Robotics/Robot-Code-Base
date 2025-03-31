@@ -150,6 +150,8 @@ public class DrivebaseOperator extends Operator {
                 align(AlignState.LEFT_ALIGN);
             } else if(controller.getRightBumperButtonPressed()) {
                 align(AlignState.RIGHT_ALIGN);
+            } else if (controller.getLeftBumperButtonPressed() && controller.getRightBumperButtonPressed()){
+                align(AlignState.CENTER);
             }
         }
 
@@ -355,9 +357,9 @@ public class DrivebaseOperator extends Operator {
     }
 
     enum AlignState {
-        LEFT_ALIGN(0, inchesToMeters(-7), Rotation2d.kZero),//tag 6, 0 front/back, 7 left, 0 rotation
-        RIGHT_ALIGN(0, inchesToMeters(7), Rotation2d.kZero),//tag 6, 0 front/back, 7 right, 0 rotation
-        CENTER(inchesToMeters(7), 0, Rotation2d.kZero),
+        LEFT_ALIGN(inchesToMeters(0), inchesToMeters(-6.25), Rotation2d.kZero),//tag 6, 0 front/back, 7 left, 0 rotation
+        RIGHT_ALIGN((inchesToMeters(0)), inchesToMeters(5.5), Rotation2d.kZero),//tag 6, 0 front/back, 7 right, 0 rotation
+        CENTER(0, 0, Rotation2d.kZero),
         NONE(0, 0, Rotation2d.kZero);
 
         final double x;

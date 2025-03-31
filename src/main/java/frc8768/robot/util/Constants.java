@@ -100,7 +100,7 @@ public class Constants {
     }
 
     public enum DesiredPoses {
-        TAG_8_RED(3.86, 2.97, Rotation2d.fromDegrees(60 - 180)),
+        TAG_8_RED(3.87, 2.99, Rotation2d.fromDegrees(60 - 180)),
         TAG_9_RED(5.09, 2.97, Rotation2d.fromDegrees(120 - 180)),
         TAG_19_BLUE(3.86, 4.95, Rotation2d.fromDegrees(120)),
         TAG_20_BLUE(5.09, 5.09, Rotation2d.fromDegrees(60));

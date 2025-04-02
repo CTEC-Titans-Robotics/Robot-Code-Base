@@ -115,19 +115,12 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotInit() {
-        ////    CameraServer.startAutomaticCapture();
-        /*
-        Transform3d frontLimeLightTransform = new Transform3d(0,0.29898,0.21601,
-                new Rotation3d(Math.toRadians(10),Math.toRadians(0),Math.toRadians(0)));
-        Transform3d backLimeLightTransform = new Transform3d(0,-0.31070,0.27621,
-                new Rotation3d(Math.toRadians(0),Math.toRadians(0),Math.toRadians(0)));
-        frontVision = new LimelightVision("limelight-front",frontLimeLightTransform);
-        backVision = new LimelightVision("limelight-back",backLimeLightTransform);
-*/
+        CameraServer.startAutomaticCapture();
         frontVision = new LimelightVision("limelight-front");
         backVision = new LimelightVision("limelight-back");
-        robotCams = new PhotonMultiCam();
 
+        /*  ////Add back for Photonvision on Swerve
+        robotCams = new PhotonMultiCam();
         robotCams.addCamera("fl", new Transform3d(-0.301516, 0.301516, 0.184,
                 new Rotation3d(Math.toRadians(10),Math.toRadians(-45),Math.toRadians(0))));
         robotCams.addCamera("fr", new Transform3d(0.301516, 0.301516, 0.184,
@@ -136,6 +129,7 @@ public class Robot extends TimedRobot
                 new Rotation3d(Math.toRadians(10),Math.toRadians(-135),Math.toRadians(0))));
         robotCams.addCamera("br", new Transform3d(0.301516, -0.301516, 0.184,
                 new Rotation3d(Math.toRadians(10),Math.toRadians(135),Math.toRadians(0))));
+        */
 
         try {
           this.swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
@@ -147,10 +141,11 @@ public class Robot extends TimedRobot
         this.elevator = new Elevator();
         this.arm = new Arm();
 
-///        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.frontVision, this.backVision);
+        //Pass systems to Operators
         this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.elevator, this.arm, this.frontVision, this.backVision);
         this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
         this.auto = new Auto(swerve, arm, elevator);
+        ////Not Limelight this way right now, using Pathplanner
         // this.vision = new LimelightVision("limelight");
 
         this.auxiliary.init();
@@ -158,15 +153,6 @@ public class Robot extends TimedRobot
 
         CommandScheduler.getInstance().registerSubsystem(swerve);
     }
-
-    /* For tank
-    public TankSubsystemFalcon getFalcon() {
-        return this.falcon;
-    }
-    public TankSubsystemSpark getSpark() {
-        return this.spark;
-    }
-     */
 
     /**
      * Runs even if the Robot is disabled.

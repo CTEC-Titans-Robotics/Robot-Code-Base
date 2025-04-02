@@ -150,8 +150,6 @@ public class DrivebaseOperator extends Operator {
                 align(AlignState.LEFT_ALIGN);
             } else if(controller.getRightBumperButtonPressed()) {
                 align(AlignState.RIGHT_ALIGN);
-            } else if (controller.getLeftBumperButtonPressed() && controller.getRightBumperButtonPressed()){
-                align(AlignState.CENTER);
             }
         }
 
@@ -347,12 +345,10 @@ public class DrivebaseOperator extends Operator {
         }
          */
 
-        Constants.DesiredPoses desiredPose = Constants.DesiredPoses.getClosest(swerve.getSwerveDrive().getPose());
+        Constants.TagLocations desiredPose = Constants.TagLocations.getClosest(swerve.getSwerveDrive().getPose());
+        Pose2d desired = desiredPose.getDesiredPose(targetState.x, targetState.y, targetState.rotation);
 
-        Translation2d offset = new Translation2d(targetState.x, targetState.y).rotateBy(desiredPose.getDesiredPose().getRotation());
-        Pose2d offsetPose = new Pose2d(desiredPose.getDesiredPose().getTranslation().plus(offset), desiredPose.getDesiredPose().getRotation());
-
-        currCommand = AutoBuilder.pathfindToPose(offsetPose, Constants.DEFAULT_CONSTRAINTS);
+        currCommand = AutoBuilder.pathfindToPose(desired, Constants.DEFAULT_CONSTRAINTS);
         currCommand.schedule();
     }
 

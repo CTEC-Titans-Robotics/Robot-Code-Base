@@ -39,6 +39,8 @@ public class Constants {
      */
     public static final Translation2d FIELD_SIZE = new Translation2d(16.54175, 8.21055);
 
+    public static final double ROBOT_WIDTH = Units.inchesToMeters(32);
+
     /**
      * Weight of Robot in Kilograms
      */
@@ -99,37 +101,38 @@ public class Constants {
         public static final double MAX_ROTATION_SPEED = Math.toRadians(450);
     }
 
-    public enum DesiredPoses {
-        TAG_8_RED(3.87, 2.99, Rotation2d.fromDegrees(60 - 180)),
-        TAG_9_RED(5.09, 2.97, Rotation2d.fromDegrees(120 - 180)),
-        TAG_19_BLUE(3.86, 4.95, Rotation2d.fromDegrees(120)),
-        TAG_20_BLUE(5.09, 5.09, Rotation2d.fromDegrees(60));
+    public enum TagLocations {
+        TAG_8_RED(3.87, 2.99, Rotation2d.fromDegrees(0)),
+        TAG_9_RED(5.09, 2.97, Rotation2d.fromDegrees(0)),
+        TAG_19_BLUE(3.86, 4.95, Rotation2d.fromDegrees(0)),
+        TAG_20_BLUE(5.09, 5.09, Rotation2d.fromDegrees(0));
 
-        Pose2d desiredPose;
+        final Pose2d tagPose;
 
-        DesiredPoses(double x, double y, Rotation2d rot) {
-            desiredPose = new Pose2d(x, y, rot);
+        TagLocations(double tagX, double tagY, Rotation2d tagRot) {
+            tagPose = new Pose2d(tagX, tagY, tagRot);
         }
 
-        public Pose2d getDesiredPose() {
-            return desiredPose;
+        public Pose2d getDesiredPose(double robotRelativeX, double robotRelativeY, Rotation2d robotRelativeRot) {
+            Translation2d offsetRotated = new Translation2d(robotRelativeX + Constants.ROBOT_WIDTH/2, robotRelativeY + Constants.ROBOT_WIDTH/2).rotateBy(tagPose.getRotation());
+            return tagPose.plus(new Transform2d(offsetRotated, robotRelativeRot));
         }
 
-        public static DesiredPoses getClosest(Pose2d currPose) {
-            DesiredPoses closest = null;
-            for(DesiredPoses pose : DesiredPoses.values()) {
+        public static TagLocations getClosest(Pose2d currPose) {
+            TagLocations closest = null;
+            for(TagLocations pose : TagLocations.values()) {
                 if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red && pose.name().contains("RED")) {
                     if(closest == null) {
                         closest = pose;
-                    } else if(currPose.getTranslation().getDistance(pose.desiredPose.getTranslation()) <
-                            closest.desiredPose.getTranslation().getDistance(pose.desiredPose.getTranslation())) {
+                    } else if(currPose.getTranslation().getDistance(pose.tagPose.getTranslation()) <
+                            closest.tagPose.getTranslation().getDistance(pose.tagPose.getTranslation())) {
                         closest = pose;
                     }
                 } else if(pose.name().contains("BLUE")) {
                     if(closest == null) {
                         closest = pose;
-                    } else if(currPose.getTranslation().getDistance(pose.desiredPose.getTranslation()) <
-                            closest.desiredPose.getTranslation().getDistance(pose.desiredPose.getTranslation())) {
+                    } else if(currPose.getTranslation().getDistance(pose.tagPose.getTranslation()) <
+                            closest.tagPose.getTranslation().getDistance(pose.tagPose.getTranslation())) {
                         closest = pose;
                     }
                 }

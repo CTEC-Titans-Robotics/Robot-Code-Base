@@ -23,7 +23,7 @@ public class Arm implements Subsystem {
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
     private static final SparkBaseConfig INTAKE_CONFIG = new SparkFlexConfig()
             .idleMode(SparkBaseConfig.IdleMode.kBrake);
-    private static final double trueMaxZeroOffset = -78.310546875;
+    private static final double trueMaxZeroOffset = -274;
     private static final double angleOffset = trueMaxZeroOffset + 196;  //Reset to 0, then return to +188 to find trueMaxZeroOffset
 
     private  static final double upperBound = 78;

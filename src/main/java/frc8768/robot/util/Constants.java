@@ -100,9 +100,12 @@ public class Constants {
          */
         public static final double MAX_ROTATION_SPEED = Math.toRadians(450);
     }
-    static double robotDistToCenter = 16;
-    static double xAdjust = Units.inchesToMeters(robotDistToCenter/2);  //robot width/2
-    static double yAdjust = Units.inchesToMeters((robotDistToCenter/2)*Math.sqrt(3));  //robot width/2*sqrt(3)
+    private static final double xLeft = 0.17598;
+    private static final double yLeft = 0.1016;
+    private static final double xRight = 0.11;
+    private static final double yRight = 0.0635;
+    private static final double robotDistToCenter = 0.4064;
+
     public enum TagLocations {
         //CENTER
         TAG_8_RED(3.887703, 2.97868, Rotation2d.fromDegrees(240)),
@@ -110,7 +113,6 @@ public class Constants {
         TAG_7_RED(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
         TAG_18_BLUE(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
         TAG_6_RED(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
-
         TAG_19_BLUE(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
         TAG_11_RED(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
         TAG_20_BLUE(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
@@ -119,34 +121,38 @@ public class Constants {
         TAG_9_RED(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
         TAG_22_BLUE(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
 
-        //False = LEFT   x => 0.17598, y=> 0.1016
-        TAG_8_RED_FALSE(3.711723, 3.08088, Rotation2d.fromDegrees(240)),
-        TAG_17_BLUE_FALSE(3.870706, 2.954368, Rotation2d.fromDegrees(240)),
-        TAG_7_RED_FALSE(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
-        TAG_18_BLUE_FALSE(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
-        TAG_6_RED_FALSE(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
-        TAG_19_BLUE_FALSE(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
-        TAG_11_RED_FALSE(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
-        TAG_20_BLUE_FALSE(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
-        TAG_10_RED_FALSE(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
-        TAG_21_BLUE_FALSE(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
-        TAG_9_RED_FALSE(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
-        TAG_22_BLUE_FALSE(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
+
+        //LEFT adjustments are +- depending on movement   x => 0.17598, y=> 0.1016
+        //TAG_8_RED_FALSE(3.711723, 3.08088, Rotation2d.fromDegrees(240)),
+        TAG_8_RED_LEFT(3.870706-xLeft, 2.954368+yLeft, Rotation2d.fromDegrees(240)),
+        TAG_17_BLUE_LEFT(3.870706-xLeft, 2.954368+yLeft, Rotation2d.fromDegrees(240)),
+        TAG_7_RED_LEFT(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
+        TAG_18_BLUE_LEFT(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
+        TAG_6_RED_LEFT(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
+        TAG_19_BLUE_LEFT(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
+        TAG_11_RED_LEFT(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
+        TAG_20_BLUE_LEFT(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
+        TAG_10_RED_LEFT(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
+
+        TAG_21_BLUE_LEFT(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
+        TAG_9_RED_LEFT(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
+        TAG_22_BLUE_LEFT(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
 
 
-        //TRUE = Right    x => .11, y => 0.0635
-        TAG_8_RED_TRUE(3.997683, 2.91578, Rotation2d.fromDegrees(240)),
-        TAG_17_BLUE_TRUE(3.870706, 2.954368, Rotation2d.fromDegrees(240)),
-        TAG_7_RED_TRUE(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
-        TAG_18_BLUE_TRUE(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
-        TAG_6_RED_TRUE(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
-        TAG_19_BLUE_TRUE(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
-        TAG_11_RED_TRUE(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
-        TAG_20_BLUE_TRUE(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
-        TAG_10_RED_TRUE(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
-        TAG_21_BLUE_TRUE(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
-        TAG_9_RED_TRUE(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
-        TAG_22_BLUE_TRUE(5.10794, 2.954368, Rotation2d.fromDegrees(300));
+        //RIGHT adjustments are +- depending on movement    x => .11, y => 0.0635
+       //AG_8_RED_RIGHT(3.997683, 2.91578, Rotation2d.fromDegrees(240)),
+        TAG_8_RED_RIGHT(3.870706+xRight, 2.954368-yRight, Rotation2d.fromDegrees(240)),
+        TAG_17_BLUE_RIGHT(3.870706+xRight, 2.954368-yRight, Rotation2d.fromDegrees(240)),
+        TAG_7_RED_RIGHT(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
+        TAG_18_BLUE_RIGHT(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
+        TAG_6_RED_RIGHT(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
+        TAG_19_BLUE_RIGHT(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
+        TAG_11_RED_RIGHT(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
+        TAG_20_BLUE_RIGHT(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
+        TAG_10_RED_RIGHT(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
+        TAG_21_BLUE_RIGHT(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
+        TAG_9_RED_RIGHT(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
+        TAG_22_BLUE_RIGHT(5.10794, 2.954368, Rotation2d.fromDegrees(300));
 
         final Pose2d tagPose;
 

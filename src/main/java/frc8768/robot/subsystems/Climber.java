@@ -12,6 +12,7 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc8768.robot.util.LogUtil;
 
@@ -28,7 +29,9 @@ public class Climber implements Subsystem {
         //climbMotor.getConfigurator().apply(new NeutralModeValue(NeutralMode.Brake));
     }
     public void lift() {
-        climbMotor.setVoltage(6.0);
+        climbMotor.setVoltage(11.9);
+//        SmartDashboard.put("Climber VOlTS",climbMotor.getMotorVoltage());
+
     }
 
     public void drop() {

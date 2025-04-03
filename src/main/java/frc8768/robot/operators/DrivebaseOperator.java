@@ -50,7 +50,7 @@ public class DrivebaseOperator extends Operator {
     private double driveStartTime = 0;
     private final double driveTimeout = 3.0;
 
-    public String alignment = "FALSE";
+    public String alignment = "LEFT";
 
     private final PIDController xPID = new PIDController(1.5, 0, 0);
     private final PIDController yPID = new PIDController(1.5, 0, 0);
@@ -164,10 +164,10 @@ public class DrivebaseOperator extends Operator {
             }
         } else {
             if(controller.getLeftBumperButtonPressed()) {
-                alignment = "FALSE";
+                alignment = "LEFT";
                 align(AlignState.LEFT_ALIGN);
             } else if(controller.getRightBumperButtonPressed()) {
-                alignment = "TRUE";
+                alignment = "RIGHT";
                 align(AlignState.RIGHT_ALIGN);
             }
         }

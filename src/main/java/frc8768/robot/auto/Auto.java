@@ -49,7 +49,7 @@ public class Auto {
         NamedCommands.registerCommand("L4Arm", new L3Arm(arm));
         NamedCommands.registerCommand("L3Elevator", new L3Elevator(elevator));
         NamedCommands.registerCommand("L4Elevator", new L4Elevator(elevator));
-        NamedCommands.registerCommand("Shoot", new Shoot(arm));
+        NamedCommands.registerCommand("Shoot", new Shoot(elevator, arm));
         NamedCommands.registerCommand("Reset", new Reset(elevator, arm));
         NamedCommands.registerCommand("Intake", new Intake(arm));
 

@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "JO SWERVE"
+                  "pathName": "d to Station"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "L1_Shoot"
+                  "name": "Reset"
                 }
               }
             ]

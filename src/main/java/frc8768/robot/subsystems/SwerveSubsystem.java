@@ -152,11 +152,11 @@ public class SwerveSubsystem implements Subsystem {
 
     public void setTargetHeading(Translation2d translation, double target) {
         Pose2d currPose = swerveDrive.getPose();
-        if(MathUtil.isNear(target, currPose.getRotation().getDegrees(), 2)) {
-            drive(translation, 0, true, false, Constants.BOT_CENTER);
-            return;
-        }
-        drive(translation, target > currPose.getRotation().getDegrees() ? 0.2 : -0.2, true, false, Constants.BOT_CENTER);
+//        if(MathUtil.isNear(target, currPose.getRotation().getDegrees(), 2)) {
+//            drive(translation, 0, true, false, Constants.BOT_CENTER);
+//            return;
+//        }
+        drive(translation, target, true, false, Constants.BOT_CENTER);
     }
 
     /**
@@ -316,7 +316,7 @@ public class SwerveSubsystem implements Subsystem {
         mt2BACK.ifPresent((poseEstimate) -> {
             if (poseEstimate.pose.getX() != 0 && poseEstimate.pose.getY() != 0 && poseEstimate.pose.getRotation().getDegrees() != 0) {
                 //SmartDashboard.putNumber("LL Tag ID", mt2BACK.rawFiducials[0].id);
-                if (poseEstimate.avgTagDist < 2 && reefIds.contains(poseEstimate.rawFiducials[0].id)) {
+                if (poseEstimate.avgTagDist < 2 && reefIds.contains(poseEstimate.rawFiducials[0].id) && DriverStation.isTeleop()) {
                     swerveDrive.addVisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds);
                 }
             }

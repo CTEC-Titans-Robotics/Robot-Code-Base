@@ -33,7 +33,7 @@ import frc8768.robot.operators.AuxiliaryOperator;
 import frc8768.robot.operators.DrivebaseOperator;
 import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.Elevator;
-import frc8768.robot.subsystems.GroundIndefector;
+import frc8768.robot.subsystems.Climber;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
@@ -76,7 +76,7 @@ public class Robot extends TimedRobot
 
 
     private SwerveSubsystem swerve;
-    private GroundIndefector groundIndefector;
+    private Climber climber;
     private Elevator elevator;
     private Arm arm;
     // private TankSubsystemFalcon falcon;
@@ -115,7 +115,7 @@ public class Robot extends TimedRobot
      */
     @Override
     public void robotInit() {
-        CameraServer.startAutomaticCapture();
+        //CameraServer.startAutomaticCapture();
         frontVision = new LimelightVision("limelight-front");
         backVision = new LimelightVision("limelight-back");
 
@@ -140,9 +140,10 @@ public class Robot extends TimedRobot
         // this.groundIndefector = new GroundIndefector();
         this.elevator = new Elevator();
         this.arm = new Arm();
+        this.climber = new Climber();
 
         //Pass systems to Operators
-        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.elevator, this.arm, this.frontVision, this.backVision);
+        this.drivebase = new DrivebaseOperator(driveController, this.swerve, this.elevator, this.climber, this.arm, this.frontVision, this.backVision);
         this.auxiliary = new AuxiliaryOperator(auxController, this.elevator, this.arm);
         this.auto = new Auto(swerve, arm, elevator);
         ////Not Limelight this way right now, using Pathplanner

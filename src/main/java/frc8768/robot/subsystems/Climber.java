@@ -1,7 +1,9 @@
 package frc8768.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
@@ -22,8 +24,22 @@ public class Climber implements Subsystem {
 
 
     public Climber() {
-        climbMotor = new TalonFX(78);
+        climbMotor = new TalonFX(23);
+        //climbMotor.getConfigurator().apply(new NeutralModeValue(NeutralMode.Brake));
+    }
+    public void lift() {
+        climbMotor.setVoltage(6.0);
+    }
 
+    public void drop() {
+        climbMotor.setVoltage(-1.0);
+    }
+
+    public void hold() {
+        climbMotor.setVoltage(1.0);
+    }
+    public void stop(){
+        climbMotor.setVoltage(-0.05);
     }
 
     //boolean to get curr limit and if curr limit over certain number stop

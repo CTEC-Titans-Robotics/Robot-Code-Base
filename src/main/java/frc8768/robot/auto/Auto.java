@@ -62,8 +62,8 @@ public class Auto {
         }
 
         PPHolonomicDriveController driveController = new PPHolonomicDriveController(
-                new PIDConstants(0.5, 0, 0),
-                new PIDConstants(0.5, 0, 0)
+                new PIDConstants(0.7, 0, 0),
+                new PIDConstants(0.7, 0, 0)
         );
 
         AutoBuilder.configure(
@@ -82,9 +82,9 @@ public class Auto {
 
         PathConstraints constraints = new PathConstraints(
                 MetersPerSecond.of(3),
-                MetersPerSecondPerSecond.of(1.5),
-                RadiansPerSecond.of(6),
-                RadiansPerSecondPerSecond.of(6),
+                MetersPerSecondPerSecond.of(6),
+                RadiansPerSecond.of(12),
+                RadiansPerSecondPerSecond.of(24),
                 Volts.of(12),
                 false
         );

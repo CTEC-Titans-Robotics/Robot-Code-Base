@@ -27,10 +27,11 @@ public class Reset extends Command{
         elevator.moveToState(Elevator.ElevatorState.ZERO);
         if(elevator.isAtTarget()){
             arm.moveToState(Arm.ArmState.INTAKE);
-        }
-
-        if(arm.isAtRotation()){
             arm.spinIntake(false);
         }
+
+        //if(arm.isAtRotation()){
+        //    arm.spinIntake(false);
+        //}
     }
 }

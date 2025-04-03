@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.Robot;
 import frc8768.robot.subsystems.Arm;
+import frc8768.robot.subsystems.Climber;
 import frc8768.robot.subsystems.Elevator;
 //import frc8768.robot.subsystems.GroundIndefector;
 import frc8768.robot.subsystems.SwerveSubsystem;
@@ -49,6 +50,8 @@ public class DrivebaseOperator extends Operator {
     private double driveStartTime = 0;
     private final double driveTimeout = 3.0;
 
+    public String alignment = "FALSE";
+
     private final PIDController xPID = new PIDController(1.5, 0, 0);
     private final PIDController yPID = new PIDController(1.5, 0, 0);
     private final PIDController rotPID = new PIDController(0.05, 0, 0);
@@ -63,6 +66,7 @@ public class DrivebaseOperator extends Operator {
    // private final GroundIndefector indefector;
     private final Elevator elevator;
     private final Arm arm;
+    private final Climber climber;
 
     private  final LimelightVision frontCam;
 
@@ -79,7 +83,7 @@ public class DrivebaseOperator extends Operator {
 
 
     //public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
-    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
+    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Climber climber, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
 ///        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, LimelightVision frontCam, LimelightVision backCam) {
         super("Drivebase");
 
@@ -94,6 +98,7 @@ public class DrivebaseOperator extends Operator {
        // this.indefector = indefector;
         this.elevator = elevator;
             this.arm = arm;
+            this.climber = climber;
 
             // Init logging
         LogUtil.registerLogger(swerve::log);
@@ -129,10 +134,22 @@ public class DrivebaseOperator extends Operator {
         if (controller.getStartButtonPressed()) {
             swerve.zeroGyro();
         }
-
+/*
         if (controller.getAButtonPressed()) {
             elevator.moveToState(Elevator.ElevatorState.ZERO);
             arm.moveToState(Arm.ArmState.L2);
+        }
+*/
+        if (controller.getAButton()) {
+            climber.drop();
+        } else if (controller.getAButtonReleased()) {
+            climber.stop();
+        }
+
+        if (controller.getYButton()) {
+            climber.lift();
+        } else if (controller.getYButtonReleased()) {
+            climber.hold();
         }
 
         if(currCommand != Constants.DEFAULT_COMMAND) {
@@ -147,8 +164,10 @@ public class DrivebaseOperator extends Operator {
             }
         } else {
             if(controller.getLeftBumperButtonPressed()) {
+                alignment = "FALSE";
                 align(AlignState.LEFT_ALIGN);
             } else if(controller.getRightBumperButtonPressed()) {
+                alignment = "TRUE";
                 align(AlignState.RIGHT_ALIGN);
             }
         }
@@ -204,19 +223,25 @@ public class DrivebaseOperator extends Operator {
         //END OTT Vision
 
         if (controller.getXButton()){
+            swerve.setTargetHeading(translation2d, 128);
+/*
             if(arm.getRollersCurrent() > 18) {
                 swerve.setTargetHeading(translation2d, 120);
             } else {swerve.setTargetHeading(translation2d, 128);}
+*/
 ///            swerve.setTargetHeading(translation2d, 128);
             return;
         } else if (controller.getBButton()){
-            if(arm.getRollersCurrent() > 18) {
+            swerve.setTargetHeading(translation2d, -128);
+            /*            if(arm.getRollersCurrent() > 18) {
                 swerve.setTargetHeading(translation2d, -120);
             } else {swerve.setTargetHeading(translation2d, -128);}
+*/
 ///                swerve.setTargetHeading(translation2d, -128);
             return;
         } else if(controller.getXButtonReleased() || controller.getBButtonReleased()) {
-            swerve.setTargetHeading(translation2d, 0);
+            Pose2d currPose = swerve.getSwerveDrive().getPose();
+            swerve.setTargetHeading(translation2d, currPose.getRotation().getDegrees());
         }
 /*
         if (controller.getXButton() && controller.getAButton()) {
@@ -345,7 +370,7 @@ public class DrivebaseOperator extends Operator {
         }
          */
 
-        Constants.TagLocations desiredPose = Constants.TagLocations.getClosest(swerve.getSwerveDrive().getPose());
+        Constants.TagLocations desiredPose = Constants.TagLocations.getClosest(swerve.getSwerveDrive().getPose(), alignment);
         Pose2d desired = desiredPose.getDesiredPose(targetState.x, targetState.y, targetState.rotation);
 
         currCommand = AutoBuilder.pathfindToPose(desired, Constants.DEFAULT_CONSTRAINTS);
@@ -353,8 +378,8 @@ public class DrivebaseOperator extends Operator {
     }
 
     enum AlignState {
-        LEFT_ALIGN(inchesToMeters(0), inchesToMeters(-6.25), Rotation2d.kZero),//tag 6, 0 front/back, 7 left, 0 rotation
-        RIGHT_ALIGN((inchesToMeters(0)), inchesToMeters(5.5), Rotation2d.kZero),//tag 6, 0 front/back, 7 right, 0 rotation
+        LEFT_ALIGN(inchesToMeters(0), inchesToMeters(0), Rotation2d.kZero),//tag 6, 0 front/back, 7 left, 0 rotation
+        RIGHT_ALIGN(inchesToMeters(0), inchesToMeters(0), Rotation2d.kZero),//tag 6, 0 front/back, 7 right, 0 rotation
         CENTER(0, 0, Rotation2d.kZero),
         NONE(0, 0, Rotation2d.kZero);
 

@@ -140,17 +140,22 @@ public class DrivebaseOperator extends Operator {
             arm.moveToState(Arm.ArmState.L2);
         }
 */
-        if (controller.getAButton()) {
-            climber.drop();
-        } else if (controller.getAButtonReleased()) {
-            climber.stop();
-        }
 
-        if (controller.getYButton()) {
-            climber.lift();
-        } else if (controller.getYButtonReleased()) {
-            climber.hold();
-        }
+
+
+
+
+            if (controller.getAButton()) {
+                climber.drop();
+            } else if (controller.getAButtonReleased()) {
+                climber.stop();
+            }
+
+            if (controller.getYButton()) {
+                climber.lift();
+            } else if (controller.getYButtonReleased()) {
+                climber.hold();
+            }
 
         if(currCommand != Constants.DEFAULT_COMMAND) {
             if(currCommand.isFinished()) {

@@ -102,7 +102,7 @@ public class Constants {
     }
     private static final double xLeft = 0.17598;
     private static final double yLeft = 0.1016;
-    private static final double xRight = 0.11;
+    private static final double xRight = 0.1099;
     private static final double yRight = 0.0635;
     private static final double robotDistToCenter = 0.4064;
 
@@ -126,33 +126,32 @@ public class Constants {
         //TAG_8_RED_FALSE(3.711723, 3.08088, Rotation2d.fromDegrees(240)),
         TAG_8_RED_LEFT(3.870706-xLeft, 2.954368+yLeft, Rotation2d.fromDegrees(240)),
         TAG_17_BLUE_LEFT(3.870706-xLeft, 2.954368+yLeft, Rotation2d.fromDegrees(240)),
-        TAG_7_RED_LEFT(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
-        TAG_18_BLUE_LEFT(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
-        TAG_6_RED_LEFT(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
-        TAG_19_BLUE_LEFT(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
-        TAG_11_RED_LEFT(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
-        TAG_20_BLUE_LEFT(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
-        TAG_10_RED_LEFT(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
+        TAG_7_RED_LEFT(3.2511, 4.0259000+0.2032, Rotation2d.fromDegrees(180)),
+        TAG_18_BLUE_LEFT(3.2511, 4.0259000+0.2032, Rotation2d.fromDegrees(180)),
+        TAG_6_RED_LEFT(3.870706+xLeft, 5.097432+yLeft, Rotation2d.fromDegrees(120)),
+        TAG_19_BLUE_LEFT(3.870706+xLeft, 5.097432+yLeft, Rotation2d.fromDegrees(120)),
+        TAG_11_RED_LEFT(5.10794+xLeft, 5.097432-yLeft, Rotation2d.fromDegrees(60)),
+        TAG_20_BLUE_LEFT(5.10794+xLeft, 5.097432-yLeft, Rotation2d.fromDegrees(60)),
+        TAG_10_RED_LEFT(5.727446, 4.0259000-0.2032, Rotation2d.fromDegrees(0)),
+        TAG_21_BLUE_LEFT(5.727446, 4.0259000-0.2032, Rotation2d.fromDegrees(0)),
+        TAG_9_RED_LEFT(5.10794-xLeft, 2.954368-yLeft, Rotation2d.fromDegrees(300)),
+        TAG_22_BLUE_LEFT(5.10794-xLeft, 2.954368-yLeft, Rotation2d.fromDegrees(300)),
 
-        TAG_21_BLUE_LEFT(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
-        TAG_9_RED_LEFT(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
-        TAG_22_BLUE_LEFT(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
 
-
-        //RIGHT adjustments are +- depending on movement    x => .11, y => 0.0635
+        //RIGHT adjustments are +- depending on movement    x => .1099, y => 0.0635
        //AG_8_RED_RIGHT(3.997683, 2.91578, Rotation2d.fromDegrees(240)),
         TAG_8_RED_RIGHT(3.870706+xRight, 2.954368-yRight, Rotation2d.fromDegrees(240)),
         TAG_17_BLUE_RIGHT(3.870706+xRight, 2.954368-yRight, Rotation2d.fromDegrees(240)),
-        TAG_7_RED_RIGHT(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
-        TAG_18_BLUE_RIGHT(3.2511, 4.0259000, Rotation2d.fromDegrees(180)),
-        TAG_6_RED_RIGHT(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
-        TAG_19_BLUE_RIGHT(3.870706, 5.097432, Rotation2d.fromDegrees(120)),
-        TAG_11_RED_RIGHT(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
-        TAG_20_BLUE_RIGHT(5.10794, 5.097432, Rotation2d.fromDegrees(60)),
-        TAG_10_RED_RIGHT(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
-        TAG_21_BLUE_RIGHT(5.727446, 4.0259000, Rotation2d.fromDegrees(0)),
-        TAG_9_RED_RIGHT(5.10794, 2.954368, Rotation2d.fromDegrees(300)),
-        TAG_22_BLUE_RIGHT(5.10794, 2.954368, Rotation2d.fromDegrees(300));
+        TAG_7_RED_RIGHT(3.2511, 4.0259000-0.12700, Rotation2d.fromDegrees(180)),
+        TAG_18_BLUE_RIGHT(3.2511, 4.0259000-0.12700, Rotation2d.fromDegrees(180)),
+        TAG_6_RED_RIGHT(3.870706-xRight, 5.097432-yRight, Rotation2d.fromDegrees(120)),
+        TAG_19_BLUE_RIGHT(3.870706-xRight, 5.097432-yRight, Rotation2d.fromDegrees(120)),
+        TAG_11_RED_RIGHT(5.10794-xRight, 5.097432+yRight, Rotation2d.fromDegrees(60)),
+        TAG_20_BLUE_RIGHT(5.10794-xRight, 5.097432+yRight, Rotation2d.fromDegrees(60)),
+        TAG_10_RED_RIGHT(5.727446, 4.0259000+0.12700, Rotation2d.fromDegrees(0)),
+        TAG_21_BLUE_RIGHT(5.727446, 4.0259000+0.12700, Rotation2d.fromDegrees(0)),
+        TAG_9_RED_RIGHT(5.10794+xRight, 2.954368+yRight, Rotation2d.fromDegrees(300)),
+        TAG_22_BLUE_RIGHT(5.10794+xRight, 2.954368+yRight, Rotation2d.fromDegrees(300));
 
         final Pose2d tagPose;
 

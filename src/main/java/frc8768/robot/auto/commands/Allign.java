@@ -7,11 +7,11 @@ import frc8768.robot.subsystems.SwerveSubsystem;
 /*
 public class Allign extends Command{
 
-    private final SwerveSubsystem arm;
+    private final SwerveSubsystem swerve;
 
 
-    public Allign(Arm arm) {
-        this.arm = arm;
+    public Allign(SwerveSubsystem swerve) {
+        this.swerve = swerve;
     }
 
     @Override
@@ -21,10 +21,6 @@ public class Allign extends Command{
 
     @Override
     public void execute() {
-        this.arm.moveToState(Arm.ArmState.INTAKE);
-            if(arm.isAtRotation()) {
-            arm.spinIntake(false);
-            }
-        }
+
     }
 */

@@ -77,13 +77,13 @@ public class Climber implements Subsystem {
         //climbMotor.getConfigurator().apply(new NeutralModeValue(NeutralMode.Brake));
     }
     public void lift() {
-        climbMotor.setVoltage(3);
+        climbMotor.setVoltage(11.9);
 //        SmartDashboard.put("Climber VOlTS",climbMotor.getMotorVoltage());
 
     }
 
     public void drop() {
-        climbMotor.setVoltage(-1.0);
+        climbMotor.setVoltage(-3.0);
     }
 
     public void hold() {

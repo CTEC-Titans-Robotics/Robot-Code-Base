@@ -162,7 +162,7 @@ public class Arm implements Subsystem {
         if (currState == ArmState.L1) {
             intakeMotor.set(outTake ? -0.1 : 0.13);
         } else {
-            intakeMotor.set(outTake ? -0.2 : 0.28);
+            intakeMotor.set(outTake ? -0.2 : 0.35);
         }
     }
 

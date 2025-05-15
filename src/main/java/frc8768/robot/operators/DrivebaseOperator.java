@@ -31,9 +31,7 @@ import java.util.Map;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 import static edu.wpi.first.math.util.Units.inchesToMeters;
-import static edu.wpi.first.units.Units.Degree;
-import static edu.wpi.first.units.Units.Inches;
-
+import static edu.wpi.first.units.Units.*;
 
 
 /**
@@ -228,25 +226,25 @@ public class DrivebaseOperator extends Operator {
         //END OTT Vision
 
         if (controller.getXButton()){
-            swerve.setTargetHeading(translation2d, 128);
-/*
+            swerve.setTargetHeading(translation2d, 128, 1);
+
             if(arm.getRollersCurrent() > 18) {
-                swerve.setTargetHeading(translation2d, 120);
-            } else {swerve.setTargetHeading(translation2d, 128);}
-*/
+                swerve.setTargetHeading(translation2d, 120,1);
+            } else {swerve.setTargetHeading(translation2d, 128,1);}
+
 ///            swerve.setTargetHeading(translation2d, 128);
             return;
         } else if (controller.getBButton()){
-            swerve.setTargetHeading(translation2d, -128);
-            /*            if(arm.getRollersCurrent() > 18) {
-                swerve.setTargetHeading(translation2d, -120);
-            } else {swerve.setTargetHeading(translation2d, -128);}
-*/
+            swerve.setTargetHeading(translation2d, -128, 1);
+                        if(arm.getRollersCurrent() > 18) {
+                swerve.setTargetHeading(translation2d, -120,1);
+            } else {swerve.setTargetHeading(translation2d, -128,1);}
+
 ///                swerve.setTargetHeading(translation2d, -128);
             return;
         } else if(controller.getXButtonReleased() || controller.getBButtonReleased()) {
             Pose2d currPose = swerve.getSwerveDrive().getPose();
-            swerve.setTargetHeading(translation2d, currPose.getRotation().getDegrees());
+            swerve.setTargetHeading(translation2d, currPose.getRotation().getDegrees(), 0);
         }
 /*
         if (controller.getXButton() && controller.getAButton()) {

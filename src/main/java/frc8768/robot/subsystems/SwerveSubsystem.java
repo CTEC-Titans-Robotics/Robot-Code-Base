@@ -149,14 +149,21 @@ public class SwerveSubsystem implements Subsystem {
 
         initialYaw = swerveDrive.getYaw();
     }
-
-    public void setTargetHeading(Translation2d translation, double target) {
+    double needsRotation;
+    public void setTargetHeading(Translation2d translation, double target, double status) {
+        needsRotation = status;
         Pose2d currPose = swerveDrive.getPose();
-//        if(MathUtil.isNear(target, currPose.getRotation().getDegrees(), 2)) {
-//            drive(translation, 0, true, false, Constants.BOT_CENTER);
-//            return;
-//        }
-        drive(translation, target, true, false, Constants.BOT_CENTER);
+        if(MathUtil.isNear(target, currPose.getRotation().getDegrees(), 2)) {
+            drive(translation, 0, true, false, Constants.BOT_CENTER);
+            needsRotation=0;
+            return;
+        }
+        if(needsRotation == 1 && target - currPose.getRotation().getDegrees() > 2) {
+            drive(translation, 0.2, true, false, Constants.BOT_CENTER);
+        }
+        if(needsRotation == 1 && target - currPose.getRotation().getDegrees() < 2) {
+            drive(translation, -0.2, true, false, Constants.BOT_CENTER);
+        }
     }
 
     /**

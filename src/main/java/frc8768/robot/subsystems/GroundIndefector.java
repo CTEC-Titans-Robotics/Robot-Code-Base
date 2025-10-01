@@ -1,9 +1,13 @@
 package frc8768.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.config.SignalsConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
@@ -20,37 +24,14 @@ public class GroundIndefector implements Subsystem {
     private static final double upperBound = 25;
     private static final double lowerBound = 170;
 
-    private static final SparkBaseConfig INTAKE_BASE_CONFIG = new SparkFlexConfig()
-                .idleMode(SparkBaseConfig.IdleMode.kBrake);
-    private static final SparkBaseConfig Z_ROT_CONFIG = new SparkFlexConfig()
-            .inverted(true)
-            .idleMode(SparkBaseConfig.IdleMode.kBrake);
-
-    private final CANcoder absEncoder;
-    private final SparkFlex intakeMotor, zRotMotor;
+    private final TalonFX zRotMotor;
 
     public GroundIndefector() {
-        intakeMotor = new SparkFlex(16, SparkLowLevel.MotorType.kBrushless);
-        zRotMotor = new SparkFlex(15, SparkLowLevel.MotorType.kBrushless);
-        absEncoder = new CANcoder(21);
-
-        intakeMotor.configure(new SparkFlexConfig().apply(INTAKE_BASE_CONFIG), SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
-        zRotMotor.configure(Z_ROT_CONFIG,
-                SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
+        zRotMotor = new TalonFX(15);
+        zRotMotor.setNeutralMode(NeutralModeValue.Brake);
 
         LogUtil.registerDashLogger(this::dashLog);
     }
-
-    private double getPosition() {
-        if(absEncoder.getPosition().getValue().in(Units.Degree) >= angleOffset - 5) {
-            return Math.abs(absEncoder.getPosition().getValue().in(Units.Degree) - angleOffset);
-        } else if (absEncoder.getPosition().getValue().in(Units.Degree) <= angleOffset2) {
-            return Math.abs(absEncoder.getPosition().getValue().in(Units.Degree) + angleOffset2);
-        }
-        return 0;
-    }
-
-
 
     /**
      * Up is positive, down is negative
@@ -59,40 +40,19 @@ public class GroundIndefector implements Subsystem {
 
 
     public void forward() {
-        if(lowerBound < getPosition()) {
-            stop();
-        } else {
-            zRotMotor.set(
-                    MathUtil.clamp(-Math.abs(lowerBound/getPosition()), -0.07, 0)
-            );
-        }
+            zRotMotor.set(-0.35);
     }
 
     public void backwards() {
-        if(upperBound > getPosition()) {
-            stop();
-        } else {
-            zRotMotor.set(
-                    MathUtil.clamp(Math.abs(getPosition()/upperBound), 0, 0.15)
-            );
-        }
-    }
-
-    public void spinIntake(boolean outTake) {
-        intakeMotor.set(outTake ? 0.5 : -0.4);
-    }
-
-    public void stopIntake() {
-        intakeMotor.set(0);
+            zRotMotor.set(0.3);
     }
 
     public void stop() {
-        zRotMotor.set(0.01);
+        zRotMotor.set(0.0);
     }
 
     private Map<String, Object> dashLog() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("Algae position", getPosition());
         return map;
     }
 }

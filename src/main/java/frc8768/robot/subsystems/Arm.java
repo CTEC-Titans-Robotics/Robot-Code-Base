@@ -193,7 +193,7 @@ public class Arm implements Subsystem {
         L1(-186),
         L2(-169),
         L3(-181),
-        L4(-184), //-177  removed 3 degrees due to tightened chain
+        L4(-188 ), //-177  removed 3 degrees due to tightened chain
         INTAKE(77),  //90   removed 3 degrees due to tightened chain
         CORAL(-115);
 

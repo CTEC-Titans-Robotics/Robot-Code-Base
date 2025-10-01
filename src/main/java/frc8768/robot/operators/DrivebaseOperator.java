@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc8768.robot.Robot;
 import frc8768.robot.subsystems.Arm;
 import frc8768.robot.subsystems.Elevator;
-//import frc8768.robot.subsystems.GroundIndefector;
+import frc8768.robot.subsystems.GroundIndefector;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
@@ -60,7 +60,7 @@ public class DrivebaseOperator extends Operator {
 
     private final XboxController controller;
     private final SwerveSubsystem swerve;
-   // private final GroundIndefector indefector;
+    private final GroundIndefector indefector;
     private final Elevator elevator;
     private final Arm arm;
 
@@ -79,7 +79,8 @@ public class DrivebaseOperator extends Operator {
 
 
     //public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator) {
-    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
+    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, GroundIndefector indefector, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
+/////    public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, Elevator elevator, Arm arm, LimelightVision frontCam, LimelightVision backCam) {
 ///        public DrivebaseOperator(XboxController controller, SwerveSubsystem swerve, LimelightVision frontCam, LimelightVision backCam) {
         super("Drivebase");
 
@@ -91,7 +92,7 @@ public class DrivebaseOperator extends Operator {
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
 
-       // this.indefector = indefector;
+        this.indefector = indefector;
         this.elevator = elevator;
             this.arm = arm;
 
@@ -147,11 +148,11 @@ public class DrivebaseOperator extends Operator {
             }
         } else {
             if(controller.getLeftBumperButtonPressed()) {
-                align(AlignState.LEFT_ALIGN);
+///Temp Remove for Jayden                align(AlignState.LEFT_ALIGN);
             } else if(controller.getRightBumperButtonPressed()) {
-                align(AlignState.RIGHT_ALIGN);
+///Temp Remove for Jayden                align(AlignState.RIGHT_ALIGN);
             } else if (controller.getLeftBumperButtonPressed() && controller.getRightBumperButtonPressed()){
-                align(AlignState.CENTER);
+///Temp Remove for Jayden                align(AlignState.CENTER);
             }
         }
 
@@ -248,7 +249,7 @@ public class DrivebaseOperator extends Operator {
         } else {
             indefector.stopIntake();
         }
-
+*/
         if(controller.getRightBumperButton() && controller.getRightTriggerAxis() > 0.1) {
             // Don't do anything.
         } else if(controller.getRightBumperButton()) {
@@ -258,7 +259,7 @@ public class DrivebaseOperator extends Operator {
         } else {
             indefector.stop();
         }
-*/
+
         //Speed Scaling
         double rot = MathUtil.applyDeadband(-controller.getRightX(), Constants.CONTROLLER_DEADBAND);
         //Turtle Mode

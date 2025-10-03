@@ -4,9 +4,12 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
+
+import java.util.logging.Level;
 
 /**
  * Operator for driving the bot
@@ -15,6 +18,7 @@ public class DrivebaseOperator extends Operator {
     private static final XboxController controller = new XboxController(Constants.DRIVER_CONTROLLER_ID);
     private final SwerveSubsystem swerve;
     private Command currCommand;
+    private final ArmSubsystem arm;
 
 
     // private final TankSubsystemSpark sparkTank;
@@ -25,10 +29,11 @@ public class DrivebaseOperator extends Operator {
      *
      * @param swerve The required subsystem for this operator.
      */
-    public DrivebaseOperator(SwerveSubsystem swerve) {
+    public DrivebaseOperator(SwerveSubsystem swerve, ArmSubsystem arm) {
         super("Drivebase");
 
         this.swerve = swerve;
+        this.arm = arm;
         // sparkTank = Robot.getInstance().getSpark();
         // falconTank = Robot.getInstance().getFalcon();
 
@@ -52,6 +57,13 @@ public class DrivebaseOperator extends Operator {
                 MathUtil.applyDeadband(controller.getRightX(), Constants.CONTROLLER_DEADBAND) != 0) && currCommand != null) {
             this.currCommand.cancel();
             this.currCommand = null;
+        }
+
+        if(controller.getYButtonPressed()) {
+            if(!this.arm.launch())
+                LogUtil.LOGGER.log(Level.WARNING, "Failed to launch arm! Possibly already maxed out?");
+        } else if(controller.getAButtonPressed()) {
+            this.arm.reset();
         }
 
         if(this.currCommand != null && !this.currCommand.isFinished()) {

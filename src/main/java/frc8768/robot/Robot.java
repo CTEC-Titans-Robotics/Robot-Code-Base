@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc8768.robot.auto.Auto;
 import frc8768.robot.operators.DrivebaseOperator;
+import frc8768.robot.subsystems.ArmSubsystem;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
 import frc8768.robot.util.LogUtil;
@@ -54,6 +55,8 @@ public class Robot extends TimedRobot
      */
     private Auto auto;
 
+    private ArmSubsystem arm;
+
     public Robot() {
         instance = this;
     }
@@ -81,8 +84,8 @@ public class Robot extends TimedRobot
           throw new RuntimeException("Swerve failed to create!", io);
         }
 
-
-        this.drivebase = new DrivebaseOperator(this.swerve);
+        this.arm = new ArmSubsystem(16, 15, 19);
+        this.drivebase = new DrivebaseOperator(this.swerve, this.arm);
         // this.auto = new Auto(swerve);
         // this.vision = new LimelightVision("limelight");
 
@@ -109,6 +112,8 @@ public class Robot extends TimedRobot
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
         LogUtil.run();
+
+        this.arm.tick();
     }
 
     /**

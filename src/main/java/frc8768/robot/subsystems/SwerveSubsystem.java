@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Container class for everything Swerve
  */
-public class SwerveSubsystem {
+public class SwerveSubsystem implements Subsystem{
     /**
      * SysID routine for the Drive motor of module 0
      */
@@ -66,7 +66,7 @@ public class SwerveSubsystem {
                                     .linearVelocity(
                                             Units.MetersPerSecond.of(swerveDrive.getModules()[0].getDriveMotor().getVelocity()));
                         },
-                        null
+                        this
                 )
         );
 
@@ -82,7 +82,7 @@ public class SwerveSubsystem {
                                     .angularVelocity(
                                             Units.DegreesPerSecond.of(swerveDrive.getModules()[0].getAngleMotor().getVelocity()));
                         },
-                        null
+                        this
                 )
         );
     }

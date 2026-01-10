@@ -5,7 +5,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
-import java.util.Collections;
 import java.util.List;
 
 /**

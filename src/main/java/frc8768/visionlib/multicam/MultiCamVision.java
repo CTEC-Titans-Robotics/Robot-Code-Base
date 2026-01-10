@@ -1,11 +1,6 @@
 package frc8768.visionlib.multicam;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import frc8768.visionlib.Vision;
-
 import java.util.List;
 
 /**

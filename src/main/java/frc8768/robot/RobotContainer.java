@@ -6,8 +6,6 @@ import frc8768.robot.operators.DriveOperator;
 import frc8768.robot.operators.Operator;
 import frc8768.robot.subsystems.SwerveSubsystem;
 import frc8768.robot.util.Constants;
-import frc8768.visionlib.LimelightVision;
-
 import java.io.IOException;
 
 public class RobotContainer {

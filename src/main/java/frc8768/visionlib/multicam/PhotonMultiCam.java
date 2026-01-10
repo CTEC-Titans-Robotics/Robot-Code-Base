@@ -17,7 +17,7 @@ public class PhotonMultiCam implements MultiCamVision {
 
     @Override
     public void addCamera(String camName, Transform3d pos) {
-        PhotonCameraStorage storage = cameras.put(camName,
+        cameras.put(camName,
                 new PhotonCameraStorage(new PhotonVision(camName), pos));
     }
 

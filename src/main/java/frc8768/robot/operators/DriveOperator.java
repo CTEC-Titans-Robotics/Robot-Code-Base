@@ -20,7 +20,6 @@ public class DriveOperator implements Operator {
                         () -> controller.getLeftX() * -1)
                 .withControllerRotationAxis(controller::getRightX)
                 .deadband(Constants.CONTROLLER_DEADBAND)
-                .scaleTranslation(0.8)
                 .allianceRelativeControl(true);
     }
 

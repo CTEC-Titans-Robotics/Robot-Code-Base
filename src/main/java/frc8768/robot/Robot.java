@@ -5,19 +5,9 @@
 
 package frc8768.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc8768.robot.auto.Auto;
-import frc8768.robot.operators.DrivebaseOperator;
-import frc8768.robot.subsystems.SwerveSubsystem;
-import frc8768.robot.util.Constants;
-import frc8768.robot.util.LogUtil;
-import frc8768.visionlib.LimelightVision;
-import frc8768.visionlib.Vision;
-
-import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  * The VM is configured to automatically run this class, and to call the methods corresponding to
@@ -27,79 +17,17 @@ import java.util.logging.Level;
  */
 public class Robot extends TimedRobot
 {
-    /**
-     * Robot instance, can't be seen across threads
-     */
-    public static Robot instance;
-
-    /**
-     * Drivebase Operator
-     */
-    private DrivebaseOperator drivebase;
-
-    /**
-     * The swerve subsystem, held in here for Auton.
-     */
-    private SwerveSubsystem swerve;
-    // private TankSubsystemFalcon falcon;
-    // private TankSubsystemSpark spark;
-
-    /**
-     * Vision API instance
-     */
-    public LimelightVision vision;
-
-    /**
-     * Auton Instance
-     */
-    private Auto auto;
+    public final RobotContainer m_robotContainer;
 
     public Robot() {
-        instance = this;
+        m_robotContainer = new RobotContainer();
     }
 
-    /**
-     * Certain properties cannot be seen across Threads.
-     *
-     * @return The Robot instance;
-     */
-    public static Robot getInstance() {
-        return instance;
-    }
-
-    /**
-     * This method is run when the robot is first started up and should be used for any
-     * initialization code.
-     */
     @Override
     public void robotInit() {
-        CameraServer.startAutomaticCapture();
+        super.robotInit();
 
-        try {
-          swerve = new SwerveSubsystem(Constants.SwerveConfig.CURRENT_TYPE);
-        } catch (IOException io) {
-          throw new RuntimeException("Swerve failed to create!", io);
-        }
-
-
-        this.drivebase = new DrivebaseOperator(this.swerve);
-        // this.auto = new Auto(swerve);
-        // this.vision = new LimelightVision("limelight");
-
-        this.drivebase.init();
-    }
-
-    /* For tank
-    public TankSubsystemFalcon getFalcon() {
-        return this.falcon;
-    }
-    public TankSubsystemSpark getSpark() {
-        return this.spark;
-    }
-     */
-
-    public Vision getVision() {
-        return this.vision;
+        m_robotContainer.onRobotInit();
     }
 
     /**
@@ -108,7 +36,6 @@ public class Robot extends TimedRobot
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        LogUtil.run();
     }
 
     /**
@@ -116,8 +43,11 @@ public class Robot extends TimedRobot
      */
     @Override
     public void autonomousInit() {
-        if (this.auto != null) {
-            this.auto.getSelected().schedule();
+        Command m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+        // schedule the autonomous command (example)
+        if (m_autonomousCommand != null) {
+            CommandScheduler.getInstance().schedule(m_autonomousCommand);
         }
     }
 

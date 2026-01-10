@@ -1,8 +1,6 @@
 package frc8768.visionlib.multicam;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc8768.robot.util.LogUtil;
 import frc8768.visionlib.PhotonVision;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -21,9 +19,6 @@ public class PhotonMultiCam implements MultiCamVision {
     public void addCamera(String camName, Transform3d pos) {
         PhotonCameraStorage storage = cameras.put(camName,
                 new PhotonCameraStorage(new PhotonVision(camName), pos));
-
-        if(storage != null)
-            LogUtil.LOGGER.warning("Camera " + camName + " already existed.");
     }
 
     @Override

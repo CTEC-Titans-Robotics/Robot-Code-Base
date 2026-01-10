@@ -18,7 +18,7 @@ public class Constants {
     /**
      * Controller deadband, prevents accidental input
      */
-    public static final double CONTROLLER_DEADBAND = 0.1;
+    public static final double CONTROLLER_DEADBAND = 0.05;
 
     /**
      * Center of bot
